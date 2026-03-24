@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大模型全景对比 2026</title>
+<style>
+  :root {
+    --bg: #080c14; --card: #0f1623; --card2: #141e2e;
+    --border: #1e2d45; --text: #c8d4e8; --muted: #5a7090;
+    --blue: #3b82f6; --green: #22c55e; --red: #ef4444;
+    --yellow: #eab308; --orange: #f97316; --purple: #a855f7;
+    --cyan: #06b6d4; --pink: #ec4899;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; font-size:14px; line-height:1.6; }
+
+  /* HEADER */
+  .header { background:linear-gradient(135deg,#070b12,#0d1828); border-bottom:1px solid var(--border); padding:24px 20px 16px; text-align:center; position:sticky; top:0; z-index:100; }
+  .header h1 { font-size:1.5em; color:#e8f0ff; margin-bottom:4px; }
+  .header .sub { color:var(--muted); font-size:0.8em; }
+
+  /* TABS */
+  .nav-tabs { display:flex; gap:2px; padding:10px 16px 0; background:var(--card); border-bottom:1px solid var(--border); overflow-x:auto; }
+  .nav-tab { padding:8px 14px; border-radius:8px 8px 0 0; cursor:pointer; font-size:0.8em; font-weight:600; color:var(--muted); white-space:nowrap; border-bottom:2px solid transparent; transition:all .2s; }
+  .nav-tab:hover { color:var(--text); }
+  .nav-tab.active { color:#fff; border-bottom-color:var(--blue); background:var(--card2); }
+
+  /* PANELS */
+  .panel { display:none; padding:16px; max-width:1100px; margin:0 auto; }
+  .panel.active { display:block; }
+
+  /* FILTER */
+  .filter-bar { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }
+  .filter-btn { padding:4px 12px; border-radius:20px; font-size:0.72em; font-weight:600; cursor:pointer; border:1px solid var(--border); background:var(--card2); color:var(--muted); transition:all .2s; }
+  .filter-btn:hover, .filter-btn.active { color:#fff; border-color:var(--blue); background:rgba(59,130,246,.15); }
+
+  /* MODEL CARDS */
+  .models-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:12px; }
+  .model-card { background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; cursor:pointer; transition:all .25s; }
+  .model-card:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,.4); border-color:#2a4060; }
+  .model-card.open { border-color:var(--blue); }
+  .model-card.hidden { display:none; }
+
+  .mc-header { padding:14px 16px; display:flex; align-items:center; gap:12px; }
+  .mc-logo { font-size:2em; width:44px; text-align:center; flex-shrink:0; }
+  .mc-info { flex:1; }
+  .mc-name { font-weight:700; font-size:1em; color:#e8f0ff; }
+  .mc-maker { font-size:0.72em; color:var(--muted); margin-top:1px; }
+  .mc-badge { font-size:0.62em; font-weight:700; padding:2px 7px; border-radius:10px; margin-top:4px; display:inline-block; }
+  .badge-closed { background:rgba(59,130,246,.15); color:#60a5fa; border:1px solid rgba(59,130,246,.3); }
+  .badge-open { background:rgba(34,197,94,.15); color:#4ade80; border:1px solid rgba(34,197,94,.3); }
+  .badge-cn { background:rgba(239,68,68,.12); color:#fca5a5; border:1px solid rgba(239,68,68,.2); }
+  .badge-hybrid { background:rgba(168,85,247,.12); color:#c084fc; border:1px solid rgba(168,85,247,.2); }
+
+  .mc-chevron { color:var(--muted); font-size:0.8em; transition:transform .3s; }
+  .model-card.open .mc-chevron { transform:rotate(180deg); color:var(--blue); }
+
+  .mc-scores { display:flex; gap:8px; padding:0 16px 12px; }
+  .score-pill { flex:1; background:var(--card2); border-radius:6px; padding:6px 8px; text-align:center; }
+  .score-label { font-size:0.6em; color:var(--muted); }
+  .score-val { font-size:0.85em; font-weight:700; }
+
+  .mc-detail { display:none; border-top:1px solid var(--border); }
+  .model-card.open .mc-detail { display:block; }
+
+  .detail-tabs { display:flex; border-bottom:1px solid var(--border); }
+  .dtab { padding:8px 14px; font-size:0.75em; font-weight:600; cursor:pointer; color:var(--muted); border-bottom:2px solid transparent; transition:all .2s; }
+  .dtab:hover { color:var(--text); }
+  .dtab.active { color:var(--blue); border-bottom-color:var(--blue); }
+
+  .dtab-content { display:none; padding:14px 16px; }
+  .dtab-content.active { display:block; }
+
+  .detail-section { margin-bottom:14px; }
+  .detail-section h4 { font-size:0.72em; font-weight:700; color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
+  .detail-section p { font-size:0.82em; line-height:1.7; }
+  .detail-section ul { font-size:0.82em; padding-left:16px; }
+  .detail-section li { margin-bottom:3px; line-height:1.6; }
+
+  .kv-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:6px; margin-top:6px; }
+  .kv { background:var(--card2); border-radius:6px; padding:8px 10px; }
+  .kv-k { font-size:0.65em; color:var(--muted); margin-bottom:2px; }
+  .kv-v { font-size:0.82em; font-weight:600; }
+
+  /* PRO/CON */
+  .pro-con { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; }
+  .pro-box, .con-box { background:var(--card2); border-radius:6px; padding:10px 12px; }
+  .pro-box { border-left:3px solid var(--green); }
+  .con-box { border-left:3px solid var(--red); }
+  .pro-box h5 { color:var(--green); font-size:0.72em; margin-bottom:6px; }
+  .con-box h5 { color:var(--red); font-size:0.72em; margin-bottom:6px; }
+  .pro-box li, .con-box li { font-size:0.78em; color:var(--muted); margin-bottom:3px; list-style:none; padding-left:12px; position:relative; }
+  .pro-box li::before { content:"✓"; position:absolute; left:0; color:var(--green); }
+  .con-box li::before { content:"✗"; position:absolute; left:0; color:var(--red); }
+
+  /* PRICING TABLE */
+  .price-table { width:100%; border-collapse:collapse; font-size:0.8em; }
+  .price-table th { background:var(--card2); color:var(--muted); font-size:0.72em; letter-spacing:1px; text-transform:uppercase; padding:10px 12px; text-align:left; border-bottom:1px solid var(--border); }
+  .price-table td { padding:10px 12px; border-bottom:1px solid rgba(30,45,69,.5); }
+  .price-table tr:hover td { background:rgba(59,130,246,.04); }
+  .price-table .model-col { font-weight:700; }
+  .cheap { color:var(--green); }
+  .mid { color:var(--yellow); }
+  .pricey { color:var(--orange); }
+  .expensive { color:var(--red); }
+
+  /* TIMELINE */
+  .timeline-wrap { position:relative; padding-left:30px; }
+  .timeline-wrap::before { content:''; position:absolute; left:8px; top:0; bottom:0; width:2px; background:linear-gradient(to bottom,var(--blue),var(--purple)); }
+  .tl-item { position:relative; margin-bottom:14px; }
+  .tl-dot { position:absolute; left:-26px; top:4px; width:12px; height:12px; border-radius:50%; border:2px solid var(--bg); }
+  .tl-date { font-size:0.68em; color:var(--muted); font-weight:700; margin-bottom:2px; }
+  .tl-text { font-size:0.82em; line-height:1.6; }
+  .tl-milestone { font-weight:700; color:#e8f0ff; }
+
+  /* BENCHMARK */
+  .bench-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:8px; }
+  .bench-card { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:12px; }
+  .bench-name { font-size:0.72em; color:var(--muted); margin-bottom:8px; font-weight:600; }
+  .bench-bar-wrap { position:relative; }
+  .bench-row { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+  .bench-model-name { font-size:0.68em; color:var(--muted); width:70px; flex-shrink:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .bench-bar-bg { flex:1; background:rgba(255,255,255,.05); border-radius:3px; height:10px; position:relative; }
+  .bench-bar { height:100%; border-radius:3px; transition:width .5s; }
+  .bench-val { font-size:0.65em; font-weight:700; width:32px; text-align:right; }
+
+  /* SECTION TITLE */
+  .section-title { font-size:0.78em; font-weight:700; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; padding-bottom:8px; border-bottom:1px solid var(--border); margin-bottom:14px; }
+  .section-title.mt { margin-top:24px; }
+
+  /* CATEGORY HEADER */
+  .cat-header { display:flex; align-items:center; gap:10px; margin:20px 0 10px; }
+  .cat-line { flex:1; height:1px; background:var(--border); }
+  .cat-text { font-size:0.7em; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:3px 10px; border-radius:10px; white-space:nowrap; }
+  .cat-west { background:rgba(59,130,246,.1); color:#60a5fa; border:1px solid rgba(59,130,246,.2); }
+  .cat-cn { background:rgba(239,68,68,.1); color:#f87171; border:1px solid rgba(239,68,68,.2); }
+  .cat-open { background:rgba(34,197,94,.1); color:#4ade80; border:1px solid rgba(34,197,94,.2); }
+
+  ::-webkit-scrollbar { width:5px; height:5px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:#2a3a50; border-radius:3px; }
+
+  @media(max-width:600px) {
+    .models-grid { grid-template-columns:1fr; }
+    .pro-con { grid-template-columns:1fr; }
+    .kv-grid { grid-template-columns:1fr; }
+    .bench-grid { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🤖 大模型全景对比 2026</h1>
+  <div class="sub">主流 AI 大模型 · 性能 · 价格 · 历史 · 优缺点</div>
+</div>
+
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="switchTab('overview')">📋 模型总览</div>
+  <div class="nav-tab" onclick="switchTab('pricing')">💰 价格对比</div>
+  <div class="nav-tab" onclick="switchTab('benchmark')">📊 性能基准</div>
+  <div class="nav-tab" onclick="switchTab('history')">📅 发展历史</div>
+</div>
+
+<!-- ══════════════════ OVERVIEW ══════════════════ -->
+<div id="panel-overview" class="panel active">
+
+  <div class="filter-bar">
+    <div class="filter-btn active" onclick="filterModels('all',this)">全部</div>
+    <div class="filter-btn" onclick="filterModels('western',this)">🌍 西方模型</div>
+    <div class="filter-btn" onclick="filterModels('cn',this)">🇨🇳 中国模型</div>
+    <div class="filter-btn" onclick="filterModels('open',this)">📖 开源</div>
+    <div class="filter-btn" onclick="filterModels('closed',this)">🔒 闭源</div>
+    <div class="filter-btn" onclick="filterModels('reasoning',this)">🧠 推理强化</div>
+  </div>
+
+  <div class="models-grid" id="models-grid">
+
+    <!-- ── OpenAI ── -->
+    <div class="model-card" data-tags="western closed" onclick="toggleModel(this)">
+      <div class="mc-header">
+        <div class="mc-logo">⚡</div>
+        <div class="mc-info">
+          <div class="mc-name">GPT-4o / o3</div>
+          <div class="mc-maker">OpenAI · 美国</div>
+          <span class="mc-badge badge-closed">闭源</span>
+          <span class="mc-badge badge-western" style="background:rgba(59,130,246,.12);color:#93c5fd;border:1px solid rgba(59,130,246,.2)">美国</span>
+        </div>
+        <div class="mc-chevron">▼</div>
+      </div>
+      <div class="mc-scores">
+        <div class="score-pill"><div class="score-label">综合</div><div class="score-val" style="color:var(--blue)">S</div></div>
+        <div class="score-pill"><div class="score-label">推理</div><div class="score-val" style="color:var(--blue)">S+</div></div>
+        <div class="score-pill"><div class="score-label">代码</div><div class="score-val" style="color:var(--blue)">S</div></div>
+        <div class="score-pill"><div class="score-label">价格</div><div class="score-val" style="color:var(--orange)">中高</div></div>
+      </div>
+      <div class="mc-detail">
+        <div class="detail-tabs">
+          <div class="dtab active" onclick="switchDtab(this,'overview')">概述</div>
+          <div class="dtab" onclick="switchDtab(this,'history')">历史</div>
+          <div class="dtab" onclick="switchDtab(this,'pricing')">价格</div>
+        </div>
+        <div class="dtab-content active" data-name="overview">
+          <div class="detail-section">
+            <h4>当前旗舰</h4>
+            <p>OpenAI 目前主力模型为 <strong>GPT-4o</strong>（通用多模态）和 <strong>o3/o3-mini</strong>（深度推理）。o系列通过"思维链"强化学习，在数学、科学、代码方面达到博士级水平。GPT-5 正在开发中。</p>
+          </div>
+          <div class="pro-con">
+            <div class="pro-box"><h5>✅ 优势</h5><ul>
+              <li>生态最完善，插件/工具最多</li>
+              <li>API稳定性和文档质量业界最高</li>
+              <li>o3推理能力世界顶级</li>
+              <li>多模态（文/图/音/视）能力全面</li>
+              <li>Function Calling / Structured Output 成熟</li>
+            </ul></div>
+            <div class="con-box"><h5>❌ 劣势</h5><ul>
+              <li>o3价格昂贵</li>
+              <li>安全限制较多，创意写作保守</li>
+              <li>上下文窗口不如竞争对手大</li>
+              <li>没有免费的高端模型</li>
+            </ul></div>
+          </div>
+          <div class="detail-section" style="margin-top:10px">
+            <h4>适合场景</h4>
+            <p>企业级API集成 / 复杂代码生成 / 科学研究 / 金融分析 / 产品开发</p>
+          </div>
+        </div>
+        <div class="dtab-content" data-name="history">
+          <div class="timeline-wrap">
+            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2015年</div><div class="tl-text"><span class="tl-milestone">OpenAI 成立</span> — Musk、Altman等人共同创立，非营利机构，目标"造福全人类"</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2018年</div><div class="tl-text"><span class="tl-milestone">GPT-1</span> — 1.17亿参数，证明预训练+微调路线可行</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2019年</div><div class="tl-text"><span class="tl-milestone">GPT-2</span> — 15亿参数，生成能力惊人，OpenAI以"太危险"为由延迟发布</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2020年</div><div class="tl-text"><span class="tl-milestone">GPT-3</span> — 1750亿参数，Few-shot Learning，语言模型能力质变</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2022年11月</div><div class="tl-text"><span class="tl-milestone">ChatGPT 爆红</span> — 基于GPT-3.5，5天突破100万用户，AI时代正式到来</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2023年3月</div><div class="tl-text"><span class="tl-milestone">GPT-4</span> — 多模态，律师考试top10%，能力大幅跃升</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2024年5月</div><div class="tl-text"><span class="tl-milestone">GPT-4o</span> — 实时语音+图像，速度提升，价格下降50%</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2024年9月</div><div class="tl-text"><span class="tl-milestone">o1发布</span> — 思维链推理，AIME数学竞赛达人类专家水平</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2025年初</div><div class="tl-text"><span class="tl-milestone">o3 / GPT-4.5</span> — o3超越人类博士水平，ARC-AGI测试达87.5%</div></div>
+          </div>
+        </div>
+        <div class="dtab-content" data-name="pricing">
+          <div class="kv-grid">
+            <div class="kv"><div class="kv-k">GPT-4o 输入</div><div class="kv-v cheap">$2.5 / 1M tokens</div></div>
+            <div class="kv"><div class="kv-k">GPT-4o 输出</div><div class="kv-v mid">$10 / 1M tokens</div></div>
+            <div class="kv"><div class="kv-k">o3 输入</div><div class="kv-v pricey">$10 / 1M tokens</div></div>
+            <div class="kv"><div class="kv-k">o3 输出</div><div class="kv-v expensive">$40 / 1M tokens</div></div>
+            <div class="kv"><div class="kv-k">o3-mini 输入</div><div class="kv-v cheap">$1.1 / 1M tokens</div></div>
+            <div class="kv"><div class="kv-k">上下文窗口</div><div class="kv-v">128K tokens</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Google Gemini ── -->
+    <div class="model-card" data-tags="western closed" onclick="toggleModel(this)">
+      <div class="mc-header">
+        <div class="mc-logo">💎</div>
+        <div class="mc-info">
+          <div class="mc-name">Gemini 2.5 Pro</div>
+          <div class="mc-maker">Google DeepMind · 美国</div>
+          <span class="mc-badge badge-closed">闭源</span>
+          <span class="mc-badge" style="background:rgba(251,191,36,.12);color:#fcd34d;border:1px solid rgba(251,191,36,.2)">美国</span>
+        </div>
+        <div class="mc-chevron">▼</div>
+      </div>
+      <div class="mc-scores">
+        <div class="score-pill"><div class="score-label">综合</div><div class="score-val" style="color:var(--green)">S</div></div>
+        <div class="score-pill"><div class="score-label">长文本</div><div class="score-val" style="color:var(--green)">S+</div></div>
+        <div class="score-pill"><div class="score-label">代码</div><div class="score-val" style="color:var(--green)">S</div></div>
+        <div class="score-pill"><div class="score-label">价格</div><div class="score-val" style="color:var(--green)">低</div></div>
+      </div>
+      <div class="mc-detail">
+        <div class="detail-tabs">
+          <div class="dtab active" onclick="switchDtab(this,'overview')">概述</div>
+          <div class="dtab" onclick="switchDtab(this,'history')">历史</div>
+          <div class="dtab" onclick="switchDtab(this,'pricing')">价格</div>
+        </div>
+        <div class="dtab-content active" data-name="overview">
+          <div class="detail-section">
+            <h4>当前旗舰</h4>
+            <p>Gemini 2.5 Pro 是目前 Google 最强模型，在多个基准测试中领先。最大特点是<strong>超长上下文（1M tokens）</strong>和极具竞争力的价格。原生多模态，可处理文/图/音/视/代码。</p>
+          </div>
+          <div class="pro-con">
+            <div class="pro-box"><h5>✅ 优势</h5><ul>
+              <li>1M token 超长上下文业界领先</li>
+              <li>价格极具竞争力（性价比最高之一）</li>
+              <li>Google搜索/Workspace 深度整合</li>
+              <li>原生支持视频、音频理解</li>
+              <li>免费额度慷慨（Gemini Free版）</li>
+            </ul></div>
+            <div class="con-box"><h5>❌ 劣势</h5><ul>
+              <li>早期版本质量不稳定，信誉受损</li>
+              <li>创意写作不如Claude</li>
+              <li>中文理解略弱于专门中文模型</li>
+              <li>API偶有延迟问题</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="dtab-content" data-name="history">
+          <div class="timeline-wrap">
+            <div class="tl-item"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-date">2023年2月</div><div class="tl-text"><span class="tl-milestone">Bard 上线</span> — 基于LaMDA，首秀即出错（关于詹姆斯韦伯望远镜），股价暴跌</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-date">2023年12月</div><div class="tl-text"><span class="tl-milestone">Gemini 1.0</span> — Ultra/Pro/Nano三档，宣布超越GPT-4（演示视频后被指造假）</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-date">2024年2月</div><div class="tl-text"><span class="tl-milestone">Gemini 1.5 Pro</span> — 突破：100万token上下文，可处理整部电影</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-date">2024年12月</div><div class="tl-text"><span class="tl-milestone">Gemini 2.0</span> — Flash/Pro，多模态代理能力，与OpenAI o1竞争</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-date">2025年3月</div><div class="tl-text"><span class="tl-milestone">Gemini 2.5 Pro</span> — 当前旗舰，多项基准超越GPT-4o和Claude</div></div>
+          </div>
+        </div>
+        <div class="dtab-content" data-name="pricing">
+          <div class="kv-grid">
+            <div class="kv"><div class="kv-k">2.5 Pro 输入</div><div class="kv-v cheap">$1.25 / 1M tokens</div></div>
+            <div class="kv"><div class="kv-k">2.5 Pro 输出</div><div class="kv-v cheap">$5 / 1M tokens</div></div>
+            <div class="kv"><div class="kv-k">Flash 输入</div><div class="kv-v cheap">$0.075 / 1M tokens</div></div>
+            <div class="kv"><div class="kv-k">Flash 输出</div><div class="kv-v cheap">$0.3 / 1M tokens</div></div>
+            <div class="kv"><div class="kv-k">上下文窗口</div><div class="kv-v" style="color:var(--green)">1,000,000 tokens</div></div>
+            <div class="kv"><div class="kv-k">免费额度</div><div class="kv-v cheap">慷慨（每日限额）</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Claude ── -->
+    <div class="model-card" data-tags="western closed" onclick="toggleModel(this)">
+      <div class="mc-header">
+        <div class="mc-logo">🎭</div>
+        <div class="mc-info">
+          <div class="mc-name">Claude Sonnet 4</div>
+          <div class="mc-maker">Anthropic · 美国</div>
+          <span class="mc-badge badge-closed">闭源</span>
+          <span class="mc-badge" style="background:rgba(249,115,22,.12);color:#fdba74;border:1px solid rgba(249,115,22,.2)">美国</span>
+        </div>
+        <div class="mc-chevron">▼</div>
+      </div>
+      <div class="mc-scores">
+        <div class="score-pill"><div class="score-label">写作</div><div class="score-val" style="color:var(--orange)">S+</div></div>
+        <div class="score-pill"><div class="score-label">代码</div><div class="score-val" style="color:var(--orange)">S+</div></div>
+        <div class="score-pill"><div class="score-label">安全</div><div class="score-val" style="color:var(--orange)">S+</div></div>
+        <div class="score-pill"><div class="score-label">价格</div><div class="score-val" style="color:var(--yellow)">中</div></div>
+      </div>
+      <div class="mc-detail">
+        <div class="detail-tabs">
+          <div class="dtab active" onclick="switchDtab(this,'overview')">概述</div>
+          <div class="dtab" onclick="switchDtab(this,'history')">历史</div>
+          <div class="dtab" onclick="switchDtab(this,'pricing')">价格</div>
+        </div>
+        <div class="dtab-content active" data-name="overview">
+          <div class="detail-section">
+            <h4>当前旗舰</h4>
+            <p>Claude 由 Anthropic 开发，前身是 OpenAI 团队的分支，以<strong>安全性、写作质量和代码能力</strong>著称。首创"宪法AI"训练方法，模型更加遵循伦理。Claude 3.7引入"扩展思考"模式，可主动推理。</p>
+          </div>
+          <div class="pro-con">
+            <div class="pro-box"><h5>✅ 优势</h5><ul>
+              <li>写作质量业界公认最佳</li>
+              <li>代码能力极强（Cursor等工具首选）</li>
+              <li>200K超长上下文</li>
+              <li>回答更诚实、拒绝更少</li>
+              <li>安全对齐最好，幻觉率低</li>
+            </ul></div>
+            <div class="con-box"><h5>❌ 劣势</h5><ul>
+              <li>不支持图像生成</li>
+              <li>有时过于谨慎（过度道德化）</li>
+              <li>无实时搜索能力</li>
+              <li>中文理解稍弱</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="dtab-content" data-name="history">
+          <div class="timeline-wrap">
+            <div class="tl-item"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-date">2021年</div><div class="tl-text"><span class="tl-milestone">Anthropic 成立</span> — Dario Amodei等11位OpenAI核心成员离职创立，专注AI安全</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-date">2023年3月</div><div class="tl-text"><span class="tl-milestone">Claude 1</span> — 上线，宪法AI训练，强调安全性</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-date">2023年7月</div><div class="tl-text"><span class="tl-milestone">Claude 2</span> — 10万token上下文，大幅提升能力</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-date">2024年3月</div><div class="tl-text"><span class="tl-milestone">Claude 3 家族</span> — Haiku/Sonnet/Opus三档，Opus首次超越GPT-4</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-date">2024年6月</div><div class="tl-text"><span class="tl-milestone">Claude 3.5 Sonnet</span> — 代码能力飞跃，SWE-bench 49%，成为程序员首选</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-date">2025年2月</div><div class="tl-text"><span class="tl-milestone">Claude 3.7 Sonnet</span> — 引入"扩展思考"，混合推理模式</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-date">2025年</div><div class="tl-text"><span class="tl-milestone">Claude 4 Sonnet</span> — 当前版本，全面升级</div></div>
+          </div>
+        </div>
+        <div class="dtab-content" data-name="pricing">
+          <div class="kv-grid">
+            <div class="kv"><div class="kv-k">Sonnet 输入</div><div class="kv-v mid">$3 / 1M tokens</div></div>
+            <div class="kv"><div class="kv-k">Sonnet 输出</div><div class="kv-v pricey">$15 / 1M tokens</div></div>
+            <div class="kv"><div class="kv-k">Haiku 输入</div><div class="kv-v cheap">$0.8 / 1M tokens</div></div>
+            <div class="kv"><div class="kv-k">Haiku 输出</div><div class="kv-v cheap">$4 / 1M tokens</div></div>
+            <div class="kv"><div class="kv-k">上下文窗口</div><div class="kv-v">200K tokens</div></div>
+            <div class="kv"><div class="kv-k">免费版</div><div class="kv-v cheap">Claude.ai 有限免费</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Grok ── -->
+    <div class="model-card" data-tags="western closed" onclick="toggleModel(this)">
+      <div class="mc-header">
+        <div class="mc-logo">🚀</div>
+        <div class="mc-info">
+          <div class="mc-name">Grok-3</div>
+          <div class="mc-maker">xAI（Elon Musk）· 美国</div>
+          <span class="mc-badge badge-closed">闭源</span>
+          <span class="mc-badge" style="background:rgba(59,130,246,.12);color:#93c5fd;border:1px solid rgba(59,130,246,.2)">美国</span>
+        </div>
+        <div class="mc-chevron">▼</div>
+      </div>
+      <div class="mc-scores">
+        <div class="score-pill"><div class="score-label">综合</div><div class="score-val" style="color:var(--purple)">A+</div></div>
+        <div class="score-pill"><div class="score-label">推理</div><div class="score-val" style="color:var(--purple)">S</div></div>
+        <div class="score-pill"><div class="score-label">实时</div><div class="score-val" style="color:var(--green)">S+</div></div>
+        <div class="score-pill"><div class="score-label">价格</div><div class="score-val" style="color:var(--yellow)">中</div></div>
+      </div>
+      <div class="mc-detail">
+        <div class="detail-tabs">
+          <div class="dtab active" onclick="switchDtab(this,'overview')">概述</div>
+          <div class="dtab" onclick="switchDtab(this,'history')">历史</div>
+          <div class="dtab" onclick="switchDtab(this,'pricing')">价格</div>
+        </div>
+        <div class="dtab-content active" data-name="overview">
+          <div class="detail-section">
+            <h4>当前旗舰</h4>
+            <p>Grok-3 由 xAI 使用 20 万张 H100 训练，是目前训练规模最大的模型之一。独特优势是<strong>实时访问 X（推特）数据</strong>，以及相比其他模型更少的内容审查。还集成了 Aurora 图像生成能力。</p>
+          </div>
+          <div class="pro-con">
+            <div class="pro-box"><h5>✅ 优势</h5><ul>
+              <li>实时Twitter/X数据，最新信息</li>
+              <li>内容审查少，更"自由"</li>
+              <li>Aurora图像生成高质量</li>
+              <li>Grok-3推理能力强劲</li>
+              <li>X Premium用户可免费使用</li>
+            </ul></div>
+            <div class="con-box"><h5>❌ 劣势</h5><ul>
+              <li>与X平台绑定，生态封闭</li>
+              <li>API开放程度有限</li>
+              <li>有时受马斯克个人风格影响</li>
+              <li>企业可靠性不如OpenAI</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="dtab-content" data-name="history">
+          <div class="timeline-wrap">
+            <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-date">2023年7月</div><div class="tl-text"><span class="tl-milestone">xAI 成立</span> — Elon Musk 在与OpenAI决裂后创立，目标"理解宇宙真相"</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-date">2023年11月</div><div class="tl-text"><span class="tl-milestone">Grok-1</span> — X Premium会员专属，可访问实时推文，幽默风格</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-date">2024年3月</div><div class="tl-text"><span class="tl-milestone">Grok-1开源</span> — 3140亿参数MoE模型权重公开，轰动业界</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-date">2024年8月</div><div class="tl-text"><span class="tl-milestone">Grok-2</span> — 图像生成（FLUX集成），能力大幅提升</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-date">2025年2月</div><div class="tl-text"><span class="tl-milestone">Grok-3</span> — 20万H100训练，Deep Search，Think模式，多项超越竞品</div></div>
+          </div>
+        </div>
+        <div class="dtab-content" data-name="pricing">
+          <div class="kv-grid">
+            <div class="kv"><div class="kv-k">X Premium+</div><div class="kv-v mid">$16/月（含使用权）</div></div>
+            <div class="kv"><div class="kv-k">API 输入</div><div class="kv-v mid">$3 / 1M tokens</div></div>
+            <div class="kv"><div class="kv-k">API 输出</div><div class="kv-v mid">$15 / 1M tokens</div></div>
+            <div class="kv"><div class="kv-k">上下文窗口</div><div class="kv-v">131K tokens</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Qwen ── -->
+    <div class="model-card" data-tags="cn open hybrid" onclick="toggleModel(this)">
+      <div class="mc-header">
+        <div class="mc-logo">🌙</div>
+        <div class="mc-info">
+          <div class="mc-name">Qwen（通义千问）</div>
+          <div class="mc-maker">阿里巴巴 · 中国</div>
+          <span class="mc-badge badge-hybrid">开源+闭源</span>
+          <span class="mc-badge badge-cn">中国</span>
+        </div>
+        <div class="mc-chevron">▼</div>
+      </div>
+      <div class="mc-scores">
+        <div class="score-pill"><div class="score-label">中文</div><div class="score-val" style="color:var(--red)">S+</div></div>
+        <div class="score-pill"><div class="score-label">代码</div><div class="score-val" style="color:var(--red)">S</div></div>
+        <div class="score-pill"><div class="score-label">开源</div><div class="score-val" style="color:var(--green)">S+</div></div>
+        <div class="score-pill"><div class="score-label">价格</div><div class="score-val" style="color:var(--green)">低</div></div>
+      </div>
+      <div class="mc-detail">
+        <div class="detail-tabs">
+          <div class="dtab active" onclick="switchDtab(this,'overview')">概述</div>
+          <div class="dtab" onclick="switchDtab(this,'history')">历史</div>
+          <div class="dtab" onclick="switchDtab(this,'pricing')">价格</div>
+        </div>
+        <div class="dtab-content active" data-name="overview">
+          <div class="detail-section">
+            <h4>概述</h4>
+            <p>Qwen系列是阿里巴巴云的旗舰模型，覆盖<strong>0.5B到72B+</strong>多个尺寸，全系列开源。在中文理解、代码生成、数学推理上表现优异。QwQ-32B 是其专为推理优化的版本，在推理能力上接近 o1。</p>
+          </div>
+          <div class="pro-con">
+            <div class="pro-box"><h5>✅ 优势</h5><ul>
+              <li>全系列开源，可本地部署</li>
+              <li>尺寸覆盖极广（0.5B~72B）</li>
+              <li>中文能力顶级</li>
+              <li>QwQ推理模型极具竞争力</li>
+              <li>API价格极低</li>
+            </ul></div>
+            <div class="con-box"><h5>❌ 劣势</h5><ul>
+              <li>政治敏感话题严格审查</li>
+              <li>国际生态略弱</li>
+              <li>版本迭代频繁，维护成本高</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="dtab-content" data-name="history">
+          <div class="timeline-wrap">
+            <div class="tl-item"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-date">2023年4月</div><div class="tl-text"><span class="tl-milestone">通义千问发布</span> — 阿里云旗下，中文对话模型</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-date">2023年8月</div><div class="tl-text"><span class="tl-milestone">Qwen开源</span> — 7B/14B版本开源，引发开发者社区广泛关注</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-date">2024年上半年</div><div class="tl-text"><span class="tl-milestone">Qwen2</span> — 72B旗舰，多语言能力提升，Hugging Face下载量破记录</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-date">2024年9月</div><div class="tl-text"><span class="tl-milestone">Qwen2.5</span> — 全系列升级，新增Coder/Math专项，代码能力超越GPT-4o</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-date">2025年1月</div><div class="tl-text"><span class="tl-milestone">QwQ-32B / Qwen2.5-Max</span> — 推理模型，32B参数超越部分千亿模型</div></div>
+          </div>
+        </div>
+        <div class="dtab-content" data-name="pricing">
+          <div class="kv-grid">
+            <div class="kv"><div class="kv-k">Qwen-Max 输入</div><div class="kv-v cheap">¥0.04 / 1K tokens</div></div>
+            <div class="kv"><div class="kv-k">Qwen-Max 输出</div><div class="kv-v cheap">¥0.12 / 1K tokens</div></div>
+            <div class="kv"><div class="kv-k">开源版本</div><div class="kv-v cheap">免费（自部署）</div></div>
+            <div class="kv"><div class="kv-k">上下文窗口</div><div class="kv-v">128K tokens</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Kimi ── -->
+    <div class="model-card" data-tags="cn closed reasoning" onclick="toggleModel(this)">
+      <div class="mc-header">
+        <div class="mc-logo">🌊</div>
+        <div class="mc-info">
+          <div class="mc-name">Kimi k1.5 / k2</div>
+          <div class="mc-maker">月之暗面（Moonshot AI）· 中国</div>
+          <span class="mc-badge badge-closed">闭源</span>
+          <span class="mc-badge badge-cn">中国</span>
+        </div>
+        <div class="mc-chevron">▼</div>
+      </div>
+      <div class="mc-scores">
+        <div class="score-pill"><div class="score-label">长文本</div><div class="score-val" style="color:var(--cyan)">S+</div></div>
+        <div class="score-pill"><div class="score-label">推理</div><div class="score-val" style="color:var(--cyan)">S</div></div>
+        <div class="score-pill"><div class="score-label">中文</div><div class="score-val" style="color:var(--cyan)">S</div></div>
+        <div class="score-pill"><div class="score-label">价格</div><div class="score-val" style="color:var(--yellow)">中</div></div>
+      </div>
+      <div class="mc-detail">
+        <div class="detail-tabs">
+          <div class="dtab active" onclick="switchDtab(this,'overview')">概述</div>
+          <div class="dtab" onclick="switchDtab(this,'history')">历史</div>
+          <div class="dtab" onclick="switchDtab(this,'pricing')">价格</div>
+        </div>
+        <div class="dtab-content active" data-name="overview">
+          <div class="detail-section">
+            <h4>概述</h4>
+            <p>月之暗面由前旷视/阿里研究员杨植麟创立，以<strong>超长上下文</strong>起家（率先做到200K tokens）。Kimi k1.5 采用强化学习训练，是中国首批对标 o1 的推理模型，在数学和代码上表现抢眼。</p>
+          </div>
+          <div class="pro-con">
+            <div class="pro-box"><h5>✅ 优势</h5><ul>
+              <li>超长上下文先驱（200K+）</li>
+              <li>RL训练推理能力强</li>
+              <li>中文用户体验好</li>
+              <li>产品界面简洁易用</li>
+            </ul></div>
+            <div class="con-box"><h5>❌ 劣势</h5><ul>
+              <li>主要面向中文市场</li>
+              <li>API生态相对薄弱</li>
+              <li>国际知名度低</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="dtab-content" data-name="history">
+          <div class="timeline-wrap">
+            <div class="tl-item"><div class="tl-dot" style="background:var(--cyan)"></div><div class="tl-date">2023年3月</div><div class="tl-text"><span class="tl-milestone">月之暗面成立</span> — 杨植麟（前旷视）创立，获得10亿美元融资</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--cyan)"></div><div class="tl-date">2023年10月</div><div class="tl-text"><span class="tl-milestone">Kimi Chat</span> — 上线，主打长文本，支持上传整本书进行问答</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--cyan)"></div><div class="tl-date">2024年</div><div class="tl-text"><span class="tl-milestone">上下文扩展至200K</span> — 全球首批支持200K上下文的商业模型</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--cyan)"></div><div class="tl-date">2025年1月</div><div class="tl-text"><span class="tl-milestone">Kimi k1.5</span> — 强化学习推理模型，多模态，对标o1</div></div>
+          </div>
+        </div>
+        <div class="dtab-content" data-name="pricing">
+          <div class="kv-grid">
+            <div class="kv"><div class="kv-k">moonshot-v1-8k</div><div class="kv-v cheap">¥0.012 / 1K tokens</div></div>
+            <div class="kv"><div class="kv-k">moonshot-v1-128k</div><div class="kv-v mid">¥0.06 / 1K tokens</div></div>
+            <div class="kv"><div class="kv-k">上下文窗口</div><div class="kv-v" style="color:var(--green)">最大200K tokens</div></div>
+            <div class="kv"><div class="kv-k">免费版</div><div class="kv-v cheap">kimi.ai 有免费额度</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── GLM ── -->
+    <div class="model-card" data-tags="cn open hybrid" onclick="toggleModel(this)">
+      <div class="mc-header">
+        <div class="mc-logo">🧬</div>
+        <div class="mc-info">
+          <div class="mc-name">GLM-4 / GLM-Z1</div>
+          <div class="mc-maker">智谱AI（清华系）· 中国</div>
+          <span class="mc-badge badge-hybrid">开源+闭源</span>
+          <span class="mc-badge badge-cn">中国</span>
+        </div>
+        <div class="mc-chevron">▼</div>
+      </div>
+      <div class="mc-scores">
+        <div class="score-pill"><div class="score-label">中文</div><div class="score-val" style="color:var(--green)">S</div></div>
+        <div class="score-pill"><div class="score-label">工具调用</div><div class="score-val" style="color:var(--green)">S</div></div>
+        <div class="score-pill"><div class="score-label">开源</div><div class="score-val" style="color:var(--green)">S</div></div>
+        <div class="score-pill"><div class="score-label">价格</div><div class="score-val" style="color:var(--green)">低</div></div>
+      </div>
+      <div class="mc-detail">
+        <div class="detail-tabs">
+          <div class="dtab active" onclick="switchDtab(this,'overview')">概述</div>
+          <div class="dtab" onclick="switchDtab(this,'history')">历史</div>
+          <div class="dtab" onclick="switchDtab(this,'pricing')">价格</div>
+        </div>
+        <div class="dtab-content active" data-name="overview">
+          <div class="detail-section">
+            <h4>概述</h4>
+            <p>GLM系列由清华大学KEG实验室和智谱AI联合研发，是中国历史最悠久的大模型之一。ChatGLM-6B 是中国最受欢迎的开源中文模型之一，累计下载量数千万。GLM-Z1是其推理强化版本。</p>
+          </div>
+          <div class="pro-con">
+            <div class="pro-box"><h5>✅ 优势</h5><ul>
+              <li>学术背景扎实（清华）</li>
+              <li>工具调用(Function Call)能力强</li>
+              <li>开源版本轻量可部署</li>
+              <li>中文历史积累深厚</li>
+              <li>API价格低廉</li>
+            </ul></div>
+            <div class="con-box"><h5>❌ 劣势</h5><ul>
+              <li>国际竞争力一般</li>
+              <li>创意和多模态较弱</li>
+              <li>品牌知名度不如Qwen/Kimi</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="dtab-content" data-name="history">
+          <div class="timeline-wrap">
+            <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-date">2022年</div><div class="tl-text"><span class="tl-milestone">GLM-130B</span> — 清华&智谱联合发布，国内首个千亿级双语模型</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-date">2023年3月</div><div class="tl-text"><span class="tl-milestone">ChatGLM-6B开源</span> — 普通GPU可运行的中文对话模型，轰动开源社区</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-date">2024年1月</div><div class="tl-text"><span class="tl-milestone">GLM-4</span> — 全面升级，工具调用、代码执行、多模态</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-date">2025年</div><div class="tl-text"><span class="tl-milestone">GLM-Z1</span> — 推理增强版，思维链+RL训练</div></div>
+          </div>
+        </div>
+        <div class="dtab-content" data-name="pricing">
+          <div class="kv-grid">
+            <div class="kv"><div class="kv-k">GLM-4 输入</div><div class="kv-v cheap">¥0.1 / 1K tokens</div></div>
+            <div class="kv"><div class="kv-k">GLM-4 输出</div><div class="kv-v cheap">¥0.1 / 1K tokens</div></div>
+            <div class="kv"><div class="kv-k">开源版本</div><div class="kv-v cheap">ChatGLM-6B 免费</div></div>
+            <div class="kv"><div class="kv-k">上下文窗口</div><div class="kv-v">128K tokens</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MiniMax ── -->
+    <div class="model-card" data-tags="cn closed" onclick="toggleModel(this)">
+      <div class="mc-header">
+        <div class="mc-logo">⚙️</div>
+        <div class="mc-info">
+          <div class="mc-name">MiniMax Text-01</div>
+          <div class="mc-maker">MiniMax · 中国</div>
+          <span class="mc-badge badge-closed">闭源</span>
+          <span class="mc-badge badge-cn">中国</span>
+        </div>
+        <div class="mc-chevron">▼</div>
+      </div>
+      <div class="mc-scores">
+        <div class="score-pill"><div class="score-label">长文本</div><div class="score-val" style="color:var(--blue)">S+</div></div>
+        <div class="score-pill"><div class="score-label">综合</div><div class="score-val" style="color:var(--blue)">A+</div></div>
+        <div class="score-pill"><div class="score-label">TTS</div><div class="score-val" style="color:var(--green)">S+</div></div>
+        <div class="score-pill"><div class="score-label">价格</div><div class="score-val" style="color:var(--green)">低</div></div>
+      </div>
+      <div class="mc-detail">
+        <div class="detail-tabs">
+          <div class="dtab active" onclick="switchDtab(this,'overview')">概述</div>
+          <div class="dtab" onclick="switchDtab(this,'history')">历史</div>
+          <div class="dtab" onclick="switchDtab(this,'pricing')">价格</div>
+        </div>
+        <div class="dtab-content active" data-name="overview">
+          <div class="detail-section">
+            <h4>概述</h4>
+            <p>MiniMax 是中国独角兽AI公司，除了大语言模型外，在<strong>语音合成（TTS）</strong>方面居于行业前列。其Text-01是456B MoE架构模型，支持100万token超长上下文，在角色扮演和创意写作上有独特优势。</p>
+          </div>
+          <div class="pro-con">
+            <div class="pro-box"><h5>✅ 优势</h5><ul>
+              <li>100万token超长上下文</li>
+              <li>TTS语音合成业界顶级</li>
+              <li>角色扮演/创意写作特别擅长</li>
+              <li>MoE架构推理效率高</li>
+            </ul></div>
+            <div class="con-box"><h5>❌ 劣势</h5><ul>
+              <li>国际知名度低</li>
+              <li>推理能力不及顶尖竞品</li>
+              <li>开发者生态较弱</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="dtab-content" data-name="history">
+          <div class="timeline-wrap">
+            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2021年12月</div><div class="tl-text"><span class="tl-milestone">MiniMax 成立</span> — 前商汤研究员闫俊杰创立，专注AGI研究</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2023年</div><div class="tl-text"><span class="tl-milestone">abab系列</span> — 多模态模型，C端产品"海螺AI"、"星野"</div></div>
+            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2025年1月</div><div class="tl-text"><span class="tl-milestone">MiniMax Text-01</span> — 456B MoE，100万token上下文，开放API</div></div>
+          </div>
+        </div>
+        <div class="dtab-content" data-name="pricing">
+          <div class="kv-grid">
+            <div class="kv"><div class="kv-k">Text-01 输入</div><div class="kv-v cheap">¥0.1 / 1K tokens</div></div>
+            <div class="kv"><div class="kv-k">Text-01 输出</div><div class="kv-v cheap">¥1 / 1K tokens</div></div>
+            <div class="kv"><div class="kv-k">上下文窗口</div><div class="kv-v" style="color:var(--green)">1,000,000 tokens</div></div>
+            <div class="kv"><div class="kv-k">TTS</div><div class="kv-v">另行计费</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MiMo ── -->
+    <div class="model-card" data-tags="cn open reasoning" onclick="toggleModel(this)">
+      <div class="mc-header">
+        <div class="mc-logo">📱</div>
+        <div class="mc-info">
+          <div class="mc-name">MiMo-7B</div>
+          <div class="mc-maker">小米（Xiaomi）· 中国</div>
+          <span class="mc-badge badge-open">开源</span>
+          <span class="mc-badge badge-cn">中国</span>
+          <span class="mc-badge" style="background:rgba(239,68,68,.15);color:#ff6b6b;border:1px solid rgba(239,68,68,.3)">🆕 新</span>
+        </div>
+        <div class="mc-chevron">▼</div>
+      </div>
+      <div class="mc-scores">
+        <div class="score-pill"><div class="score-label">推理</div><div class="score-val" style="color:var(--pink)">S</div></div>
+        <div class="score-pill"><div class="score-label">体积</div><div class="score-val" style="color:var(--green)">S+</div></div>
+        <div class="score-pill"><div class="score-label">开源</div><div class="score-val" style="color:var(--green)">✅</div></div>
+        <div class="score-pill"><div class="score-label">价格</div><div class="score-val" style="color:var(--green)">免费</div></div>
+      </div>
+      <div class="mc-detail">
+        <div class="detail-tabs">
+          <div class="dtab active" onclick="switchDtab(this,'overview')">概述</div>
+          <div class="dtab" onclick="switchDtab(this,'history')">历史</div>
+          <div class="dtab" onclick="switchDtab(this,'pricing')">价格</div>
+        </div>
+        <div class="dtab-content active" data-name="overview">
+          <div class="detail-section">
+            <h4>概述</h4>
+            <p>小米于 2025 年 3 月发布的开源推理模型，<strong>仅 7B 参数</strong>但通过强化学习（RL）在数学和代码推理上达到惊人效果，部分指标超越同规模甚至更大的竞品。完全开源，可在消费级 GPU 上运行。</p>
+          </div>
+          <div class="pro-con">
+            <div class="pro-box"><h5>✅ 优势</h5><ul>
+              <li>7B参数，轻量可本地运行</li>
+              <li>推理能力远超同尺寸模型</li>
+              <li>完全开源，免费</li>
+              <li>数学/代码专项能力强</li>
+              <li>消费级GPU可运行（4090等）</li>
+            </ul></div>
+            <div class="con-box"><h5>❌ 劣势</h5><ul>
+              <li>7B总参数限制通用能力上限</li>
+              <li>不适合复杂多任务场景</li>
+              <li>非专业NLP团队出品</li>
+              <li>社区生态刚起步</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="dtab-content" data-name="history">
+          <div class="timeline-wrap">
+            <div class="tl-item"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-date">2025年3月</div><div class="tl-text"><span class="tl-milestone">MiMo-7B 发布</span> — 小米AI团队发布，开源，主打"小模型大推理"。在AIME24数学竞赛等基准上超越多个更大模型</div></div>
+          </div>
+        </div>
+        <div class="dtab-content" data-name="pricing">
+          <div class="kv-grid">
+            <div class="kv"><div class="kv-k">模型权重</div><div class="kv-v cheap">完全免费开源</div></div>
+            <div class="kv"><div class="kv-k">参数量</div><div class="kv-v">7B</div></div>
+            <div class="kv"><div class="kv-k">运行需求</div><div class="kv-v">RTX 4090 或更高</div></div>
+            <div class="kv"><div class="kv-k">许可证</div><div class="kv-v cheap">Apache 2.0</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /models-grid -->
+</div>
+
+<!-- ══════════════════ PRICING ══════════════════ -->
+<div id="panel-pricing" class="panel">
+  <div class="section-title">API 价格对比（2026年3月，仅供参考）</div>
+  <div style="overflow-x:auto">
+  <table class="price-table">
+    <thead>
+      <tr>
+        <th>模型</th>
+        <th>输入价格 /1M tokens</th>
+        <th>输出价格 /1M tokens</th>
+        <th>上下文窗口</th>
+        <th>免费层</th>
+        <th>适合场景</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="model-col">⚡ GPT-4o</td><td class="mid">$2.5</td><td class="pricey">$10</td><td>128K</td><td>有限</td><td>通用、代码、企业</td></tr>
+      <tr><td class="model-col">🧮 o3</td><td class="pricey">$10</td><td class="expensive">$40</td><td>128K</td><td>❌</td><td>复杂推理、科研</td></tr>
+      <tr><td class="model-col">🧮 o3-mini</td><td class="cheap">$1.1</td><td class="mid">$4.4</td><td>128K</td><td>有限</td><td>轻量推理</td></tr>
+      <tr><td class="model-col">💎 Gemini 2.5 Pro</td><td class="cheap">$1.25</td><td class="mid">$5</td><td style="color:var(--green)">1,000K</td><td>✅ 慷慨</td><td>长文档、成本敏感</td></tr>
+      <tr><td class="model-col">💎 Gemini Flash</td><td class="cheap">$0.075</td><td class="cheap">$0.30</td><td style="color:var(--green)">1,000K</td><td>✅</td><td>高频调用、轻任务</td></tr>
+      <tr><td class="model-col">🎭 Claude Sonnet 4</td><td class="mid">$3</td><td class="pricey">$15</td><td>200K</td><td>有限</td><td>写作、代码、分析</td></tr>
+      <tr><td class="model-col">🎭 Claude Haiku</td><td class="cheap">$0.8</td><td class="cheap">$4</td><td>200K</td><td>有限</td><td>轻量任务</td></tr>
+      <tr><td class="model-col">🚀 Grok-3</td><td class="mid">$3</td><td class="pricey">$15</td><td>131K</td><td>X Premium</td><td>实时信息、通用</td></tr>
+      <tr><td class="model-col">🌙 Qwen-Max</td><td class="cheap">≈$0.055</td><td class="cheap">≈$0.165</td><td>128K</td><td>✅</td><td>中文、成本极低</td></tr>
+      <tr><td class="model-col">🌙 QwQ-32B</td><td class="cheap">≈$0.28</td><td class="cheap">≈$0.28</td><td>32K</td><td>✅</td><td>中文推理</td></tr>
+      <tr><td class="model-col">🌊 Kimi k1.5</td><td class="cheap">≈$0.014</td><td class="cheap">≈$0.014</td><td style="color:var(--green)">200K</td><td>✅</td><td>长文本、中文</td></tr>
+      <tr><td class="model-col">🧬 GLM-4</td><td class="cheap">≈$0.014</td><td class="cheap">≈$0.014</td><td>128K</td><td>✅</td><td>工具调用、中文</td></tr>
+      <tr><td class="model-col">⚙️ MiniMax Text-01</td><td class="cheap">≈$0.014</td><td class="cheap">≈$0.138</td><td style="color:var(--green)">1,000K</td><td>✅</td><td>超长文本、角色扮演</td></tr>
+      <tr><td class="model-col">📱 MiMo-7B</td><td class="cheap" style="color:var(--green)">免费（开源）</td><td class="cheap" style="color:var(--green)">免费（开源）</td><td>—</td><td style="color:var(--green)">✅ 完全免费</td><td>本地推理、数学/代码</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div style="margin-top:12px; font-size:0.75em; color:var(--muted)">⚠️ 价格随时变动，中国模型价格已换算为美元近似值。实际使用请以官网为准。</div>
+
+  <div class="section-title mt">💡 如何选择</div>
+  <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:10px; margin-top:10px;">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;">
+      <div style="font-weight:700;font-size:0.85em;margin-bottom:6px">💰 极致省钱</div>
+      <div style="font-size:0.78em;color:var(--muted)">Gemini Flash / Qwen / GLM-4 — 高频API调用首选</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;">
+      <div style="font-weight:700;font-size:0.85em;margin-bottom:6px">✍️ 写作/内容创作</div>
+      <div style="font-size:0.78em;color:var(--muted)">Claude Sonnet — 写作质量业界公认最佳</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;">
+      <div style="font-weight:700;font-size:0.85em;margin-bottom:6px">💻 代码开发</div>
+      <div style="font-size:0.78em;color:var(--muted)">Claude Sonnet 4 / GPT-4o — Cursor等工具默认选项</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;">
+      <div style="font-weight:700;font-size:0.85em;margin-bottom:6px">🧮 复杂推理/数学</div>
+      <div style="font-size:0.78em;color:var(--muted)">o3 / Gemini 2.5 Pro / QwQ-32B</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;">
+      <div style="font-weight:700;font-size:0.85em;margin-bottom:6px">📄 超长文档分析</div>
+      <div style="font-size:0.78em;color:var(--muted)">Gemini 2.5 Pro / MiniMax Text-01 / Kimi（1M上下文）</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;">
+      <div style="font-weight:700;font-size:0.85em;margin-bottom:6px">🇨🇳 中文场景</div>
+      <div style="font-size:0.78em;color:var(--muted)">Qwen / Kimi / GLM — 中文理解更深，价格更低</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;">
+      <div style="font-weight:700;font-size:0.85em;margin-bottom:6px">🖥️ 本地私有部署</div>
+      <div style="font-size:0.78em;color:var(--muted)">Qwen2.5-7B/14B / MiMo-7B / ChatGLM-6B（开源免费）</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;">
+      <div style="font-weight:700;font-size:0.85em;margin-bottom:6px">📡 实时信息</div>
+      <div style="font-size:0.78em;color:var(--muted)">Grok-3 — 实时访问X/Twitter数据</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ BENCHMARK ══════════════════ -->
+<div id="panel-benchmark" class="panel">
+  <div class="section-title">主要基准测试对比（近似值，2025—2026）</div>
+  <div class="bench-grid">
+
+    <div class="bench-card">
+      <div class="bench-name">MMLU（综合知识）</div>
+      <div class="bench-bar-wrap">
+        <div class="bench-row"><span class="bench-model-name">o3</span><div class="bench-bar-bg"><div class="bench-bar" style="width:98%;background:var(--blue)"></div></div><span class="bench-val" style="color:var(--blue)">98%</span></div>
+        <div class="bench-row"><span class="bench-model-name">Gem 2.5 Pro</span><div class="bench-bar-bg"><div class="bench-bar" style="width:97%;background:var(--yellow)"></div></div><span class="bench-val" style="color:var(--yellow)">97%</span></div>
+        <div class="bench-row"><span class="bench-model-name">GPT-4o</span><div class="bench-bar-bg"><div class="bench-bar" style="width:89%;background:var(--blue)"></div></div><span class="bench-val" style="color:var(--blue)">89%</span></div>
+        <div class="bench-row"><span class="bench-model-name">Claude S4</span><div class="bench-bar-bg"><div class="bench-bar" style="width:88%;background:var(--orange)"></div></div><span class="bench-val" style="color:var(--orange)">88%</span></div>
+        <div class="bench-row"><span class="bench-model-name">Grok-3</span><div class="bench-bar-bg"><div class="bench-bar" style="width:87%;background:var(--purple)"></div></div><span class="bench-val" style="color:var(--purple)">87%</span></div>
+        <div class="bench-row"><span class="bench-model-name">Qwen2.5</span><div class="bench-bar-bg"><div class="bench-bar" style="width:85%;background:var(--red)"></div></div><span class="bench-val" style="color:var(--red)">85%</span></div>
+      </div>
+    </div>
+
+    <div class="bench-card">
+      <div class="bench-name">HumanEval（代码生成）</div>
+      <div class="bench-bar-wrap">
+        <div class="bench-row"><span class="bench-model-name">Claude S4</span><div class="bench-bar-bg"><div class="bench-bar" style="width:96%;background:var(--orange)"></div></div><span class="bench-val" style="color:var(--orange)">96%</span></div>
+        <div class="bench-row"><span class="bench-model-name">o3</span><div class="bench-bar-bg"><div class="bench-bar" style="width:95%;background:var(--blue)"></div></div><span class="bench-val" style="color:var(--blue)">95%</span></div>
+        <div class="bench-row"><span class="bench-model-name">GPT-4o</span><div class="bench-bar-bg"><div class="bench-bar" style="width:90%;background:var(--blue)"></div></div><span class="bench-val" style="color:var(--blue)">90%</span></div>
+        <div class="bench-row"><span class="bench-model-name">Gem 2.5 Pro</span><div class="bench-bar-bg"><div class="bench-bar" style="width:88%;background:var(--yellow)"></div></div><span class="bench-val" style="color:var(--yellow)">88%</span></div>
+        <div class="bench-row"><span class="bench-model-name">Qwen2.5C</span><div class="bench-bar-bg"><div class="bench-bar" style="width:87%;background:var(--red)"></div></div><span class="bench-val" style="color:var(--red)">87%</span></div>
+        <div class="bench-row"><span class="bench-model-name">Grok-3</span><div class="bench-bar-bg"><div class="bench-bar" style="width:85%;background:var(--purple)"></div></div><span class="bench-val" style="color:var(--purple)">85%</span></div>
+      </div>
+    </div>
+
+    <div class="bench-card">
+      <div class="bench-name">AIME（数学竞赛）</div>
+      <div class="bench-bar-wrap">
+        <div class="bench-row"><span class="bench-model-name">o3</span><div class="bench-bar-bg"><div class="bench-bar" style="width:99%;background:var(--blue)"></div></div><span class="bench-val" style="color:var(--blue)">99%</span></div>
+        <div class="bench-row"><span class="bench-model-name">Gem 2.5 Pro</span><div class="bench-bar-bg"><div class="bench-bar" style="width:92%;background:var(--yellow)"></div></div><span class="bench-val" style="color:var(--yellow)">92%</span></div>
+        <div class="bench-row"><span class="bench-model-name">Grok-3</span><div class="bench-bar-bg"><div class="bench-bar" style="width:88%;background:var(--purple)"></div></div><span class="bench-val" style="color:var(--purple)">88%</span></div>
+        <div class="bench-row"><span class="bench-model-name">QwQ-32B</span><div class="bench-bar-bg"><div class="bench-bar" style="width:80%;background:var(--red)"></div></div><span class="bench-val" style="color:var(--red)">80%</span></div>
+        <div class="bench-row"><span class="bench-model-name">MiMo-7B</span><div class="bench-bar-bg"><div class="bench-bar" style="width:68%;background:var(--pink)"></div></div><span class="bench-val" style="color:var(--pink)">68%</span></div>
+        <div class="bench-row"><span class="bench-model-name">GPT-4o</span><div class="bench-bar-bg"><div class="bench-bar" style="width:50%;background:var(--blue)"></div></div><span class="bench-val" style="color:var(--blue)">50%</span></div>
+      </div>
+    </div>
+
+    <div class="bench-card">
+      <div class="bench-name">上下文窗口（K tokens）</div>
+      <div class="bench-bar-wrap">
+        <div class="bench-row"><span class="bench-model-name">Gem 2.5 Pro</span><div class="bench-bar-bg"><div class="bench-bar" style="width:100%;background:var(--yellow)"></div></div><span class="bench-val" style="color:var(--yellow)">1000K</span></div>
+        <div class="bench-row"><span class="bench-model-name">MiniMax</span><div class="bench-bar-bg"><div class="bench-bar" style="width:100%;background:var(--blue)"></div></div><span class="bench-val" style="color:var(--blue)">1000K</span></div>
+        <div class="bench-row"><span class="bench-model-name">Kimi k1.5</span><div class="bench-bar-bg"><div class="bench-bar" style="width:20%;background:var(--cyan)"></div></div><span class="bench-val" style="color:var(--cyan)">200K</span></div>
+        <div class="bench-row"><span class="bench-model-name">Claude S4</span><div class="bench-bar-bg"><div class="bench-bar" style="width:20%;background:var(--orange)"></div></div><span class="bench-val" style="color:var(--orange)">200K</span></div>
+        <div class="bench-row"><span class="bench-model-name">GPT-4o</span><div class="bench-bar-bg"><div class="bench-bar" style="width:12.8%;background:var(--blue)"></div></div><span class="bench-val" style="color:var(--blue)">128K</span></div>
+        <div class="bench-row"><span class="bench-model-name">Grok-3</span><div class="bench-bar-bg"><div class="bench-bar" style="width:13%;background:var(--purple)"></div></div><span class="bench-val" style="color:var(--purple)">131K</span></div>
+      </div>
+    </div>
+
+  </div>
+  <div style="margin-top:12px; font-size:0.75em; color:var(--muted)">⚠️ 基准数据来自各公司官方报告及第三方评测，可能因测试集版本不同而有差异，仅供参考。</div>
+</div>
+
+<!-- ══════════════════ HISTORY ══════════════════ -->
+<div id="panel-history" class="panel">
+  <div class="section-title">大模型发展大事记</div>
+
+  <div class="cat-header"><div class="cat-line"></div><div class="cat-text cat-west">🌍 西方模型</div><div class="cat-line"></div></div>
+  <div class="timeline-wrap">
+    <div class="tl-item"><div class="tl-dot" style="background:#666"></div><div class="tl-date">2017年</div><div class="tl-text"><span class="tl-milestone">Transformer 论文发布</span>（Google）— "Attention is All You Need"，现代大模型的基石</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2018年</div><div class="tl-text"><span class="tl-milestone">BERT（Google）</span> 和 <span class="tl-milestone">GPT-1（OpenAI）</span>相继发布，预训练时代开启</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2020年</div><div class="tl-text"><span class="tl-milestone">GPT-3</span>（1750亿参数）— In-context Learning震惊业界，语言模型能力质变</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-date">2021年</div><div class="tl-text">Anthropic 成立（前OpenAI团队）/ Google LaMDA发布 / GitHub Copilot 上线</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:#fff"></div><div class="tl-date">2022年11月</div><div class="tl-text">🔥 <span class="tl-milestone">ChatGPT 发布</span> — 改变世界，AI进入大众视野，5天100万用户，2个月1亿用户</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2023年3月</div><div class="tl-text"><span class="tl-milestone">GPT-4</span> + <span class="tl-milestone">Claude 1</span> 发布；Google Bard 上线（出错翻车）</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-date">2023年7月</div><div class="tl-text">Llama 2 开源 / Claude 2 发布（10万token上下文）/ Meta AI战略转向开源</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-date">2023年11月</div><div class="tl-text">Grok-1 / <span class="tl-milestone">OpenAI宫斗</span>（奥特曼被踢出后回归）/ GPT-4 Turbo 128K</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-date">2024年2月</div><div class="tl-text"><span class="tl-milestone">Gemini 1.5 Pro</span>（100万token）/ Sora 视频生成震撼发布</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-date">2024年6月</div><div class="tl-text"><span class="tl-milestone">Claude 3.5 Sonnet</span> — 代码能力超GPT-4o，成程序员新宠</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2024年9月</div><div class="tl-text"><span class="tl-milestone">o1 发布</span> — 推理模型时代开启，思维链强化学习成主流</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2025年</div><div class="tl-text">o3 / GPT-4.5 / Claude 3.7 / Gemini 2.5 Pro / Grok-3 — 群雄竞相发力</div></div>
+  </div>
+
+  <div class="cat-header"><div class="cat-line"></div><div class="cat-text cat-cn">🇨🇳 中国模型</div><div class="cat-line"></div></div>
+  <div class="timeline-wrap">
+    <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-date">2022年</div><div class="tl-text"><span class="tl-milestone">GLM-130B</span>（清华/智谱）— 国内首个千亿双语模型 / ERNIE 3.5（百度）</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-date">2023年3月</div><div class="tl-text"><span class="tl-milestone">ChatGLM-6B 开源</span> — 国内开源中文模型爆发元年，Hugging Face下载记录</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-date">2023年4月</div><div class="tl-text"><span class="tl-milestone">通义千问（Qwen）</span>上线 / 百度文心一言 / 讯飞星火 — "百模大战"开始</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--cyan)"></div><div class="tl-date">2023年10月</div><div class="tl-text"><span class="tl-milestone">Kimi Chat</span> 发布 — 主打20万字超长上下文，差异化竞争</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-date">2024年</div><div class="tl-text">Qwen2 / GLM-4 / Kimi长文本200K / MiniMax abab6.5 全面升级</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:#fff"></div><div class="tl-date">2025年1月</div><div class="tl-text">🔥 <span class="tl-milestone">DeepSeek-R1 爆发</span> — 以极低成本媲美o1，震惊硅谷，美股科技股暴跌</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-date">2025年初</div><div class="tl-text">Kimi k1.5 / QwQ-32B / GLM-Z1 — 中国推理模型百花齐放</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-date">2025年3月</div><div class="tl-text"><span class="tl-milestone">MiMo-7B</span>（小米）— 7B小模型推理能力爆表，开源免费</div></div>
+  </div>
+
+  <div class="cat-header"><div class="cat-line"></div><div class="cat-text cat-open">📖 开源里程碑</div><div class="cat-line"></div></div>
+  <div class="timeline-wrap">
+    <div class="tl-item"><div class="tl-dot" style="background:#888"></div><div class="tl-date">2023年2月</div><div class="tl-text"><span class="tl-milestone">LLaMA 1</span>（Meta）— 开源大模型的分水岭，泄露后引爆社区</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:#888"></div><div class="tl-date">2023年7月</div><div class="tl-text"><span class="tl-milestone">LLaMA 2</span> 正式开源 / Mistral 7B 发布 — 小模型性能突破</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-date">2023年</div><div class="tl-text"><span class="tl-milestone">ChatGLM-6B / Qwen-7B</span> 开源 — 中文开源模型元年</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-date">2024年3月</div><div class="tl-text"><span class="tl-milestone">Grok-1 开源</span>（3140亿MoE）— 商业公司开源最大模型记录</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:#888"></div><div class="tl-date">2024年</div><div class="tl-text"><span class="tl-milestone">LLaMA 3</span> / Mistral Large / Phi-3 — 开源模型能力全面提升</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-date">2025年1月</div><div class="tl-text">🔥 <span class="tl-milestone">DeepSeek-R1 完全开源</span> — 蒸馏版本可在消费级GPU运行，冲击AI产业格局</div></div>
+    <div class="tl-item"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-date">2025年3月</div><div class="tl-text"><span class="tl-milestone">MiMo-7B 开源</span>（小米）— 7B推理模型，Apache 2.0许可</div></div>
+  </div>
+</div>
+
+<script>
+  function switchTab(name) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function toggleModel(card) {
+    card.classList.toggle('open');
+  }
+
+  function switchDtab(tab, name) {
+    event.stopPropagation();
+    const card = tab.closest('.model-card');
+    card.querySelectorAll('.dtab').forEach(t => t.classList.remove('active'));
+    card.querySelectorAll('.dtab-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    card.querySelector(`.dtab-content[data-name="${name}"]`).classList.add('active');
+  }
+
+  function filterModels(tag, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.model-card').forEach(card => {
+      if (tag === 'all') {
+        card.classList.remove('hidden');
+      } else {
+        const tags = card.dataset.tags || '';
+        tags.split(' ').includes(tag)
+          ? card.classList.remove('hidden')
+          : card.classList.add('hidden');
+      }
+    });
+  }
+</script>
+</body>
+</html>
