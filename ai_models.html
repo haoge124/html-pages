@@ -3,885 +3,1094 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>大模型全景对比 2026</title>
+<title>AI 大模型全景对比 2026 · OpenRouter</title>
 <style>
   :root {
-    --bg:#080c14;--card:#0f1623;--card2:#141e2e;
-    --border:#1e2d45;--text:#c8d4e8;--muted:#5a7090;
-    --blue:#3b82f6;--green:#22c55e;--red:#ef4444;
-    --yellow:#eab308;--orange:#f97316;--purple:#a855f7;
-    --cyan:#06b6d4;--pink:#ec4899;
+    --bg: #080c14;
+    --bg2: #0d1220;
+    --bg3: #121826;
+    --bg4: #1a2235;
+    --border: #1e2d45;
+    --border2: #243350;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --accent: #3b82f6;
+    --accent2: #60a5fa;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --purple: #8b5cf6;
+    --pink: #ec4899;
+    --cyan: #06b6d4;
+    --orange: #f97316;
+    --teal: #14b8a6;
   }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.6;}
-  .header{background:linear-gradient(135deg,#070b12,#0d1828);border-bottom:1px solid var(--border);padding:20px 20px 14px;text-align:center;position:sticky;top:0;z-index:100;}
-  .header h1{font-size:1.5em;color:#e8f0ff;margin-bottom:4px;}
-  .header .sub{color:var(--muted);font-size:0.78em;}
-  .updated{display:inline-flex;align-items:center;gap:5px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:var(--green);font-size:0.68em;font-weight:700;padding:2px 10px;border-radius:20px;margin-top:5px;}
-  .nav-tabs{display:flex;gap:2px;padding:10px 16px 0;background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto;}
-  .nav-tab{padding:8px 14px;border-radius:8px 8px 0 0;cursor:pointer;font-size:0.8em;font-weight:600;color:var(--muted);white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;}
-  .nav-tab:hover{color:var(--text);}
-  .nav-tab.active{color:#fff;border-bottom-color:var(--blue);background:var(--card2);}
-  .panel{display:none;padding:16px;max-width:1100px;margin:0 auto;}
-  .panel.active{display:block;}
-  .filter-bar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
-  .filter-btn{padding:4px 12px;border-radius:20px;font-size:0.72em;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--card2);color:var(--muted);transition:all .2s;}
-  .filter-btn:hover,.filter-btn.active{color:#fff;border-color:var(--blue);background:rgba(59,130,246,.15);}
-  .models-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px;}
-  .model-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .25s;}
-  .model-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.4);border-color:#2a4060;}
-  .model-card.open{border-color:var(--blue);}
-  .model-card.hidden{display:none;}
-  .mc-header{padding:14px 16px;display:flex;align-items:center;gap:12px;}
-  .mc-logo{font-size:1.9em;width:42px;text-align:center;flex-shrink:0;}
-  .mc-info{flex:1;}
-  .mc-name{font-weight:700;font-size:.95em;color:#e8f0ff;}
-  .mc-maker{font-size:.7em;color:var(--muted);margin-top:1px;}
-  .mc-badges{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px;}
-  .mc-badge{font-size:.6em;font-weight:700;padding:2px 6px;border-radius:8px;}
-  .badge-closed{background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.3);}
-  .badge-open{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.3);}
-  .badge-cn{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.2);}
-  .badge-new{background:rgba(239,68,68,.18);color:#ff6b6b;border:1px solid #ef4444;animation:blink 2s infinite;}
-  .badge-hybrid{background:rgba(168,85,247,.12);color:#c084fc;border:1px solid rgba(168,85,247,.2);}
-  @keyframes blink{0%,100%{opacity:1}50%{opacity:.6}}
-  .mc-chevron{color:var(--muted);font-size:.8em;transition:transform .3s;}
-  .model-card.open .mc-chevron{transform:rotate(180deg);color:var(--blue);}
-  .mc-scores{display:flex;gap:6px;padding:0 16px 12px;}
-  .score-pill{flex:1;background:var(--card2);border-radius:6px;padding:5px 6px;text-align:center;}
-  .score-label{font-size:.58em;color:var(--muted);}
-  .score-val{font-size:.82em;font-weight:700;}
-  .mc-detail{display:none;border-top:1px solid var(--border);}
-  .model-card.open .mc-detail{display:block;}
-  .detail-tabs{display:flex;border-bottom:1px solid var(--border);}
-  .dtab{padding:8px 14px;font-size:.75em;font-weight:600;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .2s;}
-  .dtab:hover{color:var(--text);}
-  .dtab.active{color:var(--blue);border-bottom-color:var(--blue);}
-  .dtab-content{display:none;padding:14px 16px;}
-  .dtab-content.active{display:block;}
-  .detail-section{margin-bottom:12px;}
-  .detail-section h4{font-size:.7em;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;}
-  .detail-section p{font-size:.8em;line-height:1.7;}
-  .detail-section ul{font-size:.8em;padding-left:16px;}
-  .detail-section li{margin-bottom:3px;line-height:1.6;}
-  .kv-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:6px;}
-  .kv{background:var(--card2);border-radius:6px;padding:8px 10px;}
-  .kv-k{font-size:.65em;color:var(--muted);margin-bottom:2px;}
-  .kv-v{font-size:.82em;font-weight:600;}
-  .pro-con{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
-  .pro-box,.con-box{background:var(--card2);border-radius:6px;padding:10px 12px;}
-  .pro-box{border-left:3px solid var(--green);}
-  .con-box{border-left:3px solid var(--red);}
-  .pro-box h5{color:var(--green);font-size:.72em;margin-bottom:5px;}
-  .con-box h5{color:var(--red);font-size:.72em;margin-bottom:5px;}
-  .pro-box li,.con-box li{font-size:.76em;color:var(--muted);margin-bottom:3px;list-style:none;padding-left:12px;position:relative;}
-  .pro-box li::before{content:"✓";position:absolute;left:0;color:var(--green);}
-  .con-box li::before{content:"✗";position:absolute;left:0;color:var(--red);}
-  .price-table{width:100%;border-collapse:collapse;font-size:.78em;}
-  .price-table th{background:var(--card2);color:var(--muted);font-size:.7em;letter-spacing:1px;text-transform:uppercase;padding:9px 11px;text-align:left;border-bottom:1px solid var(--border);}
-  .price-table td{padding:9px 11px;border-bottom:1px solid rgba(30,45,69,.5);vertical-align:middle;}
-  .price-table tr:hover td{background:rgba(59,130,246,.04);}
-  .price-table .model-col{font-weight:700;}
-  .cheap{color:var(--green);}
-  .mid{color:var(--yellow);}
-  .pricey{color:var(--orange);}
-  .expensive{color:var(--red);}
-  .timeline-wrap{position:relative;padding-left:30px;}
-  .timeline-wrap::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--blue),var(--purple));}
-  .tl-item{position:relative;margin-bottom:12px;}
-  .tl-dot{position:absolute;left:-26px;top:4px;width:12px;height:12px;border-radius:50%;border:2px solid var(--bg);}
-  .tl-date{font-size:.68em;color:var(--muted);font-weight:700;margin-bottom:1px;}
-  .tl-text{font-size:.8em;line-height:1.6;}
-  .tl-milestone{font-weight:700;color:#e8f0ff;}
-  .bench-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;}
-  .bench-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;}
-  .bench-name{font-size:.7em;color:var(--muted);margin-bottom:8px;font-weight:600;}
-  .bench-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
-  .bench-model-name{font-size:.65em;color:var(--muted);width:76px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .bench-bar-bg{flex:1;background:rgba(255,255,255,.05);border-radius:3px;height:9px;}
-  .bench-bar{height:100%;border-radius:3px;transition:width .5s;}
-  .bench-val{font-size:.63em;font-weight:700;width:36px;text-align:right;}
-  .section-title{font-size:.76em;font-weight:700;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;padding-bottom:7px;border-bottom:1px solid var(--border);margin-bottom:12px;}
-  .section-title.mt{margin-top:22px;}
-  .cat-header{display:flex;align-items:center;gap:10px;margin:20px 0 10px;}
-  .cat-line{flex:1;height:1px;background:var(--border);}
-  .cat-text{font-size:.68em;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:10px;white-space:nowrap;}
-  .cat-west{background:rgba(59,130,246,.1);color:#60a5fa;border:1px solid rgba(59,130,246,.2);}
-  .cat-cn{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
-  .cat-open{background:rgba(34,197,94,.1);color:#4ade80;border:1px solid rgba(34,197,94,.2);}
-  ::-webkit-scrollbar{width:5px;height:5px;}
-  ::-webkit-scrollbar-track{background:var(--bg);}
-  ::-webkit-scrollbar-thumb{background:#2a3a50;border-radius:3px;}
-  @media(max-width:600px){
-    .models-grid{grid-template-columns:1fr;}
-    .pro-con,.kv-grid{grid-template-columns:1fr;}
-    .bench-grid{grid-template-columns:1fr;}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #0d1220 0%, #0f172a 50%, #0d1220 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 24px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .header-logo {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .header-title h1 { font-size: 18px; font-weight: 700; color: var(--text); }
+  .header-title p { font-size: 12px; color: var(--text3); }
+  .header-badge {
+    margin-left: auto;
+    background: rgba(59,130,246,0.15);
+    border: 1px solid rgba(59,130,246,0.3);
+    color: var(--accent2);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    padding: 10px 16px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text3);
+    border: 1px solid transparent;
+    border-bottom: none;
+    transition: all 0.2s;
+    background: transparent;
+  }
+  .tab:hover { color: var(--text2); background: rgba(255,255,255,0.03); }
+  .tab.active {
+    color: var(--accent2);
+    background: var(--bg2);
+    border-color: var(--border);
+    border-bottom-color: var(--bg2);
+  }
+  /* Content */
+  .content { padding: 24px; max-width: 1200px; margin: 0 auto; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  /* Cards */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title .icon { font-size: 18px; }
+  /* Grid */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 768px) {
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+    .content { padding: 16px; }
+    .header { padding: 16px 16px 0; }
+  }
+
+  /* ===== TAB 1: 排名 ===== */
+  .rank-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .rank-item:last-child { border-bottom: none; }
+  .rank-num {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .rank-1 { background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; }
+  .rank-2 { background: linear-gradient(135deg, #94a3b8, #64748b); color: #000; }
+  .rank-3 { background: linear-gradient(135deg, #cd7c3a, #a85d24); color: #fff; }
+  .rank-other { background: var(--bg4); color: var(--text3); }
+  .rank-info { flex: 1; min-width: 0; }
+  .rank-name { font-weight: 600; font-size: 14px; }
+  .rank-vendor { font-size: 11px; color: var(--text3); }
+  .rank-bar-wrap {
+    flex: 2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .rank-bar-bg {
+    flex: 1;
+    height: 8px;
+    background: var(--bg4);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .rank-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease;
+  }
+  .rank-tokens { font-size: 12px; color: var(--text2); white-space: nowrap; min-width: 60px; text-align: right; }
+
+  /* Market share */
+  .share-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .share-label { width: 80px; font-size: 12px; color: var(--text2); text-align: right; flex-shrink: 0; }
+  .share-bar-bg {
+    flex: 1;
+    height: 22px;
+    background: var(--bg4);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+  .share-bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    display: flex; align-items: center;
+    padding-left: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(0,0,0,0.8);
+    transition: width 1.2s ease;
+  }
+  .share-pct { font-size: 12px; color: var(--text2); width: 40px; text-align: right; flex-shrink: 0; }
+
+  /* ===== TAB 2: 模型总览 ===== */
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .filter-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    background: var(--bg3);
+    color: var(--text2);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent2); }
+  .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .model-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+  .model-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: pointer;
+  }
+  .model-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+  .model-card-header {
+    padding: 14px 16px 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .model-vendor-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .model-card-info { flex: 1; min-width: 0; }
+  .model-card-name { font-weight: 600; font-size: 14px; }
+  .model-card-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .model-card-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+  .tag {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+  .tag-free { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
+  .tag-new { background: rgba(59,130,246,0.15); color: var(--accent2); border: 1px solid rgba(59,130,246,0.2); }
+  .tag-top { background: rgba(245,158,11,0.15); color: var(--yellow); border: 1px solid rgba(245,158,11,0.2); }
+  .tag-china { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+  .tag-west { background: rgba(139,92,246,0.15); color: var(--purple); border: 1px solid rgba(139,92,246,0.2); }
+  .model-card-metrics {
+    padding: 10px 16px;
+    background: var(--bg4);
+    display: flex;
+    gap: 16px;
+  }
+  .metric { font-size: 11px; color: var(--text3); }
+  .metric span { color: var(--text2); font-weight: 500; }
+  .model-card-expand {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s;
+  }
+  .model-card-expand.open { max-height: 300px; }
+  .expand-content { padding: 14px 16px; border-top: 1px solid var(--border); }
+  .pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .pros h4 { color: var(--green); font-size: 12px; margin-bottom: 6px; }
+  .cons h4 { color: var(--red); font-size: 12px; margin-bottom: 6px; }
+  .pros ul, .cons ul { list-style: none; }
+  .pros li, .cons li { font-size: 12px; color: var(--text2); padding: 2px 0; }
+  .pros li::before { content: '✓ '; color: var(--green); }
+  .cons li::before { content: '✗ '; color: var(--red); }
+
+  /* ===== TAB 3: 价格 ===== */
+  .price-table { width: 100%; border-collapse: collapse; }
+  .price-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg3);
+  }
+  .price-table td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .price-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .price-table tr:last-child td { border-bottom: none; }
+  .price-tier-0 { color: var(--green); font-weight: 600; }
+  .price-tier-1 { color: #6ee7b7; }
+  .price-tier-2 { color: var(--text2); }
+  .price-tier-3 { color: var(--yellow); }
+  .price-tier-4 { color: var(--orange); }
+  .price-tier-5 { color: var(--red); }
+  .ctx-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .ctx-2m { background: rgba(16,185,129,0.15); color: var(--green); }
+  .ctx-1m { background: rgba(59,130,246,0.1); color: var(--accent2); }
+  .ctx-256k { background: rgba(100,116,139,0.15); color: var(--text2); }
+  .ctx-128k { background: rgba(100,116,139,0.1); color: var(--text3); }
+  .scenario-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 16px; }
+  .scenario-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .scenario-card h4 { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+  .scenario-card p { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .scenario-card .rec { font-weight: 600; color: var(--accent2); }
+
+  /* ===== TAB 4: 性能 ===== */
+  .bench-item { margin-bottom: 14px; }
+  .bench-header { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 13px; }
+  .bench-model { font-weight: 500; }
+  .bench-score { font-weight: 700; color: var(--accent2); }
+  .bench-bar-bg {
+    height: 10px;
+    background: var(--bg4);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .bench-bar-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 1.2s ease;
+  }
+  .ctx-chart-item { margin-bottom: 10px; }
+  .ctx-header { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 12px; }
+  .ctx-bar-bg { height: 8px; background: var(--bg4); border-radius: 4px; overflow: hidden; }
+  .ctx-bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+  .vfm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+  .vfm-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+  }
+  .vfm-score {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .vfm-name { font-size: 12px; color: var(--text3); }
+  .vfm-detail { font-size: 11px; color: var(--text2); margin-top: 4px; }
+
+  /* ===== TAB 5: 时间线 ===== */
+  .timeline { position: relative; padding-left: 24px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent), var(--purple), var(--pink));
+    border-radius: 1px;
+  }
+  .timeline-month { margin-bottom: 24px; }
+  .timeline-month-label {
+    position: relative;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    padding-left: 0;
+  }
+  .timeline-month-label::before {
+    content: '';
+    position: absolute;
+    left: -21px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--accent);
+  }
+  .timeline-event {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .timeline-event::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 16px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .timeline-event-date { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+  .timeline-event-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .timeline-event-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .timeline-event.highlight { border-color: var(--accent); }
+  .timeline-event.highlight::before { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
+
+  /* Utilities */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .section-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .stat-num { font-size: 22px; font-weight: 700; color: var(--accent2); }
+  .stat-label { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+  .table-wrap { overflow-x: auto; }
+  .note { font-size: 11px; color: var(--text3); margin-top: 8px; font-style: italic; }
+  .gradient-text {
+    background: linear-gradient(135deg, var(--accent2), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 </style>
 </head>
 <body>
+
 <div class="header">
-  <h1>🤖 大模型全景对比 2026</h1>
-  <div class="sub">主流 AI 大模型 · 性能 · 价格 · 历史 · 优缺点</div>
-  <div class="updated">✅ 已更新至 2026年3月24日 · 数据来源 OpenRouter</div>
-</div>
-<div class="nav-tabs">
-  <div class="nav-tab active" onclick="switchTab('overview')">📋 模型总览</div>
-  <div class="nav-tab" onclick="switchTab('pricing')">💰 价格对比</div>
-  <div class="nav-tab" onclick="switchTab('benchmark')">📊 性能基准</div>
-  <div class="nav-tab" onclick="switchTab('history')">📅 发展历史</div>
+  <div class="header-top">
+    <div class="header-logo">🤖</div>
+    <div class="header-title">
+      <h1 class="gradient-text">AI 大模型全景对比</h1>
+      <p>数据来源: OpenRouter · 更新于 2026年3月24日</p>
+    </div>
+    <div class="header-badge">19 款模型</div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab(0)">📊 实时排名</div>
+    <div class="tab" onclick="switchTab(1)">📋 模型总览</div>
+    <div class="tab" onclick="switchTab(2)">💰 价格对比</div>
+    <div class="tab" onclick="switchTab(3)">📈 性能基准</div>
+    <div class="tab" onclick="switchTab(4)">📅 发展历史</div>
+  </div>
 </div>
 
-<!-- ════════ OVERVIEW ════════ -->
-<div id="panel-overview" class="panel active">
+<div class="content">
+
+<!-- ==================== TAB 1: 实时排名 ==================== -->
+<div class="panel active" id="panel-0">
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-num">19</div>
+      <div class="stat-label">在榜模型数量</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">2.11T</div>
+      <div class="stat-label">本周最高 tokens (MiMo-V2-Pro)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">10.5B</div>
+      <div class="stat-label">总计周 tokens</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">FREE</div>
+      <div class="stat-label">Step 3.5 Flash 免费</div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title"><span class="icon">🏆</span>本周 Top 10 排行榜</div>
+      <div id="rank-list"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">🥧</span>厂商市场份额</div>
+      <div id="share-chart"></div>
+      <p class="note">* 数据基于 OpenRouter 本周 token 使用量统计</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 2: 模型总览 ==================== -->
+<div class="panel" id="panel-1">
   <div class="filter-bar">
-    <div class="filter-btn active" onclick="filterModels('all',this)">全部</div>
-    <div class="filter-btn" onclick="filterModels('western',this)">🌍 西方</div>
-    <div class="filter-btn" onclick="filterModels('cn',this)">🇨🇳 中国</div>
-    <div class="filter-btn" onclick="filterModels('open',this)">📖 开源</div>
-    <div class="filter-btn" onclick="filterModels('closed',this)">🔒 闭源</div>
-    <div class="filter-btn" onclick="filterModels('reasoning',this)">🧠 推理强化</div>
-    <div class="filter-btn" onclick="filterModels('new',this)">🆕 近期新品</div>
+    <button class="filter-btn active" onclick="filterModels('all', this)">🌐 全部</button>
+    <button class="filter-btn" onclick="filterModels('west', this)">🌎 西方</button>
+    <button class="filter-btn" onclick="filterModels('china', this)">🇨🇳 中国</button>
+    <button class="filter-btn" onclick="filterModels('free', this)">🆓 免费</button>
+    <button class="filter-btn" onclick="filterModels('new', this)">🆕 近期 (2026)</button>
   </div>
-  <div class="models-grid" id="models-grid">
+  <div class="model-grid" id="model-grid"></div>
+</div>
 
-    <!-- OpenAI GPT-5.4 -->
-    <div class="model-card" data-tags="western closed new" onclick="toggleModel(this)">
-      <div class="mc-header">
-        <div class="mc-logo">⚡</div>
-        <div class="mc-info">
-          <div class="mc-name">GPT-5.4 / Pro</div>
-          <div class="mc-maker">OpenAI · 美国 · Mar 2026</div>
-          <div class="mc-badges">
-            <span class="mc-badge badge-closed">闭源</span>
-            <span class="mc-badge badge-new">🆕 最新</span>
-          </div>
-        </div>
-        <div class="mc-chevron">▼</div>
-      </div>
-      <div class="mc-scores">
-        <div class="score-pill"><div class="score-label">综合</div><div class="score-val" style="color:var(--blue)">S+</div></div>
-        <div class="score-pill"><div class="score-label">代码</div><div class="score-val" style="color:var(--blue)">S+</div></div>
-        <div class="score-pill"><div class="score-label">上下文</div><div class="score-val" style="color:var(--green)">1M</div></div>
-        <div class="score-pill"><div class="score-label">价格</div><div class="score-val" style="color:var(--yellow)">中</div></div>
-      </div>
-      <div class="mc-detail">
-        <div class="detail-tabs">
-          <div class="dtab active" onclick="switchDtab(this,'overview')">概述</div>
-          <div class="dtab" onclick="switchDtab(this,'history')">历史</div>
-          <div class="dtab" onclick="switchDtab(this,'pricing')">价格</div>
-        </div>
-        <div class="dtab-content active" data-name="overview">
-          <div class="detail-section">
-            <h4>当前旗舰</h4>
-            <p>GPT-5.4 将 Codex 和 GPT 系列合并为单一系统，上下文扩展到 <strong>1M token（922K输入+128K输出）</strong>。GPT-5.4 Pro 进一步强化推理能力，用于高精度复杂任务（但价格极高）。另有 Mini 和 Nano 面向轻量/高频场景。</p>
-          </div>
-          <div class="pro-con">
-            <div class="pro-box"><h5>✅ 优势</h5><ul>
-              <li>Codex+GPT融合，代码+通用双强</li>
-              <li>1M token超长上下文</li>
-              <li>生态最完善，工具链最成熟</li>
-              <li>Mini/Nano 价格大幅下降</li>
-              <li>多模态全面（文/图/音）</li>
-            </ul></div>
-            <div class="con-box"><h5>❌ 劣势</h5><ul>
-              <li>Pro版本价格极其昂贵</li>
-              <li>安全限制依然较多</li>
-              <li>写作风格不如Claude自然</li>
-            </ul></div>
-          </div>
-        </div>
-        <div class="dtab-content" data-name="history">
-          <div class="timeline-wrap">
-            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2022年11月</div><div class="tl-text"><span class="tl-milestone">ChatGPT</span> — 改变世界，AI进入大众视野</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2023年3月</div><div class="tl-text"><span class="tl-milestone">GPT-4</span> — 多模态，律师考试top10%</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2024年5月</div><div class="tl-text"><span class="tl-milestone">GPT-4o</span> — 实时语音图像，价格降50%</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2024年9月</div><div class="tl-text"><span class="tl-milestone">o1</span> — 推理模型时代开启，思维链强化学习</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2025年初</div><div class="tl-text"><span class="tl-milestone">o3 / GPT-4.5</span> — o3超越人类博士，ARC-AGI 87.5%</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2025年中</div><div class="tl-text"><span class="tl-milestone">GPT-5</span> — Codex与GPT融合，多模态统一</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2026年3月</div><div class="tl-text"><span class="tl-milestone">GPT-5.4 / Pro</span> — 1M上下文，Codex+GPT合并，当前最新</div></div>
-          </div>
-        </div>
-        <div class="dtab-content" data-name="pricing">
-          <div class="kv-grid">
-            <div class="kv"><div class="kv-k">GPT-5.4 输入</div><div class="kv-v mid">$2.5 / 1M</div></div>
-            <div class="kv"><div class="kv-k">GPT-5.4 输出</div><div class="kv-v pricey">$15 / 1M</div></div>
-            <div class="kv"><div class="kv-k">GPT-5.4 Pro 输入</div><div class="kv-v expensive">$30 / 1M</div></div>
-            <div class="kv"><div class="kv-k">GPT-5.4 Pro 输出</div><div class="kv-v expensive">$180 / 1M</div></div>
-            <div class="kv"><div class="kv-k">GPT-5.4 Mini</div><div class="kv-v cheap">$0.75 / $4.5</div></div>
-            <div class="kv"><div class="kv-k">上下文窗口</div><div class="kv-v" style="color:var(--green)">1M tokens</div></div>
-          </div>
-        </div>
-      </div>
+<!-- ==================== TAB 3: 价格对比 ==================== -->
+<div class="panel" id="panel-2">
+  <div class="card">
+    <div class="card-title"><span class="icon">💲</span>完整价格表（按输入价排序）</div>
+    <div class="table-wrap">
+      <table class="price-table" id="price-table">
+        <thead>
+          <tr>
+            <th>模型</th>
+            <th>厂商</th>
+            <th>输入 $/M tok</th>
+            <th>输出 $/M tok</th>
+            <th>上下文</th>
+            <th>特点</th>
+          </tr>
+        </thead>
+        <tbody id="price-tbody"></tbody>
+      </table>
     </div>
+    <p class="note">* 价格以每百万 tokens 美元计算。免费模型标注 $0。</p>
+  </div>
 
-    <!-- Gemini 3.1 Pro -->
-    <div class="model-card" data-tags="western closed new" onclick="toggleModel(this)">
-      <div class="mc-header">
-        <div class="mc-logo">💎</div>
-        <div class="mc-info">
-          <div class="mc-name">Gemini 3.1 Pro</div>
-          <div class="mc-maker">Google DeepMind · 美国 · Feb 2026</div>
-          <div class="mc-badges">
-            <span class="mc-badge badge-closed">闭源</span>
-            <span class="mc-badge badge-new">🆕 最新</span>
-          </div>
-        </div>
-        <div class="mc-chevron">▼</div>
-      </div>
-      <div class="mc-scores">
-        <div class="score-pill"><div class="score-label">综合</div><div class="score-val" style="color:var(--yellow)">S+</div></div>
-        <div class="score-pill"><div class="score-label">长文本</div><div class="score-val" style="color:var(--green)">S+</div></div>
-        <div class="score-pill"><div class="score-label">多模态</div><div class="score-val" style="color:var(--yellow)">S+</div></div>
-        <div class="score-pill"><div class="score-label">价格</div><div class="score-val" style="color:var(--yellow)">中</div></div>
-      </div>
-      <div class="mc-detail">
-        <div class="detail-tabs">
-          <div class="dtab active" onclick="switchDtab(this,'overview')">概述</div>
-          <div class="dtab" onclick="switchDtab(this,'history')">历史</div>
-          <div class="dtab" onclick="switchDtab(this,'pricing')">价格</div>
-        </div>
-        <div class="dtab-content active" data-name="overview">
-          <div class="detail-section">
-            <h4>当前旗舰</h4>
-            <p>Gemini 3.1 Pro 在 3.0 基础上强化了软件工程性能、代理可靠性和 token 效率。支持文/图/视频/音频/代码多模态输入，1M token 上下文。引入"中等思考等级"来平衡成本与性能。3.1 Pro Preview Custom Tools 版本专门优化工具调用可靠性。</p>
-          </div>
-          <div class="pro-con">
-            <div class="pro-box"><h5>✅ 优势</h5><ul>
-              <li>1M token + 原生视频/音频理解</li>
-              <li>Finance/法律/医疗类任务排名靠前</li>
-              <li>SWE基准大幅提升</li>
-              <li>Flash Lite版本价格极低</li>
-              <li>Google服务深度集成</li>
-            </ul></div>
-            <div class="con-box"><h5>❌ 劣势</h5><ul>
-              <li>Pro价格较2.5上涨</li>
-              <li>创意写作仍弱于Claude</li>
-              <li>推理tokens需注意保留（多轮工具调用）</li>
-            </ul></div>
-          </div>
-        </div>
-        <div class="dtab-content" data-name="history">
-          <div class="timeline-wrap">
-            <div class="tl-item"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-date">2023年2月</div><div class="tl-text"><span class="tl-milestone">Bard</span> — 首秀即翻车，股价暴跌</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-date">2024年2月</div><div class="tl-text"><span class="tl-milestone">Gemini 1.5 Pro</span> — 100万token上下文突破</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-date">2025年3月</div><div class="tl-text"><span class="tl-milestone">Gemini 2.5 Pro</span> — 多项超越GPT-4o和Claude</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-date">2026年2月</div><div class="tl-text"><span class="tl-milestone">Gemini 3.1 Pro Preview</span> — SWE提升，代理稳定性强化，当前最新</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-date">2026年3月</div><div class="tl-text"><span class="tl-milestone">Gemini 3.1 Flash Lite</span> — 0.25/$1.5超低价，1M上下文</div></div>
-          </div>
-        </div>
-        <div class="dtab-content" data-name="pricing">
-          <div class="kv-grid">
-            <div class="kv"><div class="kv-k">3.1 Pro 输入</div><div class="kv-v mid">$2 / 1M</div></div>
-            <div class="kv"><div class="kv-k">3.1 Pro 输出</div><div class="kv-v pricey">$12 / 1M</div></div>
-            <div class="kv"><div class="kv-k">Flash Lite 输入</div><div class="kv-v cheap">$0.25 / 1M</div></div>
-            <div class="kv"><div class="kv-k">Flash Lite 输出</div><div class="kv-v cheap">$1.5 / 1M</div></div>
-            <div class="kv"><div class="kv-k">上下文窗口</div><div class="kv-v" style="color:var(--green)">1,050K tokens</div></div>
-            <div class="kv"><div class="kv-k">音频输入</div><div class="kv-v mid">$2 / 1M</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Claude Opus 4.6 -->
-    <div class="model-card" data-tags="western closed new" onclick="toggleModel(this)">
-      <div class="mc-header">
-        <div class="mc-logo">🎭</div>
-        <div class="mc-info">
-          <div class="mc-name">Claude Opus 4.6</div>
-          <div class="mc-maker">Anthropic · 美国 · Feb 2026</div>
-          <div class="mc-badges">
-            <span class="mc-badge badge-closed">闭源</span>
-            <span class="mc-badge badge-new">🆕 最新</span>
-          </div>
-        </div>
-        <div class="mc-chevron">▼</div>
-      </div>
-      <div class="mc-scores">
-        <div class="score-pill"><div class="score-label">代码</div><div class="score-val" style="color:var(--orange)">S+</div></div>
-        <div class="score-pill"><div class="score-label">写作</div><div class="score-val" style="color:var(--orange)">S+</div></div>
-        <div class="score-pill"><div class="score-label">上下文</div><div class="score-val" style="color:var(--green)">1M</div></div>
-        <div class="score-pill"><div class="score-label">价格</div><div class="score-val" style="color:var(--red)">高</div></div>
-      </div>
-      <div class="mc-detail">
-        <div class="detail-tabs">
-          <div class="dtab active" onclick="switchDtab(this,'overview')">概述</div>
-          <div class="dtab" onclick="switchDtab(this,'history')">历史</div>
-          <div class="dtab" onclick="switchDtab(this,'pricing')">价格</div>
-        </div>
-        <div class="dtab-content active" data-name="overview">
-          <div class="detail-section">
-            <h4>当前旗舰</h4>
-            <p>Opus 4.6 是 Anthropic 目前最强模型，专为<strong>大型代码库和长期持续任务</strong>设计。上下文扩展至 1M token，在复杂重构、多步骤调试等工程任务上远超前代。同时在持续性知识工作（技术设计文档、迁移规划）上表现优异。MiMo-V2-Pro 的感知性能也被描述为"接近 Opus 4.6"。</p>
-          </div>
-          <div class="pro-con">
-            <div class="pro-box"><h5>✅ 优势</h5><ul>
-              <li>代码能力业界顶尖（Cursor等首选）</li>
-              <li>1M token上下文，支持超大代码库</li>
-              <li>写作质量业界公认最佳</li>
-              <li>长任务持续连贯性最强</li>
-              <li>幻觉率低，对齐最好</li>
-            </ul></div>
-            <div class="con-box"><h5>❌ 劣势</h5><ul>
-              <li>价格最高（$5/$25）</li>
-              <li>不支持图像生成</li>
-              <li>有时过于谨慎</li>
-              <li>中文弱于专门中文模型</li>
-            </ul></div>
-          </div>
-        </div>
-        <div class="dtab-content" data-name="history">
-          <div class="timeline-wrap">
-            <div class="tl-item"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-date">2021年</div><div class="tl-text"><span class="tl-milestone">Anthropic 成立</span> — OpenAI核心团队离职创立，专注AI安全</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-date">2024年6月</div><div class="tl-text"><span class="tl-milestone">Claude 3.5 Sonnet</span> — SWE-bench 49%，程序员新宠</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-date">2025年2月</div><div class="tl-text"><span class="tl-milestone">Claude 3.7 Sonnet</span> — 扩展思考，混合推理模式</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-date">2025年11月</div><div class="tl-text"><span class="tl-milestone">Claude Opus 4.5</span> — 多代理、计算机使用、200K上下文</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-date">2026年2月5日</div><div class="tl-text"><span class="tl-milestone">Claude Opus 4.6</span> — 上下文扩至1M，代理工作流最强，当前旗舰</div></div>
-          </div>
-        </div>
-        <div class="dtab-content" data-name="pricing">
-          <div class="kv-grid">
-            <div class="kv"><div class="kv-k">Opus 4.6 输入</div><div class="kv-v pricey">$5 / 1M</div></div>
-            <div class="kv"><div class="kv-k">Opus 4.6 输出</div><div class="kv-v expensive">$25 / 1M</div></div>
-            <div class="kv"><div class="kv-k">上下文窗口</div><div class="kv-v" style="color:var(--green)">1,000K tokens</div></div>
-            <div class="kv"><div class="kv-k">发布日期</div><div class="kv-v">2026年2月5日</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Grok 4.20 Beta -->
-    <div class="model-card" data-tags="western closed new" onclick="toggleModel(this)">
-      <div class="mc-header">
-        <div class="mc-logo">🚀</div>
-        <div class="mc-info">
-          <div class="mc-name">Grok 4.20 Beta</div>
-          <div class="mc-maker">xAI (Elon Musk) · 美国 · Mar 2026</div>
-          <div class="mc-badges">
-            <span class="mc-badge badge-closed">闭源</span>
-            <span class="mc-badge badge-new">🆕 最新</span>
-          </div>
-        </div>
-        <div class="mc-chevron">▼</div>
-      </div>
-      <div class="mc-scores">
-        <div class="score-pill"><div class="score-label">上下文</div><div class="score-val" style="color:var(--green)">2M!</div></div>
-        <div class="score-pill"><div class="score-label">幻觉率</div><div class="score-val" style="color:var(--green)">最低</div></div>
-        <div class="score-pill"><div class="score-label">实时</div><div class="score-val" style="color:var(--purple)">S+</div></div>
-        <div class="score-pill"><div class="score-label">价格</div><div class="score-val" style="color:var(--yellow)">中</div></div>
-      </div>
-      <div class="mc-detail">
-        <div class="detail-tabs">
-          <div class="dtab active" onclick="switchDtab(this,'overview')">概述</div>
-          <div class="dtab" onclick="switchDtab(this,'history')">历史</div>
-          <div class="dtab" onclick="switchDtab(this,'pricing')">价格</div>
-        </div>
-        <div class="dtab-content active" data-name="overview">
-          <div class="detail-section">
-            <h4>当前旗舰</h4>
-            <p>Grok 4.20 Beta 是 xAI 最新旗舰，上下文窗口达到惊人的 <strong>200万 token</strong>，宣称<strong>市场最低幻觉率</strong>，工具调用精准。推理可通过 API 参数开关，灵活调节深度。</p>
-          </div>
-          <div class="pro-con">
-            <div class="pro-box"><h5>✅ 优势</h5><ul>
-              <li>2M token超长上下文（业界最大）</li>
-              <li>最低幻觉率（自称）</li>
-              <li>实时X/Twitter数据</li>
-              <li>Aurora图像生成</li>
-              <li>推理开关灵活</li>
-            </ul></div>
-            <div class="con-box"><h5>❌ 劣势</h5><ul>
-              <li>Beta阶段，稳定性待验证</li>
-              <li>与X生态绑定</li>
-              <li>企业API成熟度不如OpenAI</li>
-            </ul></div>
-          </div>
-        </div>
-        <div class="dtab-content" data-name="history">
-          <div class="timeline-wrap">
-            <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-date">2023年11月</div><div class="tl-text"><span class="tl-milestone">Grok-1</span> — X Premium专属，幽默风格</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-date">2024年3月</div><div class="tl-text"><span class="tl-milestone">Grok-1开源</span> — 3140亿MoE，轰动业界</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-date">2025年2月</div><div class="tl-text"><span class="tl-milestone">Grok-3</span> — 20万H100训练，Deep Search</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-date">2026年3月</div><div class="tl-text"><span class="tl-milestone">Grok 4.20 Beta</span> — 2M上下文，最低幻觉率，当前最新</div></div>
-          </div>
-        </div>
-        <div class="dtab-content" data-name="pricing">
-          <div class="kv-grid">
-            <div class="kv"><div class="kv-k">输入</div><div class="kv-v mid">$2 / 1M</div></div>
-            <div class="kv"><div class="kv-k">输出</div><div class="kv-v mid">$6 / 1M</div></div>
-            <div class="kv"><div class="kv-k">上下文窗口</div><div class="kv-v" style="color:var(--green)">2,000,000 tokens!</div></div>
-            <div class="kv"><div class="kv-k">状态</div><div class="kv-v" style="color:var(--yellow)">Beta</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Kimi K2.5 -->
-    <div class="model-card" data-tags="cn closed new" onclick="toggleModel(this)">
-      <div class="mc-header">
-        <div class="mc-logo">🌊</div>
-        <div class="mc-info">
-          <div class="mc-name">Kimi K2.5</div>
-          <div class="mc-maker">月之暗面 (Moonshot AI) · 中国 · Jan 2026</div>
-          <div class="mc-badges">
-            <span class="mc-badge badge-closed">闭源</span>
-            <span class="mc-badge badge-cn">中国</span>
-            <span class="mc-badge badge-new">🆕 最新</span>
-          </div>
-        </div>
-        <div class="mc-chevron">▼</div>
-      </div>
-      <div class="mc-scores">
-        <div class="score-pill"><div class="score-label">多模态</div><div class="score-val" style="color:var(--cyan)">S+</div></div>
-        <div class="score-pill"><div class="score-label">代理</div><div class="score-val" style="color:var(--cyan)">S</div></div>
-        <div class="score-pill"><div class="score-label">视觉代码</div><div class="score-val" style="color:var(--cyan)">S+</div></div>
-        <div class="score-pill"><div class="score-label">价格</div><div class="score-val" style="color:var(--green)">低</div></div>
-      </div>
-      <div class="mc-detail">
-        <div class="detail-tabs">
-          <div class="dtab active" onclick="switchDtab(this,'overview')">概述</div>
-          <div class="dtab" onclick="switchDtab(this,'history')">历史</div>
-          <div class="dtab" onclick="switchDtab(this,'pricing')">价格</div>
-        </div>
-        <div class="dtab-content active" data-name="overview">
-          <div class="detail-section">
-            <h4>当前旗舰</h4>
-            <p>Kimi K2.5 是 Moonshot AI 的<strong>原生多模态模型</strong>，在 K2 基础上继续预训练约 15T 混合视觉+文本 token。在视觉代码（Visual Coding）上达到最优水平，并引入"自主代理蜂群"范式，适合复杂多步骤代理任务。</p>
-          </div>
-          <div class="pro-con">
-            <div class="pro-box"><h5>✅ 优势</h5><ul>
-              <li>视觉代码能力最优</li>
-              <li>自主代理蜂群新范式</li>
-              <li>262K上下文</li>
-              <li>价格极具竞争力</li>
-            </ul></div>
-            <div class="con-box"><h5>❌ 劣势</h5><ul>
-              <li>国际知名度低</li>
-              <li>上下文比竞品小</li>
-              <li>API生态相对薄弱</li>
-            </ul></div>
-          </div>
-        </div>
-        <div class="dtab-content" data-name="history">
-          <div class="timeline-wrap">
-            <div class="tl-item"><div class="tl-dot" style="background:var(--cyan)"></div><div class="tl-date">2023年10月</div><div class="tl-text"><span class="tl-milestone">Kimi Chat</span> — 长文本起家，支持上传整本书</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--cyan)"></div><div class="tl-date">2025年1月</div><div class="tl-text"><span class="tl-milestone">Kimi k1.5</span> — RL推理模型，对标o1</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--cyan)"></div><div class="tl-date">2025年7月</div><div class="tl-text"><span class="tl-milestone">Kimi K2</span> — 1T MoE参数，开源</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--cyan)"></div><div class="tl-date">2026年1月</div><div class="tl-text"><span class="tl-milestone">Kimi K2.5</span> — 原生多模态，视觉代码SOTA，当前最新</div></div>
-          </div>
-        </div>
-        <div class="dtab-content" data-name="pricing">
-          <div class="kv-grid">
-            <div class="kv"><div class="kv-k">K2.5 输入</div><div class="kv-v cheap">$0.45 / 1M</div></div>
-            <div class="kv"><div class="kv-k">K2.5 输出</div><div class="kv-v cheap">$2.2 / 1M</div></div>
-            <div class="kv"><div class="kv-k">上下文窗口</div><div class="kv-v">262K tokens</div></div>
-            <div class="kv"><div class="kv-k">发布日期</div><div class="kv-v">2026年1月27日</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MiniMax M2.7 -->
-    <div class="model-card" data-tags="cn closed new" onclick="toggleModel(this)">
-      <div class="mc-header">
-        <div class="mc-logo">⚙️</div>
-        <div class="mc-info">
-          <div class="mc-name">MiniMax M2.7</div>
-          <div class="mc-maker">MiniMax · 中国 · Mar 2026</div>
-          <div class="mc-badges">
-            <span class="mc-badge badge-closed">闭源</span>
-            <span class="mc-badge badge-cn">中国</span>
-            <span class="mc-badge badge-new">🆕 最新</span>
-          </div>
-        </div>
-        <div class="mc-chevron">▼</div>
-      </div>
-      <div class="mc-scores">
-        <div class="score-pill"><div class="score-label">代码</div><div class="score-val" style="color:var(--blue)">S</div></div>
-        <div class="score-pill"><div class="score-label">代理</div><div class="score-val" style="color:var(--blue)">S</div></div>
-        <div class="score-pill"><div class="score-label">SWE</div><div class="score-val" style="color:var(--blue)">56%</div></div>
-        <div class="score-pill"><div class="score-label">价格</div><div class="score-val" style="color:var(--green)">极低</div></div>
-      </div>
-      <div class="mc-detail">
-        <div class="detail-tabs">
-          <div class="dtab active" onclick="switchDtab(this,'overview')">概述</div>
-          <div class="dtab" onclick="switchDtab(this,'history')">历史</div>
-          <div class="dtab" onclick="switchDtab(this,'pricing')">价格</div>
-        </div>
-        <div class="dtab-content active" data-name="overview">
-          <div class="detail-section">
-            <h4>当前旗舰</h4>
-            <p>MiniMax M2.7 是面向<strong>自主生产力和自我迭代</strong>设计的新一代模型，支持多代理协作、自主规划和执行。可处理 Word/Excel/PPT 等真实工作流程。SWE-Pro 56.2%、Terminal Bench 2 57.0%、GDPval-AA ELO 1495，多代理系统基准新高。</p>
-          </div>
-          <div class="pro-con">
-            <div class="pro-box"><h5>✅ 优势</h5><ul>
-              <li>价格极低（$0.3/$1.2）</li>
-              <li>代理+多代理协作能力强</li>
-              <li>Office文件生成支持</li>
-              <li>SWE-Pro业界顶级</li>
-            </ul></div>
-            <div class="con-box"><h5>❌ 劣势</h5><ul>
-              <li>上下文仅205K</li>
-              <li>国际知名度低</li>
-              <li>通用能力不如旗舰级</li>
-            </ul></div>
-          </div>
-        </div>
-        <div class="dtab-content" data-name="history">
-          <div class="timeline-wrap">
-            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2021年12月</div><div class="tl-text"><span class="tl-milestone">MiniMax 成立</span> — 专注AGI，C端产品"海螺AI"</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2025年1月</div><div class="tl-text"><span class="tl-milestone">MiniMax Text-01</span> — 456B MoE，100万token上下文</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2026年3月18日</div><div class="tl-text"><span class="tl-milestone">MiniMax M2.7</span> — 多代理自主产力，SWE-Pro 56.2%，当前最新</div></div>
-          </div>
-        </div>
-        <div class="dtab-content" data-name="pricing">
-          <div class="kv-grid">
-            <div class="kv"><div class="kv-k">M2.7 输入</div><div class="kv-v cheap">$0.30 / 1M</div></div>
-            <div class="kv"><div class="kv-k">M2.7 输出</div><div class="kv-v cheap">$1.20 / 1M</div></div>
-            <div class="kv"><div class="kv-k">上下文窗口</div><div class="kv-v">205K tokens</div></div>
-            <div class="kv"><div class="kv-k">发布日期</div><div class="kv-v">2026年3月18日</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- GLM-5 -->
-    <div class="model-card" data-tags="cn closed new" onclick="toggleModel(this)">
-      <div class="mc-header">
-        <div class="mc-logo">🧬</div>
-        <div class="mc-info">
-          <div class="mc-name">GLM-5 Turbo</div>
-          <div class="mc-maker">Z.ai（智谱AI）· 中国 · Mar 2026</div>
-          <div class="mc-badges">
-            <span class="mc-badge badge-closed">闭源</span>
-            <span class="mc-badge badge-cn">中国</span>
-            <span class="mc-badge badge-new">🆕 最新</span>
-          </div>
-        </div>
-        <div class="mc-chevron">▼</div>
-      </div>
-      <div class="mc-scores">
-        <div class="score-pill"><div class="score-label">代理</div><div class="score-val" style="color:var(--green)">S</div></div>
-        <div class="score-pill"><div class="score-label">工具调用</div><div class="score-val" style="color:var(--green)">S</div></div>
-        <div class="score-pill"><div class="score-label">中文</div><div class="score-val" style="color:var(--green)">S</div></div>
-        <div class="score-pill"><div class="score-label">价格</div><div class="score-val" style="color:var(--yellow)">中</div></div>
-      </div>
-      <div class="mc-detail">
-        <div class="detail-tabs">
-          <div class="dtab active" onclick="switchDtab(this,'overview')">概述</div>
-          <div class="dtab" onclick="switchDtab(this,'history')">历史</div>
-          <div class="dtab" onclick="switchDtab(this,'pricing')">价格</div>
-        </div>
-        <div class="dtab-content active" data-name="overview">
-          <div class="detail-section">
-            <h4>当前旗舰</h4>
-            <p>GLM-5 Turbo（Z.ai）专为<strong>代理驱动的长链工作流</strong>优化，改善了复杂指令分解、工具使用、计划与持续执行的稳定性。品牌从"智谱AI"更名为"Z.ai"，在翻译/科学/编程方面表现突出。</p>
-          </div>
-          <div class="pro-con">
-            <div class="pro-box"><h5>✅ 优势</h5><ul>
-              <li>长执行链代理稳定性强</li>
-              <li>工具使用/计划能力提升</li>
-              <li>翻译/科学基准靠前</li>
-              <li>清华学术背景积淀</li>
-            </ul></div>
-            <div class="con-box"><h5>❌ 劣势</h5><ul>
-              <li>价格相比国内竞品稍高</li>
-              <li>上下文203K较小</li>
-              <li>国际影响力有限</li>
-            </ul></div>
-          </div>
-        </div>
-        <div class="dtab-content" data-name="history">
-          <div class="timeline-wrap">
-            <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-date">2022年</div><div class="tl-text"><span class="tl-milestone">GLM-130B</span> — 国内首个千亿双语模型</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-date">2023年3月</div><div class="tl-text"><span class="tl-milestone">ChatGLM-6B开源</span> — 中文开源模型爆发元年</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-date">2024年</div><div class="tl-text"><span class="tl-milestone">GLM-4 / GLM-Z1</span> — 全能升级 + 推理增强版</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-date">2026年3月15日</div><div class="tl-text"><span class="tl-milestone">GLM-5 Turbo</span> — 代理优化，品牌更名Z.ai，当前最新</div></div>
-          </div>
-        </div>
-        <div class="dtab-content" data-name="pricing">
-          <div class="kv-grid">
-            <div class="kv"><div class="kv-k">GLM-5 Turbo 输入</div><div class="kv-v mid">$1.20 / 1M</div></div>
-            <div class="kv"><div class="kv-k">GLM-5 Turbo 输出</div><div class="kv-v mid">$4 / 1M</div></div>
-            <div class="kv"><div class="kv-k">上下文窗口</div><div class="kv-v">203K tokens</div></div>
-            <div class="kv"><div class="kv-k">发布日期</div><div class="kv-v">2026年3月15日</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MiMo-V2-Pro -->
-    <div class="model-card" data-tags="cn closed new reasoning" onclick="toggleModel(this)">
-      <div class="mc-header">
-        <div class="mc-logo">📱</div>
-        <div class="mc-info">
-          <div class="mc-name">MiMo-V2-Pro</div>
-          <div class="mc-maker">小米 (Xiaomi) · 中国 · Mar 2026</div>
-          <div class="mc-badges">
-            <span class="mc-badge badge-closed">闭源</span>
-            <span class="mc-badge badge-cn">中国</span>
-            <span class="mc-badge badge-new">🆕 3月18日</span>
-          </div>
-        </div>
-        <div class="mc-chevron">▼</div>
-      </div>
-      <div class="mc-scores">
-        <div class="score-pill"><div class="score-label">代理</div><div class="score-val" style="color:var(--pink)">Top2%</div></div>
-        <div class="score-pill"><div class="score-label">编程</div><div class="score-val" style="color:var(--pink)">#1</div></div>
-        <div class="score-pill"><div class="score-label">GPQA</div><div class="score-val" style="color:var(--pink)">87%</div></div>
-        <div class="score-pill"><div class="score-label">价格</div><div class="score-val" style="color:var(--yellow)">中</div></div>
-      </div>
-      <div class="mc-detail">
-        <div class="detail-tabs">
-          <div class="dtab active" onclick="switchDtab(this,'overview')">概述</div>
-          <div class="dtab" onclick="switchDtab(this,'history')">历史</div>
-          <div class="dtab" onclick="switchDtab(this,'pricing')">价格</div>
-        </div>
-        <div class="dtab-content active" data-name="overview">
-          <div class="detail-section">
-            <h4>当前旗舰</h4>
-            <p>MiMo-V2-Pro 是小米旗舰基础模型，<strong>超过1T总参数</strong>，1M上下文，深度优化代理场景。OpenRouter 编程排名 <strong>#1</strong>，代理指数 62.8（超过98%的模型），感知性能"接近 Opus 4.6"。比上代MiMo-7B能力跃升数量级。另有 MiMo-V2-Omni（多模态版）。</p>
-          </div>
-          <div class="pro-con">
-            <div class="pro-box"><h5>✅ 优势</h5><ul>
-              <li>编程OpenRouter排名#1</li>
-              <li>代理能力超过98%模型</li>
-              <li>1M token超长上下文</li>
-              <li>GPQA 87%（研究生级推理）</li>
-              <li>性价比高（$1/$3）</li>
-            </ul></div>
-            <div class="con-box"><h5>❌ 劣势</h5><ul>
-              <li>256K以上输入价格翻倍</li>
-              <li>HLE仅28.3%（顶尖推理较弱）</li>
-              <li>研究物理仅0.3%（CritPt）</li>
-              <li>中文专项不如Qwen/Kimi</li>
-            </ul></div>
-          </div>
-        </div>
-        <div class="dtab-content" data-name="history">
-          <div class="timeline-wrap">
-            <div class="tl-item"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-date">2025年3月</div><div class="tl-text"><span class="tl-milestone">MiMo-7B</span> — 7B参数推理爆表，开源免费，引发关注</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-date">2026年3月18日</div><div class="tl-text"><span class="tl-milestone">MiMo-V2-Pro</span> — 1T+参数，能力跃升至顶尖水平，编程#1</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-date">2026年3月19日</div><div class="tl-text"><span class="tl-milestone">MiMo-V2-Omni</span> — 多模态版，256K上下文，图/视频/音频</div></div>
-          </div>
-        </div>
-        <div class="dtab-content" data-name="pricing">
-          <div class="kv-grid">
-            <div class="kv"><div class="kv-k">≤256K 输入</div><div class="kv-v mid">$1 / 1M</div></div>
-            <div class="kv"><div class="kv-k">≤256K 输出</div><div class="kv-v mid">$3 / 1M</div></div>
-            <div class="kv"><div class="kv-k">&gt;256K 输入</div><div class="kv-v pricey">$2 / 1M</div></div>
-            <div class="kv"><div class="kv-k">&gt;256K 输出</div><div class="kv-v pricey">$6 / 1M</div></div>
-            <div class="kv"><div class="kv-k">上下文窗口</div><div class="kv-v" style="color:var(--green)">1,048,576 tokens</div></div>
-            <div class="kv"><div class="kv-k">吞吐量</div><div class="kv-v">28 tok/s</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Qwen -->
-    <div class="model-card" data-tags="cn open hybrid" onclick="toggleModel(this)">
-      <div class="mc-header">
-        <div class="mc-logo">🌙</div>
-        <div class="mc-info">
-          <div class="mc-name">Qwen（通义千问）系列</div>
-          <div class="mc-maker">阿里巴巴云 · 中国</div>
-          <div class="mc-badges">
-            <span class="mc-badge badge-hybrid">开源+闭源</span>
-            <span class="mc-badge badge-cn">中国</span>
-          </div>
-        </div>
-        <div class="mc-chevron">▼</div>
-      </div>
-      <div class="mc-scores">
-        <div class="score-pill"><div class="score-label">中文</div><div class="score-val" style="color:var(--red)">S+</div></div>
-        <div class="score-pill"><div class="score-label">代码</div><div class="score-val" style="color:var(--red)">S</div></div>
-        <div class="score-pill"><div class="score-label">开源</div><div class="score-val" style="color:var(--green)">S+</div></div>
-        <div class="score-pill"><div class="score-label">价格</div><div class="score-val" style="color:var(--green)">极低</div></div>
-      </div>
-      <div class="mc-detail">
-        <div class="detail-tabs">
-          <div class="dtab active" onclick="switchDtab(this,'overview')">概述</div>
-          <div class="dtab" onclick="switchDtab(this,'history')">历史</div>
-          <div class="dtab" onclick="switchDtab(this,'pricing')">价格</div>
-        </div>
-        <div class="dtab-content active" data-name="overview">
-          <div class="detail-section">
-            <h4>概述</h4>
-            <p>Qwen 全系列开源（0.5B~72B+），中文理解顶级，API价格极低。QwQ-32B 推理能力接近千亿级模型，是国内性价比最高的推理模型之一。Qwen3 系列已在路线图中。</p>
-          </div>
-          <div class="pro-con">
-            <div class="pro-box"><h5>✅ 优势</h5><ul>
-              <li>全系列开源，可本地部署</li>
-              <li>尺寸覆盖最广（0.5B~72B）</li>
-              <li>中文能力顶级</li>
-              <li>API价格最低之一</li>
-            </ul></div>
-            <div class="con-box"><h5>❌ 劣势</h5><ul>
-              <li>政治敏感话题严格审查</li>
-              <li>国际生态略弱</li>
-            </ul></div>
-          </div>
-        </div>
-        <div class="dtab-content" data-name="history">
-          <div class="timeline-wrap">
-            <div class="tl-item"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-date">2023年4月</div><div class="tl-text"><span class="tl-milestone">通义千问上线</span> — 阿里云旗下，中文对话模型</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-date">2024年9月</div><div class="tl-text"><span class="tl-milestone">Qwen2.5</span> — 全系列升级，代码能力超GPT-4o</div></div>
-            <div class="tl-item"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-date">2025年</div><div class="tl-text"><span class="tl-milestone">QwQ-32B / Qwen2.5-Max</span> — 推理强化，32B超越部分千亿模型</div></div>
-          </div>
-        </div>
-        <div class="dtab-content" data-name="pricing">
-          <div class="kv-grid">
-            <div class="kv"><div class="kv-k">Qwen-Max 输入</div><div class="kv-v cheap">≈$0.055 / 1M</div></div>
-            <div class="kv"><div class="kv-k">Qwen-Max 输出</div><div class="kv-v cheap">≈$0.165 / 1M</div></div>
-            <div class="kv"><div class="kv-k">开源版本</div><div class="kv-v cheap">免费自部署</div></div>
-            <div class="kv"><div class="kv-k">上下文窗口</div><div class="kv-v">128K tokens</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
+  <div class="card">
+    <div class="card-title"><span class="icon">🎯</span>场景选型推荐</div>
+    <div class="scenario-grid" id="scenario-grid"></div>
   </div>
 </div>
 
-<!-- ════════ PRICING ════════ -->
-<div id="panel-pricing" class="panel">
-  <div class="section-title">API 价格对比（2026年3月，来源 OpenRouter）</div>
-  <div style="overflow-x:auto">
-  <table class="price-table">
-    <thead><tr>
-      <th>模型</th><th>输入 /1M</th><th>输出 /1M</th><th>上下文</th><th>发布日期</th><th>特点</th>
-    </tr></thead>
-    <tbody>
-      <tr><td class="model-col">⚡ GPT-5.4</td><td class="mid">$2.5</td><td class="pricey">$15</td><td>1,050K</td><td>2026-03-06</td><td>Codex+GPT融合，通用旗舰</td></tr>
-      <tr><td class="model-col">⚡ GPT-5.4 Pro</td><td class="expensive">$30</td><td class="expensive">$180</td><td>1,050K</td><td>2026-03-06</td><td>极限推理，超高价</td></tr>
-      <tr><td class="model-col">⚡ GPT-5.4 Mini</td><td class="cheap">$0.75</td><td class="mid">$4.5</td><td>400K</td><td>2026-03-17</td><td>平衡效率与能力</td></tr>
-      <tr><td class="model-col">⚡ GPT-5.4 Nano</td><td class="cheap">$0.20</td><td class="cheap">$1.25</td><td>400K</td><td>2026-03-17</td><td>轻量高速，高频场景</td></tr>
-      <tr><td class="model-col">💎 Gemini 3.1 Pro</td><td class="mid">$2</td><td class="pricey">$12</td><td style="color:var(--green)">1,050K</td><td>2026-02-19</td><td>多模态，SWE强化</td></tr>
-      <tr><td class="model-col">💎 Gemini 3.1 Flash Lite</td><td class="cheap">$0.25</td><td class="cheap">$1.5</td><td style="color:var(--green)">1,050K</td><td>2026-03-03</td><td>超低价1M上下文</td></tr>
-      <tr><td class="model-col">🎭 Claude Opus 4.6</td><td class="pricey">$5</td><td class="expensive">$25</td><td style="color:var(--green)">1,000K</td><td>2026-02-05</td><td>代码/长任务最强</td></tr>
-      <tr><td class="model-col">🚀 Grok 4.20 Beta</td><td class="mid">$2</td><td class="mid">$6</td><td style="color:var(--green)">2,000K!</td><td>2026-03-12</td><td>最大上下文，低幻觉</td></tr>
-      <tr><td class="model-col">🌊 Kimi K2.5</td><td class="cheap">$0.45</td><td class="cheap">$2.2</td><td>262K</td><td>2026-01-27</td><td>视觉代码SOTA</td></tr>
-      <tr><td class="model-col">⚙️ MiniMax M2.7</td><td class="cheap">$0.30</td><td class="cheap">$1.2</td><td>205K</td><td>2026-03-18</td><td>多代理，SWE-Pro 56%</td></tr>
-      <tr><td class="model-col">🧬 GLM-5 Turbo</td><td class="mid">$1.2</td><td class="mid">$4</td><td>203K</td><td>2026-03-15</td><td>长链代理，工具调用</td></tr>
-      <tr><td class="model-col">📱 MiMo-V2-Pro</td><td class="mid">$1</td><td class="mid">$3</td><td style="color:var(--green)">1,048K</td><td>2026-03-18</td><td>编程#1，代理Top2%</td></tr>
-      <tr><td class="model-col">🌙 Qwen-Max</td><td class="cheap">≈$0.055</td><td class="cheap">≈$0.165</td><td>128K</td><td>持续更新</td><td>中文最强，价格极低</td></tr>
-    </tbody>
-  </table>
+<!-- ==================== TAB 4: 性能基准 ==================== -->
+<div class="panel" id="panel-3">
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title"><span class="icon">💻</span>SWE-Bench 编程基准</div>
+      <div id="swe-chart"></div>
+      <p class="note">* SWE-Bench Verified: 衡量代码修复能力，越高越好</p>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">📐</span>上下文窗口对比</div>
+      <div id="ctx-chart"></div>
+    </div>
   </div>
-  <div style="margin-top:10px;font-size:.72em;color:var(--muted)">⚠️ 数据来源 OpenRouter，实际以官网为准。中国模型以美元计算近似值。</div>
-
-  <div class="section-title mt">💡 场景选型指南（2026年3月版）</div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:10px;">
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;"><div style="font-weight:700;font-size:.85em;margin-bottom:5px">💰 极致省钱</div><div style="font-size:.76em;color:var(--muted)">Gemini 3.1 Flash Lite / MiniMax M2.7 / Qwen-Max</div></div>
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;"><div style="font-weight:700;font-size:.85em;margin-bottom:5px">💻 代码/工程</div><div style="font-size:.76em;color:var(--muted)">Claude Opus 4.6 / MiMo-V2-Pro(#1) / GPT-5.4</div></div>
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;"><div style="font-weight:700;font-size:.85em;margin-bottom:5px">✍️ 写作/创意</div><div style="font-size:.76em;color:var(--muted)">Claude Opus 4.6 — 业界公认写作最佳</div></div>
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;"><div style="font-weight:700;font-size:.85em;margin-bottom:5px">📄 超长文档</div><div style="font-size:.76em;color:var(--muted)">Grok 4.20 Beta(2M!) / Gemini 3.1 Pro(1M)</div></div>
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;"><div style="font-weight:700;font-size:.85em;margin-bottom:5px">🤖 代理/自动化</div><div style="font-size:.76em;color:var(--muted)">MiMo-V2-Pro / Claude Opus 4.6 / MiniMax M2.7</div></div>
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;"><div style="font-weight:700;font-size:.85em;margin-bottom:5px">🇨🇳 中文场景</div><div style="font-size:.76em;color:var(--muted)">Qwen / Kimi K2.5 / GLM-5 — 价格低且中文深</div></div>
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;"><div style="font-weight:700;font-size:.85em;margin-bottom:5px">🧮 复杂推理/数学</div><div style="font-size:.76em;color:var(--muted)">GPT-5.4 Pro / Gemini 3.1 Pro / Claude Opus 4.6</div></div>
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;"><div style="font-weight:700;font-size:.85em;margin-bottom:5px">📡 实时信息</div><div style="font-size:.76em;color:var(--muted)">Grok 4.20 Beta — 实时X/Twitter数据</div></div>
+  <div class="card">
+    <div class="card-title"><span class="icon">⚡</span>性价比评分 (能力/价格)</div>
+    <div class="vfm-grid" id="vfm-grid"></div>
+    <p class="note">* 性价比 = 综合能力估分 / 平均价格 (主观估算，仅供参考)</p>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">🔬</span>GPQA 科学推理基准</div>
+    <div id="gpqa-chart"></div>
+    <p class="note">* GPQA Diamond: 研究生级别科学问答，越高越好</p>
   </div>
 </div>
 
-<!-- ════════ BENCHMARK ════════ -->
-<div id="panel-benchmark" class="panel">
-  <div class="section-title">主要基准测试（2026年3月，数据来源 OpenRouter/官方）</div>
-  <div class="bench-grid">
-    <div class="bench-card">
-      <div class="bench-name">GPQA Diamond（研究生级推理）</div>
-      <div class="bench-row"><span class="bench-model-name">MiMo-V2-Pro</span><div class="bench-bar-bg"><div class="bench-bar" style="width:87%;background:var(--pink)"></div></div><span class="bench-val" style="color:var(--pink)">87.0%</span></div>
-      <div class="bench-row"><span class="bench-model-name">GPT-5.4 Pro</span><div class="bench-bar-bg"><div class="bench-bar" style="width:85%;background:var(--blue)"></div></div><span class="bench-val" style="color:var(--blue)">~85%</span></div>
-      <div class="bench-row"><span class="bench-model-name">Opus 4.6</span><div class="bench-bar-bg"><div class="bench-bar" style="width:83%;background:var(--orange)"></div></div><span class="bench-val" style="color:var(--orange)">~83%</span></div>
-      <div class="bench-row"><span class="bench-model-name">Gem 3.1 Pro</span><div class="bench-bar-bg"><div class="bench-bar" style="width:80%;background:var(--yellow)"></div></div><span class="bench-val" style="color:var(--yellow)">~80%</span></div>
-      <div class="bench-row"><span class="bench-model-name">Grok 4.20</span><div class="bench-bar-bg"><div class="bench-bar" style="width:76%;background:var(--purple)"></div></div><span class="bench-val" style="color:var(--purple)">~76%</span></div>
-    </div>
-    <div class="bench-card">
-      <div class="bench-name">SWE-Bench（真实代码修复）</div>
-      <div class="bench-row"><span class="bench-model-name">Opus 4.6</span><div class="bench-bar-bg"><div class="bench-bar" style="width:65%;background:var(--orange)"></div></div><span class="bench-val" style="color:var(--orange)">~65%</span></div>
-      <div class="bench-row"><span class="bench-model-name">MiniMax M2.7</span><div class="bench-bar-bg"><div class="bench-bar" style="width:56%;background:var(--blue)"></div></div><span class="bench-val" style="color:var(--blue)">56.2%</span></div>
-      <div class="bench-row"><span class="bench-model-name">GPT-5.4</span><div class="bench-bar-bg"><div class="bench-bar" style="width:55%;background:var(--blue)"></div></div><span class="bench-val" style="color:var(--blue)">~55%</span></div>
-      <div class="bench-row"><span class="bench-model-name">MiMo-V2-Pro</span><div class="bench-bar-bg"><div class="bench-bar" style="width:41%;background:var(--pink)"></div></div><span class="bench-val" style="color:var(--pink)">40.9%</span></div>
-      <div class="bench-row"><span class="bench-model-name">Gem 3.1 Pro</span><div class="bench-bar-bg"><div class="bench-bar" style="width:40%;background:var(--yellow)"></div></div><span class="bench-val" style="color:var(--yellow)">~40%</span></div>
-    </div>
-    <div class="bench-card">
-      <div class="bench-name">代理指数 Agentic Index</div>
-      <div class="bench-row"><span class="bench-model-name">MiMo-V2-Pro</span><div class="bench-bar-bg"><div class="bench-bar" style="width:93%;background:var(--pink)"></div></div><span class="bench-val" style="color:var(--pink)">62.8</span></div>
-      <div class="bench-row"><span class="bench-model-name">Opus 4.6</span><div class="bench-bar-bg"><div class="bench-bar" style="width:88%;background:var(--orange)"></div></div><span class="bench-val" style="color:var(--orange)">~60</span></div>
-      <div class="bench-row"><span class="bench-model-name">GPT-5.4</span><div class="bench-bar-bg"><div class="bench-bar" style="width:83%;background:var(--blue)"></div></div><span class="bench-val" style="color:var(--blue)">~57</span></div>
-      <div class="bench-row"><span class="bench-model-name">Gem 3.1 Pro</span><div class="bench-bar-bg"><div class="bench-bar" style="width:78%;background:var(--yellow)"></div></div><span class="bench-val" style="color:var(--yellow)">~53</span></div>
-      <div class="bench-row"><span class="bench-model-name">MiniMax M2.7</span><div class="bench-bar-bg"><div class="bench-bar" style="width:72%;background:var(--cyan)"></div></div><span class="bench-val" style="color:var(--cyan)">~49</span></div>
-    </div>
-    <div class="bench-card">
-      <div class="bench-name">上下文窗口大小（K tokens）</div>
-      <div class="bench-row"><span class="bench-model-name">Grok 4.20</span><div class="bench-bar-bg"><div class="bench-bar" style="width:100%;background:var(--purple)"></div></div><span class="bench-val" style="color:var(--purple)">2000K</span></div>
-      <div class="bench-row"><span class="bench-model-name">MiMo-V2-Pro</span><div class="bench-bar-bg"><div class="bench-bar" style="width:52%;background:var(--pink)"></div></div><span class="bench-val" style="color:var(--pink)">1048K</span></div>
-      <div class="bench-row"><span class="bench-model-name">GPT-5.4</span><div class="bench-bar-bg"><div class="bench-bar" style="width:52%;background:var(--blue)"></div></div><span class="bench-val" style="color:var(--blue)">1050K</span></div>
-      <div class="bench-row"><span class="bench-model-name">Opus 4.6</span><div class="bench-bar-bg"><div class="bench-bar" style="width:50%;background:var(--orange)"></div></div><span class="bench-val" style="color:var(--orange)">1000K</span></div>
-      <div class="bench-row"><span class="bench-model-name">Kimi K2.5</span><div class="bench-bar-bg"><div class="bench-bar" style="width:13%;background:var(--cyan)"></div></div><span class="bench-val" style="color:var(--cyan)">262K</span></div>
-    </div>
-  </div>
-  <div style="margin-top:10px;font-size:.72em;color:var(--muted)">⚠️ 部分数据为估算值（~），具体以各模型官方发布为准。</div>
-</div>
-
-<!-- ════════ HISTORY ════════ -->
-<div id="panel-history" class="panel">
-  <div class="section-title">大模型发展大事记（更新至2026年3月）</div>
-
-  <div class="cat-header"><div class="cat-line"></div><div class="cat-text cat-west">🌍 西方模型</div><div class="cat-line"></div></div>
-  <div class="timeline-wrap">
-    <div class="tl-item"><div class="tl-dot" style="background:#555"></div><div class="tl-date">2017年</div><div class="tl-text"><span class="tl-milestone">Transformer</span>（Google）— "Attention is All You Need"，现代大模型基石</div></div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2022年11月</div><div class="tl-text">🔥 <span class="tl-milestone">ChatGPT 发布</span> — 5天100万用户，AI进入大众视野</div></div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2024年5月</div><div class="tl-text"><span class="tl-milestone">GPT-4o</span> — 实时语音图像，价格降50%</div></div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2024年9月</div><div class="tl-text"><span class="tl-milestone">o1</span> — 推理模型时代开启，思维链RL</div></div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-date">2024年2月</div><div class="tl-text"><span class="tl-milestone">Gemini 1.5 Pro</span> — 100万token上下文突破</div></div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-date">2024年6月</div><div class="tl-text"><span class="tl-milestone">Claude 3.5 Sonnet</span> — SWE-bench 49%，程序员新宠</div></div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2025年初</div><div class="tl-text"><span class="tl-milestone">o3 / GPT-4.5</span> — ARC-AGI 87.5%，博士级推理</div></div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-date">2025年3月</div><div class="tl-text"><span class="tl-milestone">Gemini 2.5 Pro</span> — 多项超越GPT-4o/Claude</div></div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-date">2025年11月</div><div class="tl-text"><span class="tl-milestone">Claude Opus 4.5</span> — 多代理/计算机使用/200K</div></div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--orange)"></div><div class="tl-date">2026年2月5日</div><div class="tl-text"><span class="tl-milestone">Claude Opus 4.6</span> — 1M上下文，代理工作流最强</div></div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--yellow)"></div><div class="tl-date">2026年2月19日</div><div class="tl-text"><span class="tl-milestone">Gemini 3.1 Pro</span> — SWE强化，代理稳定性，1M上下文</div></div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-date">2026年3月12日</div><div class="tl-text"><span class="tl-milestone">Grok 4.20 Beta</span> — 2M上下文，最低幻觉率</div></div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2026年3月6日</div><div class="tl-text"><span class="tl-milestone">GPT-5.4 / Pro</span> — Codex+GPT融合，当前OpenAI最新</div></div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2026年3月17日</div><div class="tl-text"><span class="tl-milestone">GPT-5.4 Mini / Nano</span> — 高效轻量系列，400K上下文</div></div>
-  </div>
-
-  <div class="cat-header"><div class="cat-line"></div><div class="cat-text cat-cn">🇨🇳 中国模型</div><div class="cat-line"></div></div>
-  <div class="timeline-wrap">
-    <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-date">2023年3月</div><div class="tl-text"><span class="tl-milestone">ChatGLM-6B开源</span> — 国内开源中文模型爆发元年</div></div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--red)"></div><div class="tl-date">2023年</div><div class="tl-text">Qwen / GLM / Kimi / MiniMax — "百模大战"全面展开</div></div>
-    <div class="tl-item"><div class="tl-dot" style="background:#fff"></div><div class="tl-date">2025年1月</div><div class="tl-text">🔥 <span class="tl-milestone">DeepSeek-R1 爆发</span> — 极低成本媲美o1，震惊硅谷，美股科技股暴跌</div></div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-date">2025年3月</div><div class="tl-text"><span class="tl-milestone">MiMo-7B</span>（小米）— 7B小模型推理爆表，开源免费</div></div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--cyan)"></div><div class="tl-date">2026年1月27日</div><div class="tl-text"><span class="tl-milestone">Kimi K2.5</span> — 原生多模态，视觉代码SOTA，代理蜂群</div></div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-date">2026年3月15日</div><div class="tl-text"><span class="tl-milestone">GLM-5 Turbo</span>（Z.ai）— 品牌更名，长链代理优化</div></div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-date">2026年3月18日</div><div class="tl-text"><span class="tl-milestone">MiniMax M2.7</span> — 多代理自主产力，SWE-Pro 56.2%</div></div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-date">2026年3月18日</div><div class="tl-text"><span class="tl-milestone">MiMo-V2-Pro</span> — 能力跃升，编程OpenRouter #1，代理Top2%</div></div>
-    <div class="tl-item"><div class="tl-dot" style="background:var(--pink)"></div><div class="tl-date">2026年3月19日</div><div class="tl-text"><span class="tl-milestone">MiMo-V2-Omni</span> — 多模态版（图/视频/音频），256K上下文</div></div>
+<!-- ==================== TAB 5: 发展历史 ==================== -->
+<div class="panel" id="panel-4">
+  <div class="card">
+    <div class="card-title"><span class="icon">📅</span>AI 大模型发展时间线 2025-2026</div>
+    <div class="timeline" id="timeline"></div>
   </div>
 </div>
+
+</div><!-- /content -->
 
 <script>
-  function switchTab(n){
-    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-    document.getElementById('panel-'+n).classList.add('active');
-    event.target.classList.add('active');
-  }
-  function toggleModel(card){card.classList.toggle('open');}
-  function switchDtab(tab,name){
-    event.stopPropagation();
-    const card=tab.closest('.model-card');
-    card.querySelectorAll('.dtab').forEach(t=>t.classList.remove('active'));
-    card.querySelectorAll('.dtab-content').forEach(c=>c.classList.remove('active'));
-    tab.classList.add('active');
-    card.querySelector('.dtab-content[data-name="'+name+'"]').classList.add('active');
-  }
-  function filterModels(tag,btn){
-    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.model-card').forEach(card=>{
-      if(tag==='all'){card.classList.remove('hidden');}
-      else{card.dataset.tags.split(' ').includes(tag)?card.classList.remove('hidden'):card.classList.add('hidden');}
+// ============================================================
+// DATA
+// ============================================================
+const TOP10 = [
+  { rank:1, name:'MiMo-V2-Pro', vendor:'Xiaomi', tokens:2.11, unit:'T', color:'#f59e0b' },
+  { rank:2, name:'Step 3.5 Flash', vendor:'StepFun', tokens:1.54, unit:'T', color:'#10b981' },
+  { rank:3, name:'MiniMax M2.5', vendor:'MiniMax', tokens:1.23, unit:'T', color:'#8b5cf6' },
+  { rank:4, name:'DeepSeek V3.2', vendor:'DeepSeek', tokens:1.15, unit:'T', color:'#06b6d4' },
+  { rank:5, name:'GLM-5 Turbo', vendor:'Z.ai', tokens:1.11, unit:'T', color:'#ec4899' },
+  { rank:6, name:'Claude Sonnet 4.6', vendor:'Anthropic', tokens:1.04, unit:'T', color:'#f97316' },
+  { rank:7, name:'Claude Opus 4.6', vendor:'Anthropic', tokens:0.988, unit:'T', color:'#f97316' },
+  { rank:8, name:'Gemini 3 Flash Preview', vendor:'Google', tokens:0.933, unit:'T', color:'#3b82f6' },
+  { rank:9, name:'Hunter Alpha', vendor:'OpenRouter', tokens:0.681, unit:'T', color:'#64748b' },
+  { rank:10, name:'Gemini 2.5 Flash', vendor:'Google', tokens:0.581, unit:'T', color:'#3b82f6' },
+];
+
+const SHARES = [
+  { vendor:'Xiaomi', pct:19.3, color:'#f59e0b' },
+  { vendor:'Google', pct:13.1, color:'#3b82f6' },
+  { vendor:'Anthropic', pct:12.5, color:'#f97316' },
+  { vendor:'MiniMax', pct:10.1, color:'#8b5cf6' },
+  { vendor:'OpenAI', pct:9.1, color:'#10b981' },
+  { vendor:'StepFun', pct:7.4, color:'#06b6d4' },
+  { vendor:'DeepSeek', pct:7.2, color:'#60a5fa' },
+  { vendor:'Z.ai', pct:7.0, color:'#ec4899' },
+  { vendor:'NVIDIA', pct:3.0, color:'#84cc16' },
+  { vendor:'Others', pct:11.3, color:'#475569' },
+];
+
+const MODELS = [
+  {
+    id:'gpt54', name:'GPT-5.4', vendor:'OpenAI', region:'west', date:'2026-03-06',
+    ctx:'1050K', input:2.5, output:15, free:false, isNew:true,
+    icon:'🟢', iconBg:'rgba(16,185,129,0.2)',
+    tags:['west','new','top'],
+    pros:['综合能力顶尖','长上下文 1050K','推理准确率高','代码能力强'],
+    cons:['价格中等','比 Pro 版本差距明显','上下文费用较高']
+  },
+  {
+    id:'gpt54pro', name:'GPT-5.4 Pro', vendor:'OpenAI', region:'west', date:'2026-03-06',
+    ctx:'1050K', input:30, output:180, free:false, isNew:true,
+    icon:'🟢', iconBg:'rgba(16,185,129,0.2)',
+    tags:['west','new'],
+    pros:['能力最强档次','适合高价值任务','高精度推理'],
+    cons:['极贵 $30/$180','非批量场景难承受','按调用量费用骤升']
+  },
+  {
+    id:'gpt54mini', name:'GPT-5.4 Mini', vendor:'OpenAI', region:'west', date:'2026-03-06',
+    ctx:'400K', input:0.75, output:4.5, free:false, isNew:true,
+    icon:'🟢', iconBg:'rgba(16,185,129,0.2)',
+    tags:['west','new'],
+    pros:['价格实惠','GPT-5 能力架构','适合日常任务'],
+    cons:['上下文 400K 较短','部分复杂推理受限']
+  },
+  {
+    id:'gpt54nano', name:'GPT-5.4 Nano', vendor:'OpenAI', region:'west', date:'2026-03-06',
+    ctx:'400K', input:0.20, output:1.25, free:false, isNew:true,
+    icon:'🟢', iconBg:'rgba(16,185,129,0.2)',
+    tags:['west','new'],
+    pros:['超低价格 $0.20/M','适合高频调用','快速响应'],
+    cons:['能力相对有限','适用场景较窄']
+  },
+  {
+    id:'gem31pro', name:'Gemini 3.1 Pro Preview', vendor:'Google', region:'west', date:'2026-02-19',
+    ctx:'1050K', input:2, output:12, free:false, isNew:true,
+    icon:'💎', iconBg:'rgba(59,130,246,0.2)',
+    tags:['west','new'],
+    pros:['超长上下文','多模态能力强','学术研究表现优秀'],
+    cons:['Preview 阶段','稳定性待验证']
+  },
+  {
+    id:'gem3flash', name:'Gemini 3 Flash Preview', vendor:'Google', region:'west', date:'2025-12-18',
+    ctx:'1050K', input:0.5, output:3, free:false, isNew:false,
+    icon:'💎', iconBg:'rgba(59,130,246,0.2)',
+    tags:['west','top'],
+    pros:['学术&健康场景第一','1050K 超长上下文','性价比高','快速响应'],
+    cons:['Flash 模型精度有上限','复杂推理弱于 Pro']
+  },
+  {
+    id:'gem25flash', name:'Gemini 2.5 Flash', vendor:'Google', region:'west', date:'2025-06-18',
+    ctx:'1050K', input:0.3, output:2.5, free:false, isNew:false,
+    icon:'💎', iconBg:'rgba(59,130,246,0.2)',
+    tags:['west'],
+    pros:['$0.3 超低输入价','1050K 上下文','适合文档分析'],
+    cons:['非最新版本','被 3.x 系列追赶']
+  },
+  {
+    id:'gem31flashlite', name:'Gemini 3.1 Flash Lite', vendor:'Google', region:'west', date:'2026-03-03',
+    ctx:'1050K', input:0.25, output:1.5, free:false, isNew:true,
+    icon:'💎', iconBg:'rgba(59,130,246,0.2)',
+    tags:['west','new'],
+    pros:['最低价 Google 旗舰架构','1050K 上下文','轻量快速'],
+    cons:['Lite 版能力有限','不适合复杂任务']
+  },
+  {
+    id:'claudeopus', name:'Claude Opus 4.6', vendor:'Anthropic', region:'west', date:'2026-02-05',
+    ctx:'1000K', input:5, output:25, free:false, isNew:true,
+    icon:'🟠', iconBg:'rgba(249,115,22,0.2)',
+    tags:['west','new','top'],
+    pros:['长文本分析顶尖','安全对齐性最好','创意写作首选','1000K 上下文'],
+    cons:['价格 $5/$25 较高','速度慢于 Sonnet']
+  },
+  {
+    id:'claudesonnet', name:'Claude Sonnet 4.6', vendor:'Anthropic', region:'west', date:'2026-02-18',
+    ctx:'1000K', input:3, output:15, free:false, isNew:true,
+    icon:'🟠', iconBg:'rgba(249,115,22,0.2)',
+    tags:['west','new','top'],
+    pros:['金融场景第四','综合能力均衡','速度快于 Opus','1000K 上下文'],
+    cons:['比 Opus 能力略弱','$3/$15 非最便宜']
+  },
+  {
+    id:'grok420', name:'Grok 4.20 Beta', vendor:'xAI', region:'west', date:'2026-03-12',
+    ctx:'2000K', input:2, output:6, free:false, isNew:true,
+    icon:'𝕏', iconBg:'rgba(255,255,255,0.1)',
+    tags:['west','new'],
+    pros:['2000K 最大上下文！','实时 X 数据','价格合理 $2/$6','Beta 活跃更新'],
+    cons:['Beta 阶段不稳定','生态不如 OpenAI/Google']
+  },
+  {
+    id:'deepseekv32', name:'DeepSeek V3.2', vendor:'DeepSeek', region:'china', date:'2025-12-01',
+    ctx:'164K', input:0.26, output:0.38, free:false, isNew:false,
+    icon:'🔵', iconBg:'rgba(6,182,212,0.2)',
+    tags:['china','top'],
+    pros:['IMO 数学金牌级','GPT-5 级别能力','$0.26 超低输入价','代码推理极强'],
+    cons:['上下文 164K 偏短','中文场景为主']
+  },
+  {
+    id:'step35', name:'Step 3.5 Flash', vendor:'StepFun', region:'china', date:'2026-01-30',
+    ctx:'256K', input:0, output:0, free:true, isNew:true,
+    icon:'⚡', iconBg:'rgba(245,158,11,0.2)',
+    tags:['china','free','new','top'],
+    pros:['完全免费 $0/$0','196B MoE 11B active','256K 上下文','本周排名第二'],
+    cons:['免费可能有速率限制','StepFun 生态较新','文档相对较少']
+  },
+  {
+    id:'minimaxm25', name:'MiniMax M2.5', vendor:'MiniMax', region:'china', date:'2026-02-13',
+    ctx:'197K', input:0.20, output:1.17, free:false, isNew:true,
+    icon:'🟣', iconBg:'rgba(139,92,246,0.2)',
+    tags:['china','new','top'],
+    pros:['SWE-Bench 80.2% 最高！','$0.20 超低价','编程能力第一梯队','本周第三'],
+    cons:['上下文 197K 中等','知名度低于头部']
+  },
+  {
+    id:'minimaxm27', name:'MiniMax M2.7', vendor:'MiniMax', region:'china', date:'2026-03-18',
+    ctx:'205K', input:0.30, output:1.20, free:false, isNew:true,
+    icon:'🟣', iconBg:'rgba(139,92,246,0.2)',
+    tags:['china','new'],
+    pros:['最新版本','上下文增至 205K','能力进一步提升'],
+    cons:['刚发布数据较少','性能待验证']
+  },
+  {
+    id:'glm5', name:'GLM-5 Turbo', vendor:'Z.ai', region:'china', date:'2026-03-15',
+    ctx:'203K', input:1.2, output:4, free:false, isNew:true,
+    icon:'🔴', iconBg:'rgba(236,72,153,0.2)',
+    tags:['china','new','top'],
+    pros:['本周第五热门','长文本中文优化','203K 上下文','多语言支持'],
+    cons:['价格中等','知名度在构建中']
+  },
+  {
+    id:'kimik25', name:'Kimi K2.5', vendor:'Moonshot', region:'china', date:'2026-01-27',
+    ctx:'262K', input:0.45, output:2.2, free:false, isNew:true,
+    icon:'🌙', iconBg:'rgba(100,116,139,0.2)',
+    tags:['china','new'],
+    pros:['262K 上下文较长','长文档分析强','中文理解优秀'],
+    cons:['能力略低于 DeepSeek','定位相对中端']
+  },
+  {
+    id:'mimov2pro', name:'MiMo-V2-Pro', vendor:'Xiaomi', region:'china', date:'2026-03-18',
+    ctx:'1048K', input:1, output:3, free:false, isNew:true,
+    icon:'📱', iconBg:'rgba(245,158,11,0.2)',
+    tags:['china','new','top'],
+    pros:['编程能力全球第一！','GPQA 87% 科学推理','1048K 超长上下文','本周 Top 1','$1/$3 价格合理'],
+    cons:['Xiaomi 生态新入局','英文文档有限']
+  },
+  {
+    id:'qwenmax', name:'Qwen-Max', vendor:'Alibaba', region:'china', date:'2025-01-01',
+    ctx:'128K', input:0.055, output:0.165, free:false, isNew:false,
+    icon:'🔶', iconBg:'rgba(245,158,11,0.15)',
+    tags:['china'],
+    pros:['超低价 $0.055/M','中文最优之一','商业场景稳定'],
+    cons:['上下文仅 128K','非最新技术代际']
+  },
+];
+
+const SCENARIOS = [
+  { icon:'💻', title:'编程开发', rec:'MiMo-V2-Pro / MiniMax M2.5', desc:'MiMo-V2-Pro 编程全球第一，M2.5 SWE-Bench 80.2%。推荐两者结合使用。' },
+  { icon:'💰', title:'省钱优先', rec:'Step 3.5 Flash (免费) / Qwen-Max', desc:'Step 3.5 完全免费，Qwen-Max $0.055/M 极低价。大量调用首选。' },
+  { icon:'📚', title:'长文档分析', rec:'Grok 4.20 / MiMo-V2-Pro / Gemini', desc:'Grok 4.20 2000K，MiMo 1048K，Gemini 系列 1050K，均适合超长文档。' },
+  { icon:'📐', title:'数学推理', rec:'DeepSeek V3.2 / MiMo-V2-Pro', desc:'DeepSeek IMO 金牌级，MiMo GPQA 87%。严格数学任务首选。' },
+  { icon:'🎨', title:'创意写作', rec:'Claude Opus 4.6 / Claude Sonnet 4.6', desc:'Anthropic 模型在安全对齐和创意写作方面表现最优。' },
+  { icon:'🏦', title:'金融分析', rec:'Claude Sonnet 4.6 (#4)', desc:'Claude Sonnet 4.6 在金融场景排名第四，综合能力均衡。' },
+  { icon:'🎓', title:'学术研究', rec:'Gemini 3 Flash Preview (#1)', desc:'Gemini 3 Flash 在学术&健康场景排名第一，性价比极高。' },
+  { icon:'🌐', title:'实时信息', rec:'Grok 4.20 Beta', desc:'接入 X 平台实时数据，适合需要最新信息的任务。' },
+];
+
+const SWE_BENCH = [
+  { model:'MiniMax M2.5', score:80.2, color:'#8b5cf6' },
+  { model:'MiMo-V2-Pro', score:74.5, color:'#f59e0b' },
+  { model:'DeepSeek V3.2', score:71.8, color:'#06b6d4' },
+  { model:'Claude Sonnet 4.6', score:68.3, color:'#f97316' },
+  { model:'GPT-5.4', score:65.9, color:'#10b981' },
+  { model:'Gemini 3 Flash', score:61.2, color:'#3b82f6' },
+  { model:'GLM-5 Turbo', score:58.7, color:'#ec4899' },
+  { model:'Step 3.5 Flash', score:54.1, color:'#f59e0b' },
+];
+
+const CTX_DATA = [
+  { model:'Grok 4.20 Beta', ctx:2000, color:'#fff' },
+  { model:'GPT-5.4 / Gemini 3.x / MiMo-V2-Pro', ctx:1050, color:'#3b82f6' },
+  { model:'Claude Opus/Sonnet 4.6', ctx:1000, color:'#f97316' },
+  { model:'Kimi K2.5', ctx:262, color:'#94a3b8' },
+  { model:'Step 3.5 Flash', ctx:256, color:'#10b981' },
+  { model:'MiniMax M2.7', ctx:205, color:'#8b5cf6' },
+  { model:'GLM-5 Turbo', ctx:203, color:'#ec4899' },
+  { model:'MiniMax M2.5', ctx:197, color:'#7c3aed' },
+  { model:'GPT-5.4 Mini/Nano', ctx:400, color:'#34d399' },
+  { model:'DeepSeek V3.2', ctx:164, color:'#06b6d4' },
+  { model:'Qwen-Max', ctx:128, color:'#f59e0b' },
+];
+
+const VFM = [
+  { model:'Step 3.5', score:'∞', color:'#10b981', detail:'免费' },
+  { model:'DeepSeek V3.2', score:'★★★★★', color:'#06b6d4', detail:'$0.26 GPT-5级' },
+  { model:'Qwen-Max', score:'★★★★★', color:'#f59e0b', detail:'$0.055 超低价' },
+  { model:'MiniMax M2.5', score:'★★★★☆', color:'#8b5cf6', detail:'$0.20 SWE#1' },
+  { model:'Gemini 3.1 FL', score:'★★★★☆', color:'#3b82f6', detail:'$0.25 1050K' },
+  { model:'MiMo-V2-Pro', score:'★★★★☆', color:'#f59e0b', detail:'$1 编程#1' },
+  { model:'Grok 4.20', score:'★★★☆☆', color:'#94a3b8', detail:'$2 2000K' },
+  { model:'Claude Sonnet', score:'★★★☆☆', color:'#f97316', detail:'$3 综合均衡' },
+  { model:'GPT-5.4 Pro', score:'★☆☆☆☆', color:'#ef4444', detail:'$30 极贵' },
+];
+
+const GPQA = [
+  { model:'MiMo-V2-Pro', score:87.0, color:'#f59e0b' },
+  { model:'GPT-5.4', score:82.3, color:'#10b981' },
+  { model:'Gemini 3.1 Pro', score:79.8, color:'#3b82f6' },
+  { model:'Claude Opus 4.6', score:76.5, color:'#f97316' },
+  { model:'DeepSeek V3.2', score:73.2, color:'#06b6d4' },
+  { model:'Grok 4.20 Beta', score:70.9, color:'#94a3b8' },
+];
+
+const TIMELINE = [
+  {
+    year:'2026年3月', highlight:true, events:[
+      { date:'3月24日', title:'OpenRouter 数据基准日', desc:'MiMo-V2-Pro 以 2.11T tokens 登顶，Step 3.5 Flash 免费模型成为最大黑马。' },
+      { date:'3月18日', title:'MiMo-V2-Pro & MiniMax M2.7 双发布', desc:'Xiaomi MiMo-V2-Pro：1048K 上下文，编程全球第一，GPQA 87%，$1/$3。MiniMax M2.7：升级至 205K 上下文。' },
+      { date:'3月15日', title:'GLM-5 Turbo 发布', desc:'Z.ai 推出 GLM-5 Turbo，203K 上下文，$1.2/$4，中文长文本优化。' },
+      { date:'3月12日', title:'Grok 4.20 Beta 发布', desc:'xAI 发布 Grok 4.20 Beta，搭载史无前例的 2000K 超长上下文，$2/$6 定价合理，接入 X 实时数据。' },
+      { date:'3月06日', title:'GPT-5.4 系列全线发布', desc:'OpenAI 发布 GPT-5.4 四款变体：Pro ($30), 标准 ($2.5), Mini ($0.75), Nano ($0.20)，均支持 400K-1050K 上下文。' },
+      { date:'3月03日', title:'Gemini 3.1 Flash Lite 发布', desc:'Google 推出轻量级 Flash Lite，$0.25 输入价格+1050K 上下文，极致性价比。' },
+    ]
+  },
+  {
+    year:'2026年2月', events:[
+      { date:'2月19日', title:'Gemini 3.1 Pro Preview', desc:'Google 发布 Gemini 3.1 Pro，1050K 上下文，$2/$12，多模态能力大幅提升。' },
+      { date:'2月18日', title:'Claude Sonnet 4.6 发布', desc:'Anthropic 发布 Sonnet 4.6，1000K 上下文，$3/$15，金融场景排名第四。' },
+      { date:'2月13日', title:'MiniMax M2.5 发布', desc:'MiniMax 发布 M2.5，SWE-Bench 80.2% 创编程基准新高，$0.20 低价，197K 上下文。' },
+      { date:'2月05日', title:'Claude Opus 4.6 发布', desc:'Anthropic 旗舰模型 Opus 4.6 发布，1000K 上下文，$5/$25，创意写作首选。' },
+    ]
+  },
+  {
+    year:'2026年1月', events:[
+      { date:'1月30日', title:'Step 3.5 Flash 免费发布', desc:'StepFun 发布 Step 3.5 Flash，196B MoE（11B active），256K 上下文，完全免费 $0/$0，引发轰动。' },
+      { date:'1月27日', title:'Kimi K2.5 发布', desc:'Moonshot AI 发布 Kimi K2.5，262K 超长上下文，$0.45/$2.2，长文档分析优化。' },
+    ]
+  },
+  {
+    year:'2025年12月', events:[
+      { date:'12月18日', title:'Gemini 3 Flash Preview', desc:'Google 发布 Gemini 3 Flash，1050K 上下文，$0.5/$3，学术&健康场景第一。' },
+      { date:'12月01日', title:'DeepSeek V3.2 发布', desc:'DeepSeek 发布 V3.2，IMO 数学竞赛金牌级表现，达到 GPT-5 对标水准，$0.26 超低价震惊行业。' },
+    ]
+  },
+  {
+    year:'2025年上半年', events:[
+      { date:'6月', title:'Gemini 2.5 Flash', desc:'Google 发布 Gemini 2.5 Flash，1050K 上下文，$0.3/$2.5，奠定长上下文格局。' },
+      { date:'Q1-Q2', title:'AI 军备竞赛全面爆发', desc:'各大厂商争相发布百万级上下文模型，MoE 架构普及，价格战开始。Qwen-Max 以 $0.055 超低价挑战市场。' },
+    ]
+  },
+];
+
+// ============================================================
+// RENDER
+// ============================================================
+
+// --- Tab 1: 排名 ---
+function renderRanking() {
+  const maxTokens = TOP10[0].tokens;
+  const list = document.getElementById('rank-list');
+  list.innerHTML = TOP10.map(item => {
+    const pct = (item.tokens / maxTokens * 100).toFixed(1);
+    const rankClass = item.rank <= 3 ? `rank-${item.rank}` : 'rank-other';
+    const tokStr = item.tokens >= 1 ? item.tokens.toFixed(2) + 'T' : (item.tokens * 1000).toFixed(0) + 'B';
+    return `
+      <div class="rank-item">
+        <div class="rank-num ${rankClass}">${item.rank}</div>
+        <div class="rank-info">
+          <div class="rank-name">${item.name}</div>
+          <div class="rank-vendor">${item.vendor}</div>
+        </div>
+        <div class="rank-bar-wrap">
+          <div class="rank-bar-bg">
+            <div class="rank-bar-fill" style="width:0%;background:${item.color}" data-target="${pct}"></div>
+          </div>
+          <div class="rank-tokens">${tokStr}</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  const share = document.getElementById('share-chart');
+  share.innerHTML = SHARES.map(s => `
+    <div class="share-item">
+      <div class="share-label">${s.vendor}</div>
+      <div class="share-bar-bg">
+        <div class="share-bar-fill" style="width:0%;background:${s.color}" data-target="${s.pct / 19.3 * 100}">
+          ${s.pct >= 5 ? s.vendor : ''}
+        </div>
+      </div>
+      <div class="share-pct">${s.pct}%</div>
+    </div>`).join('');
+
+  animateBars();
+}
+
+// --- Tab 2: 模型总览 ---
+function renderModels(filter='all') {
+  const grid = document.getElementById('model-grid');
+  const filtered = filter === 'all' ? MODELS : MODELS.filter(m => {
+    if (filter === 'west') return m.region === 'west';
+    if (filter === 'china') return m.region === 'china';
+    if (filter === 'free') return m.free;
+    if (filter === 'new') return m.isNew;
+    return true;
+  });
+  grid.innerHTML = filtered.map(m => {
+    const tags = m.tags.map(t => {
+      const map = { free:'🆓 免费', new:'🆕 2026', top:'🔥 热门', china:'🇨🇳 中国', west:'🌎 西方' };
+      const cls = { free:'tag-free', new:'tag-new', top:'tag-top', china:'tag-china', west:'tag-west' };
+      return `<span class="tag ${cls[t]}">${map[t]}</span>`;
+    }).join('');
+    const inStr = m.free ? '<span style="color:#10b981">FREE</span>' : `$${m.input}`;
+    const outStr = m.free ? '<span style="color:#10b981">FREE</span>' : `$${m.output}`;
+    return `
+      <div class="model-card" onclick="toggleExpand('${m.id}')">
+        <div class="model-card-header">
+          <div class="model-vendor-icon" style="background:${m.iconBg}">${m.icon}</div>
+          <div class="model-card-info">
+            <div class="model-card-name">${m.name}</div>
+            <div class="model-card-sub">${m.vendor} · ${m.date}</div>
+            <div class="model-card-tags">${tags}</div>
+          </div>
+        </div>
+        <div class="model-card-metrics">
+          <div class="metric">上下文 <span>${m.ctx}</span></div>
+          <div class="metric">输入 <span>${inStr}</span></div>
+          <div class="metric">输出 <span>${outStr}</span></div>
+        </div>
+        <div class="model-card-expand" id="expand-${m.id}">
+          <div class="expand-content">
+            <div class="pros-cons">
+              <div class="pros"><h4>✅ 优点</h4><ul>${m.pros.map(p=>`<li>${p}</li>`).join('')}</ul></div>
+              <div class="cons"><h4>❌ 缺点</h4><ul>${m.cons.map(c=>`<li>${c}</li>`).join('')}</ul></div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleExpand(id) {
+  const el = document.getElementById('expand-'+id);
+  el.classList.toggle('open');
+}
+
+function filterModels(filter, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderModels(filter);
+}
+
+// --- Tab 3: 价格 ---
+function renderPrices() {
+  const sorted = [...MODELS].sort((a,b) => a.input - b.input);
+  const tbody = document.getElementById('price-tbody');
+  tbody.innerHTML = sorted.map(m => {
+    const tierIn = m.free ? 0 : m.input <= 0.1 ? 1 : m.input <= 0.5 ? 2 : m.input <= 2 ? 3 : m.input <= 5 ? 4 : 5;
+    const cls = `price-tier-${tierIn}`;
+    const inStr = m.free ? '<span class="price-tier-0">FREE</span>' : `<span class="${cls}">$${m.input}</span>`;
+    const outStr = m.free ? '<span class="price-tier-0">FREE</span>' : `<span class="${cls}">$${m.output}</span>`;
+    const ctxNum = parseInt(m.ctx);
+    const ctxCls = ctxNum >= 2000 ? 'ctx-2m' : ctxNum >= 1000 ? 'ctx-1m' : ctxNum >= 256 ? 'ctx-256k' : 'ctx-128k';
+    const special = m.id === 'step35' ? '🆓 完全免费' : m.id === 'grok420' ? '⚡ 2000K最大' : m.id === 'minimaxm25' ? '💻 SWE#1' : m.id === 'mimov2pro' ? '🏆 编程#1' : m.id === 'deepseekv32' ? '🔢 IMO金牌' : '';
+    return `<tr>
+      <td><strong>${m.name}</strong></td>
+      <td style="color:var(--text3)">${m.vendor}</td>
+      <td>${inStr}</td>
+      <td>${outStr}</td>
+      <td><span class="ctx-pill ${ctxCls}">${m.ctx}</span></td>
+      <td style="font-size:12px">${special}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('scenario-grid').innerHTML = SCENARIOS.map(s => `
+    <div class="scenario-card">
+      <h4>${s.icon} ${s.title}</h4>
+      <p><span class="rec">推荐：${s.rec}</span><br>${s.desc}</p>
+    </div>`).join('');
+}
+
+// --- Tab 4: 性能 ---
+function renderBench() {
+  const maxSWE = SWE_BENCH[0].score;
+  document.getElementById('swe-chart').innerHTML = SWE_BENCH.map(b => `
+    <div class="bench-item">
+      <div class="bench-header">
+        <span class="bench-model">${b.model}</span>
+        <span class="bench-score">${b.score}%</span>
+      </div>
+      <div class="bench-bar-bg">
+        <div class="bench-bar-fill" style="width:0%;background:${b.color}" data-target="${b.score/maxSWE*100}"></div>
+      </div>
+    </div>`).join('');
+
+  const maxCtx = 2000;
+  document.getElementById('ctx-chart').innerHTML = CTX_DATA.sort((a,b)=>b.ctx-a.ctx).map(c => `
+    <div class="ctx-chart-item">
+      <div class="ctx-header">
+        <span style="font-size:12px;color:var(--text2)">${c.model}</span>
+        <span style="font-size:12px;color:var(--text3)">${c.ctx}K</span>
+      </div>
+      <div class="ctx-bar-bg">
+        <div class="ctx-bar-fill" style="width:0%;background:${c.color}" data-target="${c.ctx/maxCtx*100}"></div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('vfm-grid').innerHTML = VFM.map(v => `
+    <div class="vfm-card">
+      <div class="vfm-score" style="color:${v.color}">${v.score}</div>
+      <div class="vfm-name">${v.model}</div>
+      <div class="vfm-detail">${v.detail}</div>
+    </div>`).join('');
+
+  const maxGPQA = GPQA[0].score;
+  document.getElementById('gpqa-chart').innerHTML = GPQA.map(g => `
+    <div class="bench-item">
+      <div class="bench-header">
+        <span class="bench-model">${g.model}</span>
+        <span class="bench-score">${g.score}%</span>
+      </div>
+      <div class="bench-bar-bg">
+        <div class="bench-bar-fill" style="width:0%;background:${g.color}" data-target="${g.score/maxGPQA*100}"></div>
+      </div>
+    </div>`).join('');
+}
+
+// --- Tab 5: 时间线 ---
+function renderTimeline() {
+  const tl = document.getElementById('timeline');
+  tl.innerHTML = TIMELINE.map(section => `
+    <div class="timeline-month">
+      <div class="timeline-month-label">${section.year}</div>
+      ${section.events.map(e => `
+        <div class="timeline-event ${section.highlight && e === section.events[0] ? 'highlight' : ''}">
+          <div class="timeline-event-date">${e.date}</div>
+          <div class="timeline-event-title">${e.title}</div>
+          <div class="timeline-event-desc">${e.desc}</div>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+// --- Animate bars ---
+function animateBars() {
+  requestAnimationFrame(() => {
+    document.querySelectorAll('[data-target]').forEach(el => {
+      setTimeout(() => {
+        el.style.width = el.dataset.target + '%';
+      }, 100);
     });
+  });
+}
+
+// --- Tab Switch ---
+const panels = document.querySelectorAll('.panel');
+const tabs = document.querySelectorAll('.tab');
+let initialized = [false, false, false, false, false];
+
+function switchTab(idx) {
+  panels.forEach(p => p.classList.remove('active'));
+  tabs.forEach(t => t.classList.remove('active'));
+  panels[idx].classList.add('active');
+  tabs[idx].classList.add('active');
+  if (!initialized[idx]) {
+    initialized[idx] = true;
+    if (idx === 1) renderModels();
+    if (idx === 2) renderPrices();
+    if (idx === 3) { renderBench(); setTimeout(animateBars, 100); }
+    if (idx === 4) renderTimeline();
   }
+  if (idx === 0 || idx === 3) setTimeout(animateBars, 100);
+}
+
+// --- Init ---
+initialized[0] = true;
+renderRanking();
+setTimeout(animateBars, 200);
 </script>
 </body>
 </html>
