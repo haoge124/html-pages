@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>伊朗局势 · 交互时间线</title>
+<style>
+  :root {
+    --bg: #080c14;
+    --card: #0f1623;
+    --card2: #141e2e;
+    --border: #1e2d45;
+    --text: #c8d4e8;
+    --muted: #5a7090;
+    --blue: #3b82f6;
+    --orange: #f97316;
+    --red: #ef4444;
+    --yellow: #eab308;
+    --green: #22c55e;
+    --purple: #a855f7;
+    --cyan: #06b6d4;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: linear-gradient(135deg, #0a0e1a 0%, #0d1525 100%);
+    border-bottom: 1px solid #1a2a40;
+    padding: 24px 20px 16px;
+    text-align: center;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .site-header h1 { font-size: 1.5em; color: #e8f0ff; margin-bottom: 4px; }
+  .site-header .sub { color: var(--muted); font-size: 0.8em; }
+  .live-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #1a0808; border: 1px solid var(--red);
+    color: var(--red); font-size: 0.7em; font-weight: 700;
+    padding: 2px 10px; border-radius: 20px; margin-top: 6px;
+  }
+  .live-dot {
+    width: 6px; height: 6px; background: var(--red);
+    border-radius: 50%; animation: blink 1s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  /* ── NAV TABS ── */
+  .nav-tabs {
+    display: flex; gap: 4px;
+    padding: 12px 16px 0;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .nav-tab {
+    padding: 8px 16px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    font-size: 0.82em;
+    font-weight: 600;
+    color: var(--muted);
+    white-space: nowrap;
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+  }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active { color: #fff; border-bottom-color: var(--blue); background: var(--card2); }
+
+  /* ── PANELS ── */
+  .panel { display: none; padding: 16px; max-width: 1000px; margin: 0 auto; }
+  .panel.active { display: block; }
+
+  /* ── FILTER BAR ── */
+  .filter-bar {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 16px;
+  }
+  .filter-btn {
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 0.75em; font-weight: 600; cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--card2); color: var(--muted);
+    transition: all 0.2s;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    color: #fff; border-color: var(--blue);
+    background: rgba(59,130,246,0.15);
+  }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; padding: 0 0 20px; }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 24px; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom,
+      var(--blue) 0%, var(--orange) 40%,
+      var(--red) 70%, #ff2222 100%);
+  }
+
+  .tl-item {
+    position: relative;
+    padding-left: 64px;
+    margin-bottom: 12px;
+    transition: all 0.2s;
+  }
+  .tl-item[data-cat].hidden { display: none; }
+
+  .tl-dot {
+    position: absolute; left: 16px; top: 20px;
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid var(--bg);
+    z-index: 2;
+  }
+  .tl-dot.blue   { background: var(--blue); }
+  .tl-dot.orange { background: var(--orange); }
+  .tl-dot.red    { background: var(--red); }
+  .tl-dot.yellow { background: var(--yellow); }
+  .tl-dot.green  { background: var(--green); }
+  .tl-dot.purple { background: var(--purple); }
+  .tl-dot.hot    {
+    background: #ff2222;
+    box-shadow: 0 0 12px #ff2222;
+    animation: pulse-dot 1.2s infinite;
+  }
+  @keyframes pulse-dot {
+    0%,100%{ transform: scale(1); box-shadow: 0 0 8px #ff2222; }
+    50%{ transform: scale(1.3); box-shadow: 0 0 20px #ff2222; }
+  }
+
+  .tl-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tl-card:hover { border-color: #2a4060; background: var(--card2); }
+  .tl-card.open { border-color: #2a5090; }
+
+  .tl-head {
+    display: flex; align-items: flex-start;
+    gap: 10px; padding: 12px 14px;
+  }
+  .tl-date {
+    font-size: 0.7em; color: var(--muted);
+    font-weight: 700; letter-spacing: 0.5px;
+    white-space: nowrap; margin-top: 2px; min-width: 90px;
+  }
+  .tl-title-wrap { flex: 1; }
+  .tl-title {
+    font-weight: 700; font-size: 0.92em;
+    color: #e0eaff; margin-bottom: 4px;
+  }
+  .tl-summary { font-size: 0.78em; color: var(--muted); }
+
+  .tl-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .tag {
+    font-size: 0.65em; padding: 1px 7px;
+    border-radius: 10px; font-weight: 600;
+  }
+  .tag-nuke   { background: rgba(168,85,247,0.15); color: #c084fc; border: 1px solid rgba(168,85,247,0.3); }
+  .tag-war    { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+  .tag-proxy  { background: rgba(249,115,22,0.15); color: #fb923c; border: 1px solid rgba(249,115,22,0.3); }
+  .tag-econ   { background: rgba(6,182,212,0.15);  color: #22d3ee; border: 1px solid rgba(6,182,212,0.3); }
+  .tag-diplo  { background: rgba(34,197,94,0.15);  color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+  .tag-japan  { background: rgba(239,68,68,0.1);   color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
+  .tag-hot    { background: rgba(255,34,34,0.2);   color: #ff6b6b; border: 1px solid #ff2222; animation: blink2 2s infinite; }
+  @keyframes blink2{ 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+  .tl-chevron {
+    color: var(--muted); font-size: 0.8em;
+    transition: transform 0.3s; margin-top: 3px;
+    flex-shrink: 0;
+  }
+  .tl-card.open .tl-chevron { transform: rotate(180deg); color: var(--blue); }
+
+  .tl-detail {
+    display: none;
+    padding: 0 14px 14px;
+    border-top: 1px solid var(--border);
+  }
+  .tl-card.open .tl-detail { display: block; }
+
+  .detail-section { margin-top: 12px; }
+  .detail-section h4 {
+    font-size: 0.75em; font-weight: 700;
+    color: var(--muted); letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .detail-section p { font-size: 0.82em; color: var(--text); line-height: 1.7; }
+  .detail-section ul { font-size: 0.82em; color: var(--text); padding-left: 16px; }
+  .detail-section li { margin-bottom: 4px; line-height: 1.6; }
+
+  .detail-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 8px; margin-top: 8px;
+  }
+  .detail-kv {
+    background: var(--card2); border-radius: 6px;
+    padding: 8px 10px;
+  }
+  .detail-k { font-size: 0.68em; color: var(--muted); margin-bottom: 2px; }
+  .detail-v { font-size: 0.82em; font-weight: 600; }
+
+  .phase-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 20px 0 10px;
+  }
+  .phase-header-line { flex: 1; height: 1px; background: var(--border); }
+  .phase-header-text {
+    font-size: 0.72em; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 4px 12px; border-radius: 20px;
+    white-space: nowrap;
+  }
+  .ph-bg   { background: rgba(59,130,246,0.1);  color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); }
+  .ph-prxy { background: rgba(249,115,22,0.1); color: #fb923c; border: 1px solid rgba(249,115,22,0.2); }
+  .ph-war  { background: rgba(239,68,68,0.1);  color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+  .ph-now  { background: rgba(255,34,34,0.15); color: #ff6b6b; border: 1px solid #ff2222; animation: pulse-border 2s infinite; }
+  @keyframes pulse-border{ 0%,100%{ box-shadow:0 0 5px rgba(255,34,34,0.2)} 50%{box-shadow:0 0 15px rgba(255,34,34,0.5)} }
+
+  /* ── FACTIONS PANEL ── */
+  .factions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px; margin-top: 8px;
+  }
+  .faction-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden;
+  }
+  .faction-header {
+    padding: 12px 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .faction-flag { font-size: 1.8em; }
+  .faction-name { font-weight: 700; font-size: 0.9em; }
+  .faction-role { font-size: 0.72em; color: var(--muted); }
+  .faction-body { padding: 0 14px 14px; }
+  .faction-stat {
+    display: flex; justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.78em;
+  }
+  .faction-stat:last-child { border-bottom: none; }
+  .stat-label { color: var(--muted); }
+  .stat-val { font-weight: 600; }
+  .stance-attack { color: var(--red); }
+  .stance-defend { color: var(--orange); }
+  .stance-support { color: var(--blue); }
+  .stance-neutral { color: var(--muted); }
+  .stance-shifting { color: var(--yellow); }
+
+  /* ── IMPACT PANEL ── */
+  .impact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .impact-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px;
+  }
+  .impact-icon { font-size: 1.6em; margin-bottom: 8px; }
+  .impact-title { font-weight: 700; font-size: 0.88em; margin-bottom: 6px; }
+  .impact-desc { font-size: 0.78em; color: var(--muted); line-height: 1.6; }
+  .impact-value {
+    margin-top: 8px; font-size: 1.1em; font-weight: 700;
+  }
+
+  /* ── STATUS PANEL ── */
+  .status-panel {
+    background: #1a0808; border: 1px solid #ef4444;
+    border-radius: 12px; padding: 16px; margin-bottom: 16px;
+    box-shadow: 0 0 30px rgba(239,68,68,0.1);
+  }
+  .status-title {
+    font-size: 0.88em; font-weight: 700;
+    color: var(--red); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 8px;
+  }
+  .status-item {
+    background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px 12px;
+  }
+  .status-label { font-size: 0.68em; color: var(--muted); margin-bottom: 3px; }
+  .status-val { font-size: 0.85em; font-weight: 700; }
+  .c-red { color: var(--red); }
+  .c-orange { color: var(--orange); }
+  .c-yellow { color: var(--yellow); }
+  .c-green { color: var(--green); }
+  .c-muted { color: var(--muted); }
+
+  /* ── SCROLL ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: #2a3a50; border-radius: 3px; }
+
+  /* ── MISC ── */
+  .section-title {
+    font-size: 0.82em; font-weight: 700;
+    color: var(--muted); letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 20px 0 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  @media(max-width:600px) {
+    .detail-grid { grid-template-columns: 1fr; }
+    .factions-grid { grid-template-columns: 1fr; }
+    .impact-grid { grid-template-columns: 1fr; }
+    .status-grid { grid-template-columns: repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <h1>🌍 伊朗局势 · 交互时间线</h1>
+  <div class="sub">从核协议到战争爆发 · 点击任意事件展开详情</div>
+  <div class="live-badge"><div class="live-dot"></div> LIVE · 2026年3月24日</div>
+</div>
+
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="switchTab('timeline')">📅 时间线</div>
+  <div class="nav-tab" onclick="switchTab('factions')">⚔️ 各方势力</div>
+  <div class="nav-tab" onclick="switchTab('impact')">📊 全球影响</div>
+  <div class="nav-tab" onclick="switchTab('status')">🔴 当前局势</div>
+</div>
+
+<!-- ═══════════════ TIMELINE PANEL ═══════════════ -->
+<div id="panel-timeline" class="panel active">
+
+  <div class="filter-bar">
+    <div class="filter-btn active" onclick="filterEvents('all',this)">全部</div>
+    <div class="filter-btn" onclick="filterEvents('nuke',this)">☢️ 核问题</div>
+    <div class="filter-btn" onclick="filterEvents('war',this)">💣 军事</div>
+    <div class="filter-btn" onclick="filterEvents('proxy',this)">🕸️ 代理战</div>
+    <div class="filter-btn" onclick="filterEvents('diplo',this)">🤝 外交</div>
+    <div class="filter-btn" onclick="filterEvents('econ',this)">💹 经济</div>
+    <div class="filter-btn" onclick="filterEvents('japan',this)">🇯🇵 日本影响</div>
+  </div>
+
+  <div class="timeline">
+
+    <!-- PHASE 1 -->
+    <div class="phase-header">
+      <div class="phase-header-line"></div>
+      <div class="phase-header-text ph-bg">📜 历史背景 2015—2022</div>
+      <div class="phase-header-line"></div>
+    </div>
+
+    <div class="tl-item" data-cat="nuke diplo">
+      <div class="tl-dot blue"></div>
+      <div class="tl-card" onclick="toggleCard(this)">
+        <div class="tl-head">
+          <div class="tl-date">2015年7月</div>
+          <div class="tl-title-wrap">
+            <div class="tl-title">🕊️ JCPOA 伊朗核协议签署</div>
+            <div class="tl-summary">六国与伊朗达成历史性核协议，中东局势短暂缓和</div>
+            <div class="tl-tags">
+              <span class="tag tag-nuke">核问题</span>
+              <span class="tag tag-diplo">外交</span>
+            </div>
+          </div>
+          <div class="tl-chevron">▼</div>
+        </div>
+        <div class="tl-detail">
+          <div class="detail-section">
+            <h4>📋 事件详情</h4>
+            <p>《联合全面行动计划》（JCPOA）由伊朗与美国、英国、法国、德国、中国、俄罗斯六国签署。协议规定：伊朗将铀浓缩度限制在3.67%以下（远低于武器级90%），大幅削减离心机数量，并允许国际原子能机构（IAEA）进行核查。作为回报，西方国家解除对伊朗的经济制裁，释放被冻结的资产约1000亿美元。</p>
+          </div>
+          <div class="detail-section">
+            <h4>🌍 影响</h4>
+            <ul>
+              <li>伊朗石油出口恢复，外汇储备增加</li>
+              <li>国际社会对伊朗核武化担忧暂时缓解</li>
+              <li>中东外交关系进入相对稳定期</li>
+            </ul>
+          </div>
+          <div class="detail-grid">
+            <div class="detail-kv"><div class="detail-k">协议有效期</div><div class="detail-v">15年</div></div>
+            <div class="detail-kv"><div class="detail-k">签署方</div><div class="detail-v">伊朗 + P5+1</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item" data-cat="nuke econ diplo">
+      <div class="tl-dot orange"></div>
+      <div class="tl-card" onclick="toggleCard(this)">
+        <div class="tl-head">
+          <div class="tl-date">2018年5月</div>
+          <div class="tl-title-wrap">
+            <div class="tl-title">💥 特朗普退出 JCPOA，重启制裁</div>
+            <div class="tl-summary">"最大压力"政策开始，伊朗经济崩溃，核计划加速</div>
+            <div class="tl-tags">
+              <span class="tag tag-nuke">核问题</span>
+              <span class="tag tag-econ">经济</span>
+            </div>
+          </div>
+          <div class="tl-chevron">▼</div>
+        </div>
+        <div class="tl-detail">
+          <div class="detail-section">
+            <h4>📋 事件详情</h4>
+            <p>特朗普以"协议无法阻止伊朗获得核武"为由单方面退出JCPOA，重新对伊朗实施全面制裁，并扩大至石油、金融、航运等领域。伊朗货币里亚尔暴跌80%以上，通货膨胀率超过40%，失业率飙升。与此同时，伊朗宣布逐步突破协议限制，扩大核活动。</p>
+          </div>
+          <div class="detail-section">
+            <h4>🔑 关键词：最大压力（Maximum Pressure）</h4>
+            <p>通过经济制裁使伊朗陷入困境，迫使其接受一个更严苛的新协议，涵盖：禁止核武、禁止弹道导弹、停止支持地区代理武装。</p>
+          </div>
+          <div class="detail-section">
+            <h4>🌍 后果</h4>
+            <ul>
+              <li>伊朗石油出口量从240万桶/天→30万桶/天</li>
+              <li>欧洲盟友反对美国退出，但无力抗衡美国金融体系</li>
+              <li>伊朗开始逐步提高铀浓缩程度作为反制</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item" data-cat="war">
+      <div class="tl-dot red"></div>
+      <div class="tl-card" onclick="toggleCard(this)">
+        <div class="tl-head">
+          <div class="tl-date">2020年1月3日</div>
+          <div class="tl-title-wrap">
+            <div class="tl-title">🎯 苏莱曼尼将军被美军暗杀</div>
+            <div class="tl-summary">伊朗革命卫队最高将领在巴格达机场遭无人机击杀</div>
+            <div class="tl-tags">
+              <span class="tag tag-war">军事</span>
+            </div>
+          </div>
+          <div class="tl-chevron">▼</div>
+        </div>
+        <div class="tl-detail">
+          <div class="detail-section">
+            <h4>👤 苏莱曼尼其人</h4>
+            <p>卡西姆·苏莱曼尼（Qasem Soleimani），伊朗革命卫队"圣城旅"司令，是伊朗在中东建立代理人网络（哈马斯、真主党、伊拉克民兵等）的核心策划者，被视为仅次于最高领袖哈梅内伊的第二号权力人物。美军无人机在巴格达机场将其击杀。</p>
+          </div>
+          <div class="detail-section">
+            <h4>⚡ 伊朗的回应</h4>
+            <ul>
+              <li>宣布退出JCPOA剩余条款</li>
+              <li>对伊拉克美军基地发射导弹（未造成死亡）</li>
+              <li>誓言"严厉报复"，推动支持者开展长期报复行动</li>
+            </ul>
+          </div>
+          <div class="detail-section">
+            <h4>🔮 历史意义</h4>
+            <p>苏莱曼尼之死被视为中东局势质变的分水岭。他长期构建的"抵抗轴心"网络因此开始松散化，但也激化了伊朗国内对美仇恨，加速了伊朗核武化进程。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 2 -->
+    <div class="phase-header">
+      <div class="phase-header-line"></div>
+      <div class="phase-header-text ph-prxy">⚔️ 代理战争时代 2023—2024</div>
+      <div class="phase-header-line"></div>
+    </div>
+
+    <div class="tl-item" data-cat="nuke diplo">
+      <div class="tl-dot green"></div>
+      <div class="tl-card" onclick="toggleCard(this)">
+        <div class="tl-head">
+          <div class="tl-date">2021—2022年</div>
+          <div class="tl-title-wrap">
+            <div class="tl-title">🔄 拜登谈判 → 多轮破裂，核浓缩突破60%</div>
+            <div class="tl-summary">恢复JCPOA的努力失败，伊朗核计划加速推进</div>
+            <div class="tl-tags">
+              <span class="tag tag-nuke">核问题</span>
+              <span class="tag tag-diplo">外交</span>
+            </div>
+          </div>
+          <div class="tl-chevron">▼</div>
+        </div>
+        <div class="tl-detail">
+          <div class="detail-section">
+            <h4>📋 谈判经过</h4>
+            <p>拜登政府于2021年上台后，在维也纳启动"恢复JCPOA"谈判。历经多轮磋商，双方在关键问题上分歧无法弥合：①美国拒绝撤销对伊朗革命卫队的恐怖主义认定；②伊朗要求美国提供停止制裁的法律保证，而非政策承诺。2022年谈判陷入僵局。</p>
+          </div>
+          <div class="detail-section">
+            <h4>☢️ 核浓缩进展</h4>
+            <ul>
+              <li>2021年：铀浓缩度达20%</li>
+              <li>2022年：突破60%（军事用途一般被认为在90%以上）</li>
+              <li>伊朗同时扩建福尔多等地下核设施，部署IR-6高效离心机</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item" data-cat="war proxy">
+      <div class="tl-dot orange"></div>
+      <div class="tl-card" onclick="toggleCard(this)">
+        <div class="tl-head">
+          <div class="tl-date">2023年10月7日</div>
+          <div class="tl-title-wrap">
+            <div class="tl-title">🔥 哈马斯突袭以色列，中东秩序崩塌</div>
+            <div class="tl-summary">伊朗支持的"抵抗轴心"全面激活，加沙战争爆发</div>
+            <div class="tl-tags">
+              <span class="tag tag-proxy">代理战</span>
+              <span class="tag tag-war">军事</span>
+            </div>
+          </div>
+          <div class="tl-chevron">▼</div>
+        </div>
+        <div class="tl-detail">
+          <div class="detail-section">
+            <h4>📋 事件经过</h4>
+            <p>哈马斯出动大批武装人员突破加沙围栏，袭击以色列南部基布兹和音乐节，造成逾1200人死亡，约250人被劫持为人质。这是以色列自1973年赎罪日战争以来遭受的最惨重攻击。</p>
+          </div>
+          <div class="detail-section">
+            <h4>🕸️ 抵抗轴心全面启动</h4>
+            <ul>
+              <li><strong>哈马斯（加沙）</strong>：主力进攻，引发以色列地面战</li>
+              <li><strong>真主党（黎巴嫩）</strong>：北线持续火箭弹+无人机袭以</li>
+              <li><strong>胡塞武装（也门）</strong>：封锁红海，袭击商船和以色列相关船只</li>
+              <li><strong>伊拉克民兵</strong>：袭击叙利亚和伊拉克美军基地</li>
+            </ul>
+          </div>
+          <div class="detail-section">
+            <h4>🇮🇷 伊朗的角色</h4>
+            <p>伊朗提供资金、武器和情报支持，但官方否认直接参与袭击计划。伊朗领导人公开赞扬哈马斯行动，将其定性为"反以占领的正当抵抗"。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item" data-cat="war">
+      <div class="tl-dot purple"></div>
+      <div class="tl-card" onclick="toggleCard(this)">
+        <div class="tl-head">
+          <div class="tl-date">2024年4—10月</div>
+          <div class="tl-title-wrap">
+            <div class="tl-title">🚀 伊朗—以色列首次直接军事交火</div>
+            <div class="tl-summary">300+导弹/无人机互射，历史首次国家级直接对抗</div>
+            <div class="tl-tags">
+              <span class="tag tag-war">军事</span>
+            </div>
+          </div>
+          <div class="tl-chevron">▼</div>
+        </div>
+        <div class="tl-detail">
+          <div class="detail-section">
+            <h4>📅 交火时间线</h4>
+            <ul>
+              <li><strong>4月1日</strong>：以色列空袭伊朗驻叙利亚大使馆，革命卫队高级将领身亡</li>
+              <li><strong>4月13—14日</strong>：伊朗首次直接向以色列本土发射300余枚无人机+弹道导弹。以色列、美国、英国、约旦联合拦截，99%被击落</li>
+              <li><strong>4月19日</strong>：以色列以无人机轻微反击伊斯法罕附近，信号性报复</li>
+              <li><strong>10月1日</strong>：伊朗发射180余枚弹道导弹，以色列防空系统承压</li>
+              <li><strong>10月26日</strong>：以色列大规模空袭伊朗，摧毁S-300防空系统和导弹生产设施</li>
+            </ul>
+          </div>
+          <div class="detail-section">
+            <h4>🔮 战略意义</h4>
+            <p>此轮交火打破了伊以之间数十年的"影子战争"惯例，双方首次在公开层面直接对抗。尽管伤亡有限，但它标志着中东进入"直接冲突时代"的重要节点。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item" data-cat="proxy">
+      <div class="tl-dot blue"></div>
+      <div class="tl-card" onclick="toggleCard(this)">
+        <div class="tl-head">
+          <div class="tl-date">2024年11—12月</div>
+          <div class="tl-title-wrap">
+            <div class="tl-title">📉 抵抗轴心全面崩溃，伊朗陷入孤立</div>
+            <div class="tl-summary">真主党重创、阿萨德倒台、哈马斯削弱，伊朗失去地区棋子</div>
+            <div class="tl-tags">
+              <span class="tag tag-proxy">代理战</span>
+            </div>
+          </div>
+          <div class="tl-chevron">▼</div>
+        </div>
+        <div class="tl-detail">
+          <div class="detail-section">
+            <h4>🔴 各轴心节点战败情况</h4>
+            <ul>
+              <li><strong>哈马斯</strong>：军事能力削减约70%，指挥层几乎全灭（辛瓦尔10月被杀）</li>
+              <li><strong>真主党（黎巴嫩）</strong>：领袖纳斯鲁拉9月被以色列击杀，高级指挥链瓦解，在以黎停火协议中被迫撤出南黎巴嫩</li>
+              <li><strong>叙利亚阿萨德政权</strong>：12月反政府武装闪电攻势，阿萨德出逃俄罗斯，政权终结。伊朗失去通往真主党的陆上补给走廊</li>
+              <li><strong>胡塞武装</strong>：美国持续空袭削弱能力，但仍保留红海袭击能力</li>
+            </ul>
+          </div>
+          <div class="detail-section">
+            <h4>🇮🇷 伊朗困境</h4>
+            <p>三十年精心构建的"前进防御"战略体系在数月内土崩瓦解。伊朗在地区无法再通过代理人施压以色列，只能面对直接暴露的战略威胁。内部压力叠加，强硬派和改革派在应对策略上出现撕裂。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 3 -->
+    <div class="phase-header">
+      <div class="phase-header-line"></div>
+      <div class="phase-header-text ph-war">💣 战争爆发 2025—2026</div>
+      <div class="phase-header-line"></div>
+    </div>
+
+    <div class="tl-item" data-cat="nuke econ diplo">
+      <div class="tl-dot orange"></div>
+      <div class="tl-card" onclick="toggleCard(this)">
+        <div class="tl-head">
+          <div class="tl-date">2025年1月</div>
+          <div class="tl-title-wrap">
+            <div class="tl-title">👊 特朗普2.0就任，"最大压力"强势回归</div>
+            <div class="tl-summary">全面制裁+核武器级浓缩，伊朗被推向绝境</div>
+            <div class="tl-tags">
+              <span class="tag tag-nuke">核问题</span>
+              <span class="tag tag-econ">经济</span>
+              <span class="tag tag-diplo">外交</span>
+            </div>
+          </div>
+          <div class="tl-chevron">▼</div>
+        </div>
+        <div class="tl-detail">
+          <div class="detail-section">
+            <h4>📋 特朗普的对伊要求</h4>
+            <ul>
+              <li>完全放弃核武器能力（不可逆拆除）</li>
+              <li>停止所有弹道导弹研发</li>
+              <li>停止支持哈马斯、真主党、胡塞武装</li>
+              <li>允许全面、无限制的核查</li>
+            </ul>
+          </div>
+          <div class="detail-section">
+            <h4>☢️ 伊朗核状态（2025年初）</h4>
+            <ul>
+              <li>铀浓缩度：达到<strong>90%（武器级）</strong></li>
+              <li>浓缩铀储量：估计足以制造数枚核弹的材料量</li>
+              <li>实际造出核武：尚无确认证据，但评估"数周内可完成"</li>
+            </ul>
+          </div>
+          <div class="detail-section">
+            <h4>🚨 红线判断</h4>
+            <p>以色列和美国情报界认为，伊朗已跨越"突破点"——即获得核武所需全部技术能力，只差最后组装。这构成了2026年军事行动的核心动机。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item" data-cat="war nuke">
+      <div class="tl-dot red"></div>
+      <div class="tl-card" onclick="toggleCard(this)">
+        <div class="tl-head">
+          <div class="tl-date">2026年3月初</div>
+          <div class="tl-title-wrap">
+            <div class="tl-title">💥 美以联合空袭伊朗：战争正式爆发</div>
+            <div class="tl-summary">打击核设施和军事基地，中东进入全面战争状态</div>
+            <div class="tl-tags">
+              <span class="tag tag-war">战争</span>
+              <span class="tag tag-nuke">核打击</span>
+            </div>
+          </div>
+          <div class="tl-chevron">▼</div>
+        </div>
+        <div class="tl-detail">
+          <div class="detail-section">
+            <h4>🎯 主要打击目标（已报道）</h4>
+            <ul>
+              <li>福尔多（Fordow）地下核设施</li>
+              <li>纳坦兹（Natanz）核浓缩设施</li>
+              <li>革命卫队航空航天部队基地</li>
+              <li>德黑兰附近导弹仓库</li>
+            </ul>
+          </div>
+          <div class="detail-section">
+            <h4>📍 攻击发起地</h4>
+            <ul>
+              <li>以色列战机：绕道沙特领空（争议）</li>
+              <li>美军基地：巴林、卡塔尔、迭戈加西亚岛</li>
+              <li>部分导弹从巴林发射（WSJ确认）</li>
+            </ul>
+          </div>
+          <div class="detail-section">
+            <h4>⚖️ 国际反应</h4>
+            <ul>
+              <li>中国、俄罗斯：强烈谴责，要求立即停火</li>
+              <li>欧洲：深切关注，呼吁对话</li>
+              <li>沙特、UAE：初期保持沉默（后转向支持）</li>
+              <li>联合国安理会：因美俄中否决权而瘫痪</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item" data-cat="war econ japan">
+      <div class="tl-dot hot"></div>
+      <div class="tl-card" onclick="toggleCard(this)">
+        <div class="tl-head">
+          <div class="tl-date">3月第1—2周</div>
+          <div class="tl-title-wrap">
+            <div class="tl-title">🌊 伊朗反击：霍尔木兹海峡危机 + 全球能源冲击</div>
+            <div class="tl-summary">海峡实质瘫痪，油价飙至$120，卡塔尔LNG遭袭</div>
+            <div class="tl-tags">
+              <span class="tag tag-war">战争</span>
+              <span class="tag tag-econ">能源危机</span>
+              <span class="tag tag-hot">🔥 进行中</span>
+            </div>
+          </div>
+          <div class="tl-chevron">▼</div>
+        </div>
+        <div class="tl-detail">
+          <div class="detail-section">
+            <h4>🛢️ 霍尔木兹海峡的重要性</h4>
+            <p>霍尔木兹海峡是全球最重要的石油运输通道，每天约有2100万桶原油（占全球需求约20%）通过此处。伊朗通过水雷布设、导弹威胁、无人快艇等手段，使该海峡进入"实质瘫痪"状态。</p>
+          </div>
+          <div class="detail-section">
+            <h4>💣 伊朗的报复行动</h4>
+            <ul>
+              <li><strong>卡塔尔LNG设施遭袭</strong>：北方气田（全球最大天然气田）的液化设施受损</li>
+              <li><strong>迭戈加西亚岛</strong>：伊朗向英美联合军事基地发射2枚弹道导弹（均被拦截）</li>
+              <li><strong>中东能源资产</strong>：沙特、UAE、科威特的管道和储油设施遭无人机袭击</li>
+            </ul>
+          </div>
+          <div class="detail-section">
+            <h4>💹 市场冲击</h4>
+            <div class="detail-grid">
+              <div class="detail-kv"><div class="detail-k">布伦特原油峰值</div><div class="detail-v" style="color:var(--red)">$120/桶</div></div>
+              <div class="detail-kv"><div class="detail-k">日经平均</div><div class="detail-v" style="color:var(--red)">大幅暴跌</div></div>
+              <div class="detail-kv"><div class="detail-k">日本LNG进口</div><div class="detail-v" style="color:var(--orange)">供应受威胁</div></div>
+              <div class="detail-kv"><div class="detail-k">丰田出口削减</div><div class="detail-v" style="color:var(--orange)">-2万辆/月</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item" data-cat="war econ japan">
+      <div class="tl-dot red"></div>
+      <div class="tl-card" onclick="toggleCard(this)">
+        <div class="tl-head">
+          <div class="tl-date">3月第2—3周</div>
+          <div class="tl-title-wrap">
+            <div class="tl-title">🔥 以色列炸伊朗气田，全球产业链冲击蔓延</div>
+            <div class="tl-summary">塑料、医疗设备、汽车出口全面受冲击</div>
+            <div class="tl-tags">
+              <span class="tag tag-war">战争</span>
+              <span class="tag tag-econ">全球冲击</span>
+              <span class="tag tag-japan">日本影响</span>
+            </div>
+          </div>
+          <div class="tl-chevron">▼</div>
+        </div>
+        <div class="tl-detail">
+          <div class="detail-section">
+            <h4>🎯 以色列对伊朗气田的打击</h4>
+            <p>以色列空袭伊朗南帕斯/北帕斯气田（全球最大天然气储量），作为对伊朗持续袭击的报复。伊朗随即宣布对中东所有"敌对国家能源资产"展开报复性打击。</p>
+          </div>
+          <div class="detail-section">
+            <h4>🇯🇵 对日本的具体影响</h4>
+            <ul>
+              <li><strong>能源</strong>：日本约10%的LNG来自卡塔尔，供应受威胁→电费上涨</li>
+              <li><strong>医疗</strong>：卡塔尔LNG设施中提取的<strong>氦气</strong>是MRI机器的关键冷却剂，供应中断→医院MRI检查或停滞</li>
+              <li><strong>汽车</strong>：丰田因中东出口受阻，每月削减约2.4万台产量</li>
+              <li><strong>塑料</strong>：石化原料价格暴涨，中国制造成本上升，进口消费品涨价</li>
+              <li><strong>物价</strong>：CPI虽已开始回落，但分析师预计伊朗情勢将推动新一轮上涨</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 4 -->
+    <div class="phase-header">
+      <div class="phase-header-line"></div>
+      <div class="phase-header-text ph-now">🔴 最新动态 3月24日</div>
+      <div class="phase-header-line"></div>
+    </div>
+
+    <div class="tl-item" data-cat="diplo econ">
+      <div class="tl-dot yellow"></div>
+      <div class="tl-card" onclick="toggleCard(this)">
+        <div class="tl-head">
+          <div class="tl-date">3月23日</div>
+          <div class="tl-title-wrap">
+            <div class="tl-title">⏸️ 特朗普宣布延迟攻击5天，声称谈判中</div>
+            <div class="tl-summary">原油暴跌9.7%→$101，但伊朗否认谈判，双方说法矛盾</div>
+            <div class="tl-tags">
+              <span class="tag tag-diplo">谈判？</span>
+              <span class="tag tag-econ">油价震荡</span>
+            </div>
+          </div>
+          <div class="tl-chevron">▼</div>
+        </div>
+        <div class="tl-detail">
+          <div class="detail-section">
+            <h4>📋 事件详情</h4>
+            <p>特朗普在社交媒体发文称，与伊朗"有富有成效的对话"，宣布暂停对伊朗能源基础设施的攻击5天，为谈判留出空间。他声称特使维特科夫（Witkoff）正在与伊朗国会议长加里巴夫谈判。</p>
+          </div>
+          <div class="detail-section">
+            <h4>🚫 伊朗的回应</h4>
+            <p>加里巴夫本人在X平台发文否认谈判存在。伊朗国家电视台也表示，过去数日美国曾通过中间人联系伊朗，但"伊朗政府拒绝了所有请求"。伊朗国会议长将特朗普的言论定性为"市场操纵策略"。</p>
+          </div>
+          <div class="detail-section">
+            <h4>💹 市场反应</h4>
+            <div class="detail-grid">
+              <div class="detail-kv"><div class="detail-k">布伦特原油</div><div class="detail-v" style="color:var(--green)">$120→$101（-9.7%）</div></div>
+              <div class="detail-kv"><div class="detail-k">道琼斯指数</div><div class="detail-v" style="color:var(--green)">反弹上升</div></div>
+              <div class="detail-kv"><div class="detail-k">市场判断</div><div class="detail-v" style="color:var(--yellow)">不确定性依然高</div></div>
+              <div class="detail-kv"><div class="detail-k">5天窗口截止</div><div class="detail-v" style="color:var(--red)">3月28日</div></div>
+            </div>
+          </div>
+          <div class="detail-section">
+            <h4>🔮 解读</h4>
+            <p>分析人士认为，即使谈判不存在，特朗普的声明也可能是在：①测探伊朗反应；②通过油价下跌为美国通胀减压；③争取盟友支持。5天窗口期（至3月28日）将是下一个关键观察节点。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item" data-cat="war">
+      <div class="tl-dot hot"></div>
+      <div class="tl-card" onclick="toggleCard(this)">
+        <div class="tl-head">
+          <div class="tl-date">3月24日（今日）</div>
+          <div class="tl-title-wrap">
+            <div class="tl-title">⚡ 沙特/UAE介入转向，冲突进入第24天</div>
+            <div class="tl-summary">周边大国立场转变，战争升级风险增大，停火遥遥无期</div>
+            <div class="tl-tags">
+              <span class="tag tag-war">升级</span>
+              <span class="tag tag-hot">🔴 今日</span>
+            </div>
+          </div>
+          <div class="tl-chevron">▼</div>
+        </div>
+        <div class="tl-detail">
+          <div class="detail-section">
+            <h4>🇸🇦 沙特立场转变</h4>
+            <p>据WSJ报道，沙特已同意向美军开放法赫德国王空军基地（King Fahd Air Base）。这是重大立场转变——沙特此前坚持不允许本国基地用于对伊朗的攻击行动。沙特长期是伊朗的地区宿敌，但也担忧自身成为伊朗报复目标。</p>
+          </div>
+          <div class="detail-section">
+            <h4>🇦🇪 UAE的行动</h4>
+            <ul>
+              <li>关闭迪拜等地的伊朗附属医院和俱乐部</li>
+              <li>切断伊朗在UAE的重要资金和后勤支援渠道</li>
+              <li>UAE此前是伊朗绕过制裁的重要中转地</li>
+            </ul>
+          </div>
+          <div class="detail-section">
+            <h4>🚀 导弹溯源新证据</h4>
+            <p>WSJ援引视频证据，部分攻击伊朗的导弹从<strong>巴林</strong>发射。这表明美国在该地区的军事行动已获多国默许或协助。美军拒绝置评。</p>
+          </div>
+          <div class="detail-section">
+            <h4>🔮 接下来5天的关键问题</h4>
+            <ul>
+              <li>特朗普的5天窗口（截至3月28日）会如何收场？</li>
+              <li>伊朗是否会接受任何形式的谈判？</li>
+              <li>霍尔木兹海峡是否会进一步升级或恢复通行？</li>
+              <li>沙特/UAE的介入会否引发伊朗对海湾国家的直接攻击？</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /timeline -->
+</div>
+
+<!-- ═══════════════ FACTIONS PANEL ═══════════════ -->
+<div id="panel-factions" class="panel">
+  <div class="section-title">各方势力一览</div>
+  <div class="factions-grid">
+
+    <div class="faction-card" style="border-top: 3px solid var(--red)">
+      <div class="faction-header">
+        <div class="faction-flag">🇮🇷</div>
+        <div><div class="faction-name">伊朗</div><div class="faction-role">战争主角 · 防御方</div></div>
+      </div>
+      <div class="faction-body">
+        <div class="faction-stat"><span class="stat-label">当前立场</span><span class="stat-val stance-defend">防御+报复</span></div>
+        <div class="faction-stat"><span class="stat-label">核状态</span><span class="stat-val" style="color:var(--purple)">90%浓缩（武器级）</span></div>
+        <div class="faction-stat"><span class="stat-label">军事能力</span><span class="stat-val">弹道导弹 / 无人机</span></div>
+        <div class="faction-stat"><span class="stat-label">经济状态</span><span class="stat-val stance-defend">严重制裁中</span></div>
+        <div class="faction-stat"><span class="stat-label">谈判意愿</span><span class="stat-val" style="color:var(--red)">官方否认</span></div>
+        <div class="faction-stat"><span class="stat-label">关键底牌</span><span class="stat-val">霍尔木兹海峡封锁</span></div>
+      </div>
+    </div>
+
+    <div class="faction-card" style="border-top: 3px solid var(--blue)">
+      <div class="faction-header">
+        <div class="faction-flag">🇺🇸</div>
+        <div><div class="faction-name">美国（特朗普政府）</div><div class="faction-role">进攻方 · 主导者</div></div>
+      </div>
+      <div class="faction-body">
+        <div class="faction-stat"><span class="stat-label">当前立场</span><span class="stat-val stance-attack">进攻+谈判施压</span></div>
+        <div class="faction-stat"><span class="stat-label">核心目标</span><span class="stat-val">阻止伊朗核武化</span></div>
+        <div class="faction-stat"><span class="stat-label">军事资产</span><span class="stat-val">航母+战略轰炸机</span></div>
+        <div class="faction-stat"><span class="stat-label">外交行动</span><span class="stat-val" style="color:var(--yellow)">5天攻击延迟</span></div>
+        <div class="faction-stat"><span class="stat-label">国内压力</span><span class="stat-val stance-defend">油价→通胀</span></div>
+        <div class="faction-stat"><span class="stat-label">关键底牌</span><span class="stat-val">B-2战略轰炸机</span></div>
+      </div>
+    </div>
+
+    <div class="faction-card" style="border-top: 3px solid #60a5fa">
+      <div class="faction-header">
+        <div class="faction-flag">🇮🇱</div>
+        <div><div class="faction-name">以色列</div><div class="faction-role">进攻方 · 共同行动</div></div>
+      </div>
+      <div class="faction-body">
+        <div class="faction-stat"><span class="stat-label">当前立场</span><span class="stat-val stance-attack">持续打击</span></div>
+        <div class="faction-stat"><span class="stat-label">核心目标</span><span class="stat-val">摧毁伊朗核与军事能力</span></div>
+        <div class="faction-stat"><span class="stat-label">最新行动</span><span class="stat-val">空袭伊朗气田</span></div>
+        <div class="faction-stat"><span class="stat-label">战略优势</span><span class="stat-val">抵抗轴心已瓦解</span></div>
+        <div class="faction-stat"><span class="stat-label">国内情况</span><span class="stat-val">广泛支持战争</span></div>
+        <div class="faction-stat"><span class="stat-label">关键底牌</span><span class="stat-val">精确打击+情报</span></div>
+      </div>
+    </div>
+
+    <div class="faction-card" style="border-top: 3px solid var(--yellow)">
+      <div class="faction-header">
+        <div class="faction-flag">🇸🇦</div>
+        <div><div class="faction-name">沙特阿拉伯</div><div class="faction-role">立场转变中 ⚡</div></div>
+      </div>
+      <div class="faction-body">
+        <div class="faction-stat"><span class="stat-label">当前立场</span><span class="stat-val stance-shifting">从中立→支持美</span></div>
+        <div class="faction-stat"><span class="stat-label">最新动作</span><span class="stat-val" style="color:var(--yellow)">开放美军基地</span></div>
+        <div class="faction-stat"><span class="stat-label">利益考量</span><span class="stat-val">伊朗弱化有利</span></div>
+        <div class="faction-stat"><span class="stat-label">风险</span><span class="stat-val stance-defend">成为伊朗报复目标</span></div>
+        <div class="faction-stat"><span class="stat-label">石油政策</span><span class="stat-val">不明朗</span></div>
+        <div class="faction-stat"><span class="stat-label">关键底牌</span><span class="stat-val">石油增产/减产</span></div>
+      </div>
+    </div>
+
+    <div class="faction-card" style="border-top: 3px solid #ef4444">
+      <div class="faction-header">
+        <div class="faction-flag">🇨🇳</div>
+        <div><div class="faction-name">中国</div><div class="faction-role">反对方 · 斡旋者</div></div>
+      </div>
+      <div class="faction-body">
+        <div class="faction-stat"><span class="stat-label">当前立场</span><span class="stat-val stance-defend">强烈谴责美以</span></div>
+        <div class="faction-stat"><span class="stat-label">外交行动</span><span class="stat-val">推动UN停火决议</span></div>
+        <div class="faction-stat"><span class="stat-label">经济影响</span><span class="stat-val stance-defend">能源进口受威胁</span></div>
+        <div class="faction-stat"><span class="stat-label">伊朗关系</span><span class="stat-val">战略伙伴</span></div>
+        <div class="faction-stat"><span class="stat-label">局限</span><span class="stat-val c-muted">无法直接干预</span></div>
+        <div class="faction-stat"><span class="stat-label">关键底牌</span><span class="stat-val">经济+外交</span></div>
+      </div>
+    </div>
+
+    <div class="faction-card" style="border-top: 3px solid #dc2626">
+      <div class="faction-header">
+        <div class="faction-flag">🇷🇺</div>
+        <div><div class="faction-name">俄罗斯</div><div class="faction-role">反对方</div></div>
+      </div>
+      <div class="faction-body">
+        <div class="faction-stat"><span class="stat-label">当前立场</span><span class="stat-val stance-defend">谴责+呼吁停火</span></div>
+        <div class="faction-stat"><span class="stat-label">实际影响力</span><span class="stat-val c-muted">受乌克兰战争制约</span></div>
+        <div class="faction-stat"><span class="stat-label">能源利益</span><span class="stat-val" style="color:var(--green)">油价上涨受益</span></div>
+        <div class="faction-stat"><span class="stat-label">UN否决权</span><span class="stat-val">与中国联手</span></div>
+        <div class="faction-stat"><span class="stat-label">伊朗援助</span><span class="stat-val c-muted">有限（自顾不暇）</span></div>
+        <div class="faction-stat"><span class="stat-label">关键底牌</span><span class="stat-val">UN否决</span></div>
+      </div>
+    </div>
+
+    <div class="faction-card" style="border-top: 3px solid var(--cyan)">
+      <div class="faction-header">
+        <div class="faction-flag">🇶🇦</div>
+        <div><div class="faction-name">卡塔尔</div><div class="faction-role">受害方 · 调停候选</div></div>
+      </div>
+      <div class="faction-body">
+        <div class="faction-stat"><span class="stat-label">当前立场</span><span class="stat-val stance-neutral">中立（受害）</span></div>
+        <div class="faction-stat"><span class="stat-label">LNG设施</span><span class="stat-val stance-defend">遭伊朗袭击受损</span></div>
+        <div class="faction-stat"><span class="stat-label">历史角色</span><span class="stat-val">哈马斯谈判中介</span></div>
+        <div class="faction-stat"><span class="stat-label">对日本影响</span><span class="stat-val stance-defend">LNG供应受影响</span></div>
+        <div class="faction-stat"><span class="stat-label">氦气供应</span><span class="stat-val stance-defend">中断→影响日本医疗</span></div>
+        <div class="faction-stat"><span class="stat-label">关键底牌</span><span class="stat-val">斡旋信誉</span></div>
+      </div>
+    </div>
+
+    <div class="faction-card" style="border-top: 3px solid var(--muted)">
+      <div class="faction-header">
+        <div class="faction-flag">🇯🇵</div>
+        <div><div class="faction-name">日本</div><div class="faction-role">受影响方</div></div>
+      </div>
+      <div class="faction-body">
+        <div class="faction-stat"><span class="stat-label">当前立场</span><span class="stat-val stance-neutral">呼吁和平（观察）</span></div>
+        <div class="faction-stat"><span class="stat-label">LNG依存</span><span class="stat-val stance-defend">卡塔尔产LNG约10%</span></div>
+        <div class="faction-stat"><span class="stat-label">石油调达</span><span class="stat-val stance-defend">中东依存度高</span></div>
+        <div class="faction-stat"><span class="stat-label">物价影响</span><span class="stat-val stance-defend">CPI上昇リスク</span></div>
+        <div class="faction-stat"><span class="stat-label">産業影響</span><span class="stat-val stance-defend">自動車・医療機器</span></div>
+        <div class="faction-stat"><span class="stat-label">外交行動</span><span class="stat-val">停戦呼びかけ</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════ IMPACT PANEL ═══════════════ -->
+<div id="panel-impact" class="panel">
+  <div class="section-title">全球影响分析</div>
+  <div class="impact-grid">
+
+    <div class="impact-card" style="border-top: 3px solid var(--red)">
+      <div class="impact-icon">🛢️</div>
+      <div class="impact-title">能源·原油价格</div>
+      <div class="impact-desc">霍尔木兹海峡实质瘫痪，全球约20%石油运输受阻。布伦特原油从战前约70美元暴涨至峰值120美元。特朗普延迟攻击公告后跌至101美元，但仍高度不稳定。</div>
+      <div class="impact-value c-orange">$101—120 / 桶</div>
+    </div>
+
+    <div class="impact-card" style="border-top: 3px solid var(--orange)">
+      <div class="impact-icon">🏭</div>
+      <div class="impact-title">日本LNG·能源供给</div>
+      <div class="impact-desc">日本约10%的LNG从卡塔尔进口，卡塔尔北方气田LNG设施遭到攻击受损。电力供应稳定性受威胁，电费将进一步上涨。中东依存度高的日本能源结构脆弱性暴露。</div>
+      <div class="impact-value c-red">供应中断风险 ⚠️</div>
+    </div>
+
+    <div class="impact-card" style="border-top: 3px solid var(--purple)">
+      <div class="impact-icon">🏥</div>
+      <div class="impact-title">日本医疗：氦气危机</div>
+      <div class="impact-desc">MRI机器所需的超低温液态氦来自卡塔尔LNG生产过程副产品。卡塔尔设施受损导致氦气产量骤降，日本医院氦气库存告急。MRI检查面临停滞风险，医院经营压力巨大。</div>
+      <div class="impact-value c-red">MRI检查危机 ❗</div>
+    </div>
+
+    <div class="impact-card" style="border-top: 3px solid var(--blue)">
+      <div class="impact-icon">🚗</div>
+      <div class="impact-title">汽车·制造业</div>
+      <div class="impact-desc">丰田因霍尔木兹海峡封锁，中东出口受阻，3月削减2万台、4月再减2.4万台产量。零部件物流成本上升，其他汽车制造商也面临相同压力。日本汽车出口收入受损。</div>
+      <div class="impact-value c-orange">丰田 -4.4万台/2月</div>
+    </div>
+
+    <div class="impact-card" style="border-top: 3px solid var(--cyan)">
+      <div class="impact-icon">🧴</div>
+      <div class="impact-title">塑料·日用品</div>
+      <div class="impact-desc">原油涨价→石化原料暴涨→塑料制品成本剧增。中国最大塑料卸售市场原材料每吨涨约7万日元。部分中国企业已开始减产，未来进口消费品价格将大幅上涨，波及日本零售市场。</div>
+      <div class="impact-value c-orange">+7万円/吨 (中国市场)</div>
+    </div>
+
+    <div class="impact-card" style="border-top: 3px solid var(--yellow)">
+      <div class="impact-icon">📈</div>
+      <div class="impact-title">日本物价（CPI）</div>
+      <div class="impact-desc">日本最新CPI数据本已开始回落（同比2%以下，37个月来首次下降），但分析师指出伊朗情势影响尚未完全反映。原油持续高价将引发新一轮通胀，消费者购买力进一步受压。</div>
+      <div class="impact-value c-yellow">通胀二次浪来袭 ⚠️</div>
+    </div>
+
+    <div class="impact-card" style="border-top: 3px solid #dc2626">
+      <div class="impact-icon">📉</div>
+      <div class="impact-title">股市·金融市场</div>
+      <div class="impact-desc">3月23日战争消息冲击下，日经平均大幅下跌。铜建值跌破200万日元（3个月最低）。全球风险规避情绪升温。特朗普延迟攻击公告后道指反弹，但不确定性依然高，市场持续震荡。</div>
+      <div class="impact-value c-red">高度震荡中 📊</div>
+    </div>
+
+    <div class="impact-card" style="border-top: 3px solid var(--green)">
+      <div class="impact-icon">🌏</div>
+      <div class="impact-title">中国经济</div>
+      <div class="impact-desc">中国是全球最大石油进口国，中东占进口量约40%。霍尔木兹封锁直接威胁中国能源安全。同时，塑料、化工等制造业原材料成本急升，"世界工厂"产出成本压力剧增。中国GDP增长面临下行风险。</div>
+      <div class="impact-value c-orange">GDP增长受威胁</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════ STATUS PANEL ═══════════════ -->
+<div id="panel-status" class="panel">
+
+  <div class="status-panel">
+    <div class="status-title"><div class="live-dot"></div> 当前局势快照 · 2026年3月24日 14:30 JST</div>
+    <div class="status-grid">
+      <div class="status-item"><div class="status-label">战争状态</div><div class="status-val c-red">进行中 · 第24天</div></div>
+      <div class="status-item"><div class="status-label">交战方</div><div class="status-val c-red">美🇺🇸以🇮🇱 vs 伊朗🇮🇷</div></div>
+      <div class="status-item"><div class="status-label">布伦特原油</div><div class="status-val c-orange">~$101/桶</div></div>
+      <div class="status-item"><div class="status-label">霍尔木兹海峡</div><div class="status-val c-red">实质瘫痪</div></div>
+      <div class="status-item"><div class="status-label">停火谈判</div><div class="status-val c-yellow">不明朗（伊朗否认）</div></div>
+      <div class="status-item"><div class="status-label">下一关键节点</div><div class="status-val c-yellow">3月28日（5天窗口结束）</div></div>
+      <div class="status-item"><div class="status-label">沙特立场</div><div class="status-val c-yellow">转向支持美军</div></div>
+      <div class="status-item"><div class="status-label">日本影响</div><div class="status-val c-orange">能源・医療・物価</div></div>
+    </div>
+  </div>
+
+  <div class="section-title">📅 未来关键时间节点</div>
+  <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">
+
+    <div style="background:var(--card); border:1px solid #ff2222; border-radius:8px; padding:12px 14px; display:flex; gap:12px; align-items:flex-start;">
+      <div style="font-size:1.2em">⏰</div>
+      <div>
+        <div style="font-weight:700; color:#ff6b6b; font-size:0.85em">3月28日 — 特朗普5天攻击延迟期届满</div>
+        <div style="font-size:0.78em; color:var(--muted); margin-top:4px">如谈判无实质进展，可能恢复对伊朗能源设施的攻击。这是当前最重要的观察节点。若攻击重启，油价可能再次冲击$120+。</div>
+      </div>
+    </div>
+
+    <div style="background:var(--card); border:1px solid var(--orange); border-radius:8px; padding:12px 14px; display:flex; gap:12px; align-items:flex-start;">
+      <div style="font-size:1.2em">🇸🇦</div>
+      <div>
+        <div style="font-weight:700; color:var(--orange); font-size:0.85em">沙特正式宣布立场</div>
+        <div style="font-size:0.78em; color:var(--muted); margin-top:4px">沙特开放基地的正式确认将是局势升级的明确信号，伊朗可能对沙特目标发动直接报复，将冲突扩展至全面地区战争。</div>
+      </div>
+    </div>
+
+    <div style="background:var(--card); border:1px solid var(--purple); border-radius:8px; padding:12px 14px; display:flex; gap:12px; align-items:flex-start;">
+      <div style="font-size:1.2em">☢️</div>
+      <div>
+        <div style="font-weight:700; color:#c084fc; font-size:0.85em">伊朗核设施状态评估</div>
+        <div style="font-size:0.78em; color:var(--muted); margin-top:4px">国际原子能机构（IAEA）及美国情报界将评估美以打击是否真正摧毁了伊朗的核武能力。如打击效果有限，后续行动压力更大。</div>
+      </div>
+    </div>
+
+    <div style="background:var(--card); border:1px solid var(--blue); border-radius:8px; padding:12px 14px; display:flex; gap:12px; align-items:flex-start;">
+      <div style="font-size:1.2em">🚢</div>
+      <div>
+        <div style="font-weight:700; color:#60a5fa; font-size:0.85em">霍尔木兹海峡通航状况</div>
+        <div style="font-size:0.78em; color:var(--muted); margin-top:4px">海峡每日通行恢复程度将直接决定全球能源价格走势。伊朗是否将彻底封锁海峡（开战以来的最大升级手段）是各方最担心的情景。</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-title" style="margin-top:24px">🗺️ 情景预测</div>
+  <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:10px; margin-top:8px;">
+
+    <div style="background:#081a0f; border:1px solid var(--green); border-radius:8px; padding:12px;">
+      <div style="color:var(--green); font-weight:700; font-size:0.82em; margin-bottom:6px">🕊️ 乐观情景（20%概率）</div>
+      <div style="font-size:0.76em; color:var(--muted); line-height:1.6">伊朗在压力下接受谈判框架，美国宣布临时停火。谈判进程启动，油价逐步回落至$80以下。核危机通过外交途径管控。</div>
+    </div>
+
+    <div style="background:#1a1608; border:1px solid var(--yellow); border-radius:8px; padding:12px;">
+      <div style="color:var(--yellow); font-weight:700; font-size:0.82em; margin-bottom:6px">⚖️ 基准情景（50%概率）</div>
+      <div style="font-size:0.76em; color:var(--muted); line-height:1.6">冲突持续数周至数月，伊朗局部反击，油价维持在$90—120区间。最终在国际压力下达成某种脆弱停火，伊朗放弃部分核能力换取部分制裁解除。</div>
+    </div>
+
+    <div style="background:#1a0808; border:1px solid var(--red); border-radius:8px; padding:12px;">
+      <div style="color:var(--red); font-weight:700; font-size:0.82em; margin-bottom:6px">🔥 悲观情景（30%概率）</div>
+      <div style="font-size:0.76eb; color:var(--muted); line-height:1.6">伊朗彻底封锁霍尔木兹或使用化学/生物武器，沙特遭到直接攻击，地区全面战争爆发。油价冲破$150，全球经济衰退，日本能源危机深化。</div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  function switchTab(name) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function toggleCard(card) {
+    card.classList.toggle('open');
+  }
+
+  function filterEvents(cat, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tl-item[data-cat]').forEach(item => {
+      if (cat === 'all') {
+        item.classList.remove('hidden');
+      } else {
+        if (item.dataset.cat.split(' ').includes(cat)) {
+          item.classList.remove('hidden');
+        } else {
+          item.classList.add('hidden');
+        }
+      }
+    });
+  }
+</script>
+</body>
+</html>
