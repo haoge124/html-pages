@@ -3,26 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>iPhone 行情、历史与新品爆料</title>
+<title>iPhone 行情、历史与新品爆料（增强版）</title>
 <style>
-:root{--bg:#0a0f18;--card:#121a27;--card2:#182233;--text:#dbe7f7;--muted:#8ca0bb;--border:#26354a;--blue:#60a5fa;--green:#22c55e;--yellow:#facc15;--red:#ef4444;--apple:#cfd8e3}
+:root{--bg:#0a0f18;--card:#121a27;--card2:#182233;--text:#dbe7f7;--muted:#8ca0bb;--border:#26354a;--blue:#60a5fa;--green:#22c55e;--yellow:#facc15;--red:#ef4444;--apple:#cfd8e3;--pink:#f472b6}
 *{box-sizing:border-box;margin:0;padding:0} body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#081019,#0a1220);color:var(--text);line-height:1.65}
 .hero{text-align:center;padding:34px 18px 26px;border-bottom:1px solid var(--border);background:radial-gradient(circle at top,rgba(96,165,250,.12),transparent 36%)}
 .hero h1{font-size:2rem;color:#fff;margin-bottom:8px}.hero p{color:var(--muted)} .badge{display:inline-block;margin-top:10px;padding:6px 12px;border-radius:999px;border:1px solid rgba(96,165,250,.3);background:rgba(96,165,250,.1);color:#b8d6ff;font-size:.84rem}
-.container{max-width:1120px;margin:0 auto;padding:20px} .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}.tab{padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--muted);cursor:pointer}.tab.active{background:var(--card2);color:#fff;border-color:var(--blue)} .panel{display:none}.panel.active{display:block}
+.container{max-width:1180px;margin:0 auto;padding:20px} .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}.tab{padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--muted);cursor:pointer}.tab.active{background:var(--card2);color:#fff;border-color:var(--blue)} .panel{display:none}.panel.active{display:block}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:18px}.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px}.card h3{margin-bottom:10px;color:#fff}.kpi{font-size:1.9rem;font-weight:700;color:var(--apple)}.sub{font-size:.84rem;color:var(--muted)}
 .table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}.table th,.table td{padding:12px 10px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}.table th{background:var(--card2)}
 .timeline{position:relative;padding-left:24px}.timeline:before{content:"";position:absolute;left:7px;top:0;bottom:0;width:2px;background:linear-gradient(var(--blue),#5b6d8f)}.event{position:relative;margin-bottom:16px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px}.event:before{content:"";position:absolute;left:-22px;top:18px;width:12px;height:12px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 4px rgba(96,165,250,.12)}.date{color:#b9d8ff;font-weight:700;font-size:.9rem}.tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.74rem;margin-left:8px;border:1px solid rgba(250,204,21,.25);background:rgba(250,204,21,.1);color:var(--yellow)}
-.bar{height:10px;background:#09111d;border:1px solid var(--border);border-radius:999px;overflow:hidden;margin-top:8px}.bar>span{display:block;height:100%;background:linear-gradient(90deg,var(--blue),#8ec5ff)} .note{padding:14px;border-radius:12px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);color:#d6ffde}.warn{padding:14px;border-radius:12px;background:rgba(250,204,21,.08);border:1px solid rgba(250,204,21,.18);color:#fff3bf}
+.bar{height:10px;background:#09111d;border:1px solid var(--border);border-radius:999px;overflow:hidden;margin-top:8px}.bar>span{display:block;height:100%;background:linear-gradient(90deg,var(--blue),#8ec5ff)} .note{padding:14px;border-radius:12px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);color:#d6ffde}.warn{padding:14px;border-radius:12px;background:rgba(250,204,21,.08);border:1px solid rgba(250,204,21,.18);color:#fff3bf}.danger{padding:14px;border-radius:12px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.18);color:#ffd0d0}
+.compare{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.75rem;background:rgba(244,114,182,.12);border:1px solid rgba(244,114,182,.25);color:#ffc2e1}
 .footer{margin-top:28px;padding-top:14px;border-top:1px solid var(--border);color:var(--muted);font-size:.84rem}
 @media(max-width:700px){.hero h1{font-size:1.55rem}}
 </style>
 </head>
 <body>
 <div class="hero">
-  <h1>📱 iPhone 行情、历史与最新爆料</h1>
-  <p>从 iPhone 历史地位、市场表现，到 2026 年最新新品传闻与折叠机进展</p>
-  <div class="badge">资料整理时间：2026-03-25 · 使用 Tavily / 多来源网页检索</div>
+  <h1>📱 iPhone 行情、历史与新品爆料（增强版）</h1>
+  <p>加入历代路线图、折叠机竞争格局、以及“现在该不该等”的购买判断</p>
+  <div class="badge">更新：2026-03-25 · 基于 Tavily / 多来源网页检索</div>
 </div>
 <div class="container">
   <div class="tabs">
@@ -30,57 +31,50 @@
     <div class="tab" onclick="showTab('history',this)">历史</div>
     <div class="tab" onclick="showTab('market',this)">行情 / 市场</div>
     <div class="tab" onclick="showTab('rumors',this)">新品爆料</div>
+    <div class="tab" onclick="showTab('compare',this)">折叠机对比</div>
+    <div class="tab" onclick="showTab('buy',this)">现在该不该等</div>
   </div>
 
   <div id="summary" class="panel active">
     <div class="grid">
       <div class="card"><div class="sub">iPhone 首发</div><div class="kpi">2007</div><div class="sub">重新定义智能手机交互</div></div>
       <div class="card"><div class="sub">Apple 2025 全球智能机份额</div><div class="kpi">20%</div><div class="sub">据 Counterpoint，Apple 2025 位居全球第一</div></div>
-      <div class="card"><div class="sub">2025 年同比出货增长</div><div class="kpi">+10%</div><div class="sub">Top 5 厂商里增速最高之一</div></div>
-      <div class="card"><div class="sub">折叠 iPhone 传闻时间点</div><div class="kpi">2026</div><div class="sub">当前主流爆料都指向 2026</div></div>
+      <div class="card"><div class="sub">2025 年同比出货增长</div><div class="kpi">+10%</div><div class="sub">Top 5 厂商里表现最强之一</div></div>
+      <div class="card"><div class="sub">折叠 iPhone 传闻时间点</div><div class="kpi">2026</div><div class="sub">主流爆料一致指向 2026</div></div>
     </div>
-
     <div class="card">
-      <h3>一句话结论</h3>
-      <p>iPhone 现在的“行情”不是单纯的销量故事，而是一个<strong>高端机护城河 + 换机周期变长 + 新形态催化</strong>的组合。市场端，Apple 在 2025 年重新坐上全球智能手机份额第一的位置；产品端，外界普遍认为 Apple 正在为下一轮大升级做准备，而<strong>折叠 iPhone</strong> 是当前最强的爆点之一。</p>
+      <h3>增强版核心结论</h3>
+      <p>iPhone 目前处在“<strong>成熟产品线 + 等待下一次形态创新</strong>”的阶段。常规直板机的创新边际放缓，但 Apple 凭借高端定位、生态锁定和新价格带扩展仍保持强势。外界普遍认为，<strong>折叠 iPhone 将是 Apple 下一轮最重要的硬件叙事</strong>，并且最早可能在 2026 年落地。</p>
     </div>
-
-    <div class="note">
-      <strong>核心判断：</strong>如果只是看短期，iPhone 已进入成熟期；但如果看 2026-2027，折叠机、形态变化、价格带扩展（如 e 系列 / Air / Fold）可能重新打开增长想象空间。
-    </div>
+    <div class="note"><strong>一句话：</strong>如果你只是问“iPhone 会不会继续卖”，答案是会；如果你问“下一次真正刺激换机的是什么”，目前最像答案的就是折叠机。</div>
   </div>
 
   <div id="history" class="panel">
     <div class="timeline">
-      <div class="event">
-        <div class="date">2007 <span class="tag">原点</span></div>
-        <h3>第一代 iPhone 发布</h3>
-        <p>苹果把电容屏、多点触控、移动浏览器、应用式交互整合成完整体验。它不是第一台智能手机，但它重新定义了“智能手机应该怎么用”。</p>
-      </div>
-      <div class="event">
-        <div class="date">2008–2010</div>
-        <h3>App Store 建立生态</h3>
-        <p>iPhone 不再只是硬件，而变成“硬件 + App Store + 开发生态”的平台。这个阶段奠定了苹果长期高利润的基础。</p>
-      </div>
-      <div class="event">
-        <div class="date">2014 <span class="tag">大屏时代</span></div>
-        <h3>iPhone 6 / 6 Plus</h3>
-        <p>正式进入大屏时代，销量爆发，成为 iPhone 历史上的一个大拐点。</p>
-      </div>
-      <div class="event">
-        <div class="date">2017 <span class="tag">十周年</span></div>
-        <h3>iPhone X</h3>
-        <p>全面屏、Face ID、刘海设计，开启新一代高端 iPhone 设计语言。也让高端价格带进一步上移。</p>
-      </div>
-      <div class="event">
-        <div class="date">2020</div>
-        <h3>5G 上车：iPhone 12 系列</h3>
-        <p>5G 普及和疫情后换机需求共振，形成新一轮超级周期。</p>
-      </div>
-      <div class="event">
-        <div class="date">2023–2025</div>
-        <h3>成熟期：增量放缓，但高端地位稳固</h3>
-        <p>整体智能机市场趋于成熟，换机周期拉长，但 iPhone 凭借高端定位、生态粘性和保值率，仍维持强势。</p>
+      <div class="event"><div class="date">2007 <span class="tag">原点</span></div><h3>第一代 iPhone</h3><p>重新定义智能手机，让“触屏 + 浏览器 + 音乐 + 电话”变成统一体验。</p></div>
+      <div class="event"><div class="date">2008–2010</div><h3>App Store 生态定型</h3><p>iPhone 从设备变平台，开发者生态和服务收入模式建立。</p></div>
+      <div class="event"><div class="date">2014 <span class="tag">爆发</span></div><h3>iPhone 6 / 6 Plus</h3><p>大屏化抓住主流需求，推动销量与利润齐升。</p></div>
+      <div class="event"><div class="date">2017 <span class="tag">高端化</span></div><h3>iPhone X</h3><p>全面屏、Face ID、高端化定价，奠定了之后几年 Pro 路线。</p></div>
+      <div class="event"><div class="date">2020</div><h3>iPhone 12 进入 5G 周期</h3><p>5G 换机潮带来新一轮增长。</p></div>
+      <div class="event"><div class="date">2022–2024</div><h3>成熟化 + Pro 系列强化</h3><p>基础款边际变化趋缓，高端 Pro/Pro Max 更成为利润核心。</p></div>
+      <div class="event"><div class="date">2025–2026</div><h3>等待下一次大形态变化</h3><p>市场开始从“直板机年更”转向“什么时候出折叠机 / 新交互形态”。</p></div>
+    </div>
+
+    <div class="card">
+      <h3>iPhone 历代路线图（简版）</h3>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>阶段</th><th>代表机型</th><th>关键词</th></tr></thead>
+          <tbody>
+            <tr><td>初代革命期</td><td>iPhone / 3G / 4</td><td>触控革命、App Store、Retina</td></tr>
+            <tr><td>普及期</td><td>4s / 5 / 5s</td><td>Siri、轻薄化、指纹识别</td></tr>
+            <tr><td>大屏普及时期</td><td>6 / 6 Plus / 7 / 8</td><td>更大屏幕、大众爆发</td></tr>
+            <tr><td>全面屏高端化</td><td>X / XS / 11 Pro</td><td>Face ID、全面屏、价格抬升</td></tr>
+            <tr><td>5G 周期</td><td>12 / 13 / 14</td><td>5G、续航与影像升级</td></tr>
+            <tr><td>成熟分层期</td><td>15 / 16 / 17</td><td>Pro 更强、基础款趋稳、e/Air 线扩展</td></tr>
+            <tr><td>下一阶段</td><td>18 / Fold（传闻）</td><td>折叠形态、可能重新定义高端机</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -88,93 +82,117 @@
   <div id="market" class="panel">
     <div class="card" style="margin-bottom:16px">
       <h3>2025 年市场走势</h3>
-      <p>根据 Counterpoint 相关报道与二次引用，<strong>Apple 在 2025 年拿下全球智能手机市场约 20% 份额</strong>，同比出货增长约 <strong>10%</strong>，并且是 14 年来首次有望在年出货层面压过三星。这个变化很重要，说明 iPhone 并不是简单“老了”，而是在高端市场与新兴市场同时找到支撑。</p>
+      <p>据 Counterpoint 相关报道和二次引用，Apple 在 2025 年拿下约 <strong>20% 全球智能手机份额</strong>，出货同比约 <strong>+10%</strong>。这意味着 iPhone 在一个已经高度成熟的市场里，仍然保持极强的竞争力。</p>
       <div class="bar"><span style="width:20%"></span></div>
-      <div class="sub">Apple 2025 全球份额：约 20%</div>
+      <div class="sub">Apple 2025 全球智能机份额：约 20%</div>
     </div>
-
-    <div class="table-wrap">
-      <table class="table">
-        <thead><tr><th>阶段</th><th>行情特征</th><th>背后逻辑</th></tr></thead>
-        <tbody>
-          <tr><td>2007–2010</td><td>高速渗透</td><td>智能机革命初期，iPhone 作为新物种快速扩张</td></tr>
-          <tr><td>2011–2016</td><td>高增长 + 高利润</td><td>生态红利 + 大屏化 + 全球普及</td></tr>
-          <tr><td>2017–2020</td><td>高端化</td><td>iPhone X 之后，价格带提升，高端用户留存强化</td></tr>
-          <tr><td>2021–2024</td><td>成熟盘整</td><td>换机周期拉长，但服务收入和生态绑定支撑估值</td></tr>
-          <tr><td>2025</td><td>份额重回第一</td><td>产品线扩张 + 新兴市场支撑 + 高端护城河</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="grid" style="margin-top:16px">
-      <div class="card">
-        <h3>利多因素</h3>
-        <ul style="padding-left:18px">
-          <li>iOS 生态和服务收入持续加强</li>
-          <li>高端市场黏性强，转安卓成本高</li>
-          <li>新形态产品有望带来新一轮换机潮</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h3>压力因素</h3>
-        <ul style="padding-left:18px">
-          <li>全球智能机市场已成熟</li>
-          <li>创新疲劳，常规升级难再引爆需求</li>
-          <li>中国高端市场竞争更激烈</li>
-        </ul>
-      </div>
+    <div class="grid">
+      <div class="card"><h3>现在的“行情”是什么</h3><p>iPhone 不是高增长故事，而是<strong>高端稳盘 + 生态锁定 + 新产品催化预期</strong>的故事。</p></div>
+      <div class="card"><h3>利多</h3><ul style="padding-left:18px"><li>高端机忠诚度高</li><li>服务收入和生态协同强</li><li>若 Fold 成功，会打开新增长空间</li></ul></div>
+      <div class="card"><h3>压力</h3><ul style="padding-left:18px"><li>直板机创新疲劳</li><li>换机周期拉长</li><li>中国高端竞争激烈</li></ul></div>
+      <div class="card"><h3>市场在等什么</h3><p>市场真正期待的不是“小改款”，而是<strong>新形态 + 新使用场景</strong>。折叠机是当前最强预期。</p></div>
     </div>
   </div>
 
   <div id="rumors" class="panel">
-    <div class="card" style="margin-bottom:16px">
-      <h3>会不会出折叠 iPhone？</h3>
-      <p><strong>当前主流结论：大概率会，而且市场普遍把时间点指向 2026 年。</strong></p>
-      <p>MacRumors、9to5Mac、Jeff Pu、郭明錤等供应链/分析师口径，目前都逐渐收敛到这个方向：Apple 的第一代折叠 iPhone 将采用<strong>书本式折叠</strong>，而不是小翻盖式。</p>
-    </div>
-
+    <div class="card" style="margin-bottom:16px"><h3>折叠 iPhone：会不会出？</h3><p><strong>大概率会。</strong> 目前主流分析师与媒体口径已明显收敛到：Apple 的首款折叠 iPhone 会在 <strong>2026 年</strong> 发布，并且大概率是<strong>书本式折叠</strong>。</p></div>
     <div class="table-wrap">
       <table class="table">
-        <thead><tr><th>项目</th><th>当前主流爆料</th><th>可信度判断</th></tr></thead>
+        <thead><tr><th>项目</th><th>当前主流爆料</th><th>判断</th></tr></thead>
         <tbody>
-          <tr><td>发布时间</td><td>2026 年秋季（多方口径）</td><td>较高</td></tr>
-          <tr><td>形态</td><td>书本式折叠，类似 Galaxy Z Fold 路线</td><td>较高</td></tr>
+          <tr><td>发布时间</td><td>2026 秋季</td><td>较高</td></tr>
+          <tr><td>形态</td><td>书本式折叠</td><td>较高</td></tr>
           <tr><td>尺寸</td><td>外屏约 5.5 英寸；内屏约 7.8 英寸</td><td>中高</td></tr>
-          <tr><td>厚度</td><td>展开约 4.5mm；折叠约 9–9.5mm</td><td>中</td></tr>
-          <tr><td>卖点</td><td>尽量消灭折痕、液态金属铰链、钛金属机身</td><td>中高</td></tr>
-          <tr><td>生物识别</td><td>可能放弃 Face ID，改侧边 Touch ID</td><td>中</td></tr>
-          <tr><td>价格</td><td>约 1800–2500 美元区间</td><td>中</td></tr>
+          <tr><td>核心卖点</td><td>更轻折痕 / 高耐用铰链 / 大屏体验</td><td>中高</td></tr>
+          <tr><td>生物识别</td><td>可能改用侧边 Touch ID</td><td>中</td></tr>
+          <tr><td>价格</td><td>1800–2500 美元</td><td>中</td></tr>
         </tbody>
       </table>
     </div>
-
     <div class="grid" style="margin-top:16px">
+      <div class="card"><h3>为什么 Apple 现在才做</h3><p>Apple 更在意产品完成度，不愿意在折痕、铰链寿命、厚度和软件适配没到位前推出产品。</p></div>
+      <div class="card"><h3>为什么市场兴奋</h3><p>因为 Apple 一旦下场，折叠机可能从小众高端尝鲜品，变成真正的主流高端赛道。</p></div>
+      <div class="card"><h3>可信度最高的部分</h3><p>时间点（2026）和书本式设计。</p></div>
+      <div class="card"><h3>可信度较低的部分</h3><p>非常具体的价格、销量、毫米数、某些零部件参数——这些都还容易变。</p></div>
+    </div>
+  </div>
+
+  <div id="compare" class="panel">
+    <div class="compare">
       <div class="card">
-        <h3>为什么 Apple 到现在才做？</h3>
-        <p>主流看法是 Apple 一直在等两个条件：<strong>折痕控制</strong> 和 <strong>耐用性</strong>。它不太愿意像安卓阵营那样先试错再迭代，而是更倾向于等供应链成熟后再入场。</p>
+        <h3>🍎 Apple Fold（传闻）</h3>
+        <p><span class="pill">预计 2026</span></p>
+        <ul style="padding-left:18px">
+          <li>书本式折叠</li>
+          <li>卖点会集中在折痕控制与生态适配</li>
+          <li>可能是最贵 iPhone 之一</li>
+          <li>优势：iOS 生态、应用适配、品牌力</li>
+        </ul>
       </div>
       <div class="card">
-        <h3>为什么市场很在意？</h3>
-        <p>因为一旦 Apple 入局，折叠机不再只是极客或安卓高端机的小众品类，而可能变成真正的主流高端赛道。多家报道都提到：Apple 可能在首年就拿到可观份额。</p>
+        <h3>📱 Samsung Fold 系列</h3>
+        <p><span class="pill">已成熟量产</span></p>
+        <ul style="padding-left:18px">
+          <li>经验最丰富</li>
+          <li>全球折叠机市场先行者</li>
+          <li>硬件迭代快</li>
+          <li>优势：产品成熟；短板：生态溢价不如 Apple</li>
+        </ul>
       </div>
       <div class="card">
-        <h3>市场预测（注意：这是预测，不是官宣）</h3>
-        <p>一些调研/转引内容提到，Apple 折叠机上市后，2026 年可能迅速拿到折叠屏市场 20%+ 的份额，部分报道甚至提到 28%。这类数据更适合看趋势，不宜当作确定值。</p>
-      </div>
-      <div class="card">
-        <h3>我对爆料的判断</h3>
-        <p>“2026 会出折叠 iPhone” 这件事，可信度已经比过去几年高很多；但具体发布时间、价格、有没有 Face ID、销量预测，这些都 still rumor，不能当已定事实。</p>
+        <h3>🇨🇳 华为折叠机</h3>
+        <p><span class="pill">中国市场很强</span></p>
+        <ul style="padding-left:18px">
+          <li>在中国折叠屏市场存在感极强</li>
+          <li>本土生态与通信能力优势大</li>
+          <li>高端用户认可度高</li>
+          <li>全球份额受限于生态和渠道</li>
+        </ul>
       </div>
     </div>
 
-    <div class="warn" style="margin-top:16px">
-      <strong>提醒：</strong>关于 iPhone Fold 的很多信息来自供应链、分析师与媒体汇总，不是 Apple 官方确认。越具体的参数（价格、毫米数、销量预估），越需要保留怀疑。
+    <div class="card" style="margin-top:16px">
+      <h3>如果 Apple 入局，意味着什么？</h3>
+      <p>对三星来说，是“从先行者变成必须守擂”；对华为来说，是“在中国之外的全球高端叙事会更激烈”；对整个行业来说，则可能意味着折叠屏从实验性产品，进入真正的大众关注期。</p>
     </div>
+  </div>
+
+  <div id="buy" class="panel">
+    <div class="grid">
+      <div class="card">
+        <h3>适合现在买新 iPhone 的人</h3>
+        <ul style="padding-left:18px">
+          <li>你现在手机已经明显老化</li>
+          <li>你并不想为第一代折叠机承担试错成本</li>
+          <li>你更在意稳定、成熟、保值率</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>适合继续等的人</h3>
+        <ul style="padding-left:18px">
+          <li>你本来就想要“大屏 + 便携”结合</li>
+          <li>你对新形态设备更感兴趣</li>
+          <li>你愿意为 Apple 第一代折叠机付高溢价</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>我对“要不要等”的判断</h3>
+        <p><strong>如果你只是普通换机：</strong>不用硬等。<br><strong>如果你最在意下一次真正的大创新：</strong>可以关注 2026 的折叠 iPhone。</p>
+        <div class="bar"><span style="width:62%"></span></div>
+        <div class="sub">“值得关注 Fold，但不必人人等”</div>
+      </div>
+      <div class="card">
+        <h3>最大的风险</h3>
+        <p>第一代产品天然存在：价格高、产量受限、软件适配仍需打磨、耐久性还要看真实使用反馈。</p>
+      </div>
+    </div>
+    <div class="warn"><strong>购买建议一句话：</strong>你如果现在就要一台靠谱的主力机，买现有 iPhone 完全没问题；但如果你追求“下一次能明显感受到时代变化的 iPhone”，那确实值得盯住 2026 折叠机。</div>
+    <div class="danger" style="margin-top:16px"><strong>重要提醒：</strong>第一代 Apple Fold 很可能又贵又难抢，且未必适合所有人。不要把“会出”直接等同于“马上就值得买”。</div>
   </div>
 
   <div class="footer">
     主要参考来源：MacRumors、9to5Mac、Counterpoint 相关报道与引用、财经/科技媒体汇总页面、Tavily 检索结果（截至 2026-03-25）。<br>
-    说明：关于折叠 iPhone 的信息目前仍以爆料/预测为主；市场份额和销量引用可能存在不同机构口径差异。
+    说明：折叠 iPhone 相关信息仍以爆料/分析师预测为主；市场数据存在不同机构口径差异。
   </div>
 </div>
 <script>
