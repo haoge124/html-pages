@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>全国女子高校生 制服調査レポート</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+      background: #fef6f9;
+      color: #333;
+      line-height: 1.7;
+    }
+
+    header {
+      background: linear-gradient(135deg, #e91e8c, #ff6eb4);
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+    }
+
+    header p {
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    .section {
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 4px 16px rgba(233,30,140,0.08);
+    }
+
+    .section h2 {
+      font-size: 1.3rem;
+      color: #e91e8c;
+      border-left: 5px solid #e91e8c;
+      padding-left: 12px;
+      margin-bottom: 20px;
+    }
+
+    /* スカート丈マップ */
+    .map-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+    }
+
+    .map-card {
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .map-card .region { font-size: 0.8rem; color: #888; margin-bottom: 4px; }
+    .map-card .pref { font-size: 1.1rem; font-weight: bold; margin-bottom: 8px; }
+    .map-card .trend { font-size: 1.6rem; margin-bottom: 6px; }
+    .map-card .desc { font-size: 0.82rem; }
+
+    .mini    { background: #ffe0f0; border: 2px solid #f06292; }
+    .long    { background: #e0f4ff; border: 2px solid #64b5f6; }
+    .various { background: #f3f0ff; border: 2px solid #9575cd; }
+
+    /* 凡例 */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+    }
+
+    .legend-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+    }
+
+    .dot-mini    { background: #f06292; }
+    .dot-long    { background: #64b5f6; }
+    .dot-various { background: #9575cd; }
+
+    /* 統計バー */
+    .stat-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 14px;
+      gap: 10px;
+    }
+
+    .stat-label {
+      width: 120px;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .bar-wrap {
+      flex: 1;
+      background: #f0f0f0;
+      border-radius: 20px;
+      height: 22px;
+      overflow: hidden;
+    }
+
+    .bar {
+      height: 100%;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      padding-left: 10px;
+      font-size: 0.78rem;
+      color: white;
+      font-weight: bold;
+      transition: width 0.6s ease;
+    }
+
+    .bar-pink  { background: linear-gradient(90deg, #e91e8c, #f48fb1); }
+    .bar-blue  { background: linear-gradient(90deg, #1976d2, #64b5f6); }
+    .bar-purple{ background: linear-gradient(90deg, #7b1fa2, #ce93d8); }
+
+    /* 制服タイプ */
+    .type-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .type-card {
+      background: #fafafa;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      border: 2px solid #f8bbd9;
+    }
+
+    .type-card .icon { font-size: 3rem; margin-bottom: 10px; }
+    .type-card h3 { color: #e91e8c; font-size: 1.1rem; margin-bottom: 8px; }
+    .type-card p  { font-size: 0.85rem; color: #555; }
+
+    /* 七分類 */
+    .seven-class {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sc-row {
+      display: grid;
+      grid-template-columns: 28px 1fr 80px;
+      align-items: center;
+      background: #fef0f7;
+      border-radius: 8px;
+      padding: 10px 14px;
+      gap: 10px;
+    }
+
+    .sc-num {
+      background: #e91e8c;
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .sc-desc { font-size: 0.9rem; }
+    .sc-tag {
+      font-size: 0.75rem;
+      text-align: right;
+      color: #e91e8c;
+      font-weight: bold;
+    }
+
+    /* 地域コメント */
+    .comment-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .comment-card {
+      background: #fff5fb;
+      border-left: 4px solid #e91e8c;
+      border-radius: 0 12px 12px 0;
+      padding: 16px;
+    }
+
+    .comment-card .pref-name {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #e91e8c;
+      margin-bottom: 6px;
+    }
+
+    .comment-card p {
+      font-size: 0.85rem;
+      color: #444;
+    }
+
+    .source {
+      font-size: 0.75rem;
+      color: #aaa;
+      margin-top: 20px;
+      padding-top: 14px;
+      border-top: 1px solid #eee;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 0.8rem;
+      color: #bbb;
+    }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.4rem; }
+      .type-grid { grid-template-columns: 1fr; }
+      .stat-label { width: 90px; font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>👧 全国女子高校生 制服調査レポート</h1>
+  <p>スカート丈・制服タイプ・地域傾向まとめ ｜ 複数調査データ統合版</p>
+</header>
+
+<div class="container">
+
+  <!-- 調査概要 -->
+  <div class="section">
+    <h2>📋 調査概要</h2>
+    <ul style="padding-left: 18px; font-size: 0.95rem; line-height: 2;">
+      <li><strong>朝日新聞スカート丈取材班（2017年）</strong>：全国14都道府県・女子高生約2,400人を記者が街頭で目視調査</li>
+      <li><strong>LINEリサーチ（2020年）</strong>：高校1〜3年生女性 2,131サンプル｜スマートフォンWeb調査</li>
+      <li><strong>cancam / DIME 調査記事（2019〜2020年）</strong>：エリア別傾向分析</li>
+    </ul>
+  </div>
+
+  <!-- 全国スカート丈マップ -->
+  <div class="section">
+    <h2>🗾 地域別スカート丈傾向</h2>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot dot-mini"></div> 短め（ひざ上）派</div>
+      <div class="legend-item"><div class="legend-dot dot-long"></div> 長め（ひざ下）派</div>
+      <div class="legend-item"><div class="legend-dot dot-various"></div> 混在・いろいろ</div>
+    </div>
+
+    <div class="map-grid">
+
+      <div class="map-card mini">
+        <div class="region">北海道</div>
+        <div class="pref">札幌</div>
+        <div class="trend">❄️🦵</div>
+        <div class="desc">寒くてもミニ！冬はタイツでしのぐ</div>
+      </div>
+
+      <div class="map-card long">
+        <div class="region">東北</div>
+        <div class="pref">秋田・東北</div>
+        <div class="trend">📏</div>
+        <div class="desc">比較的校則に忠実、長め傾向</div>
+      </div>
+
+      <div class="map-card mini">
+        <div class="region">北関東</div>
+        <div class="pref">栃木・群馬</div>
+        <div class="trend">📐</div>
+        <div class="desc">ひざ上〜ひざ丈が多め</div>
+      </div>
+
+      <div class="map-card various">
+        <div class="region">関東</div>
+        <div class="pref">茨城</div>
+        <div class="trend">↕️</div>
+        <div class="desc">「ひざの真ん中あたり」が多くやや控えめ</div>
+      </div>
+
+      <div class="map-card mini">
+        <div class="region">東京</div>
+        <div class="pref">東京（渋谷・池袋）</div>
+        <div class="trend">🗼🩲</div>
+        <div class="desc">ひざ上15cm超が32%。「みんな短い」が標準</div>
+      </div>
+
+      <div class="map-card mini">
+        <div class="region">神奈川</div>
+        <div class="pref">横浜</div>
+        <div class="trend">🥇</div>
+        <div class="desc">全国最短！ひざ上15cm超が37%</div>
+      </div>
+
+      <div class="map-card mini">
+        <div class="region">千葉</div>
+        <div class="pref">千葉</div>
+        <div class="trend">📈</div>
+        <div class="desc">ひざ上派が半数以上（LINEリサーチ）</div>
+      </div>
+
+      <div class="map-card various">
+        <div class="region">中部</div>
+        <div class="pref">愛知（名古屋）</div>
+        <div class="trend">🌀</div>
+        <div class="desc">短め＆長めが混在。独自スタイルが存在</div>
+      </div>
+
+      <div class="map-card long">
+        <div class="region">北陸</div>
+        <div class="pref">福井</div>
+        <div class="trend">📏</div>
+        <div class="desc">ひざ下が多い傾向</div>
+      </div>
+
+      <div class="map-card mini">
+        <div class="region">近畿（滋賀）</div>
+        <div class="pref">滋賀</div>
+        <div class="trend">✨🦵</div>
+        <div class="desc">ひざが完全に見える人が9割超！関西一のミニ派</div>
+      </div>
+
+      <div class="map-card various">
+        <div class="region">近畿</div>
+        <div class="pref">京都</div>
+        <div class="trend">↕️</div>
+        <div class="desc">短め・長め混在、いろいろ派</div>
+      </div>
+
+      <div class="map-card long">
+        <div class="region">大阪</div>
+        <div class="pref">大阪</div>
+        <div class="trend">👜</div>
+        <div class="desc">「限界まで下げてはく」ロング派が6割。古着テイスト</div>
+      </div>
+
+      <div class="map-card long">
+        <div class="region">兵庫</div>
+        <div class="pref">神戸</div>
+        <div class="trend">🎀</div>
+        <div class="desc">お嬢様風ロング。ワンピース型が目立つ</div>
+      </div>
+
+      <div class="map-card long">
+        <div class="region">近畿</div>
+        <div class="pref">和歌山</div>
+        <div class="trend">📏</div>
+        <div class="desc">ひざ下派が半数以上（LINEリサーチ）</div>
+      </div>
+
+      <div class="map-card mini">
+        <div class="region">中国地方</div>
+        <div class="pref">岡山・島根</div>
+        <div class="trend">📐</div>
+        <div class="desc">ひざ上派が半数以上</div>
+      </div>
+
+      <div class="map-card mini">
+        <div class="region">四国</div>
+        <div class="pref">愛媛</div>
+        <div class="trend">📐</div>
+        <div class="desc">ひざ上寄りの傾向</div>
+      </div>
+
+      <div class="map-card long">
+        <div class="region">九州</div>
+        <div class="pref">福岡・長崎・佐賀</div>
+        <div class="trend">📏</div>
+        <div class="desc">長崎・佐賀はひざ下派が約7割！九州は長め傾向</div>
+      </div>
+
+    </div>
+
+    <p class="source">
+      出典：朝日新聞スカート丈取材班（2017）・LINEリサーチ（2020年3月・n=2,131）・DIME記事・cancam記事
+    </p>
+  </div>
+
+  <!-- ひざ上派ランキング -->
+  <div class="section">
+    <h2>📊 ひざ上派（短め）ランキング</h2>
+    <p style="font-size:0.85rem; color:#888; margin-bottom:16px;">LINEリサーチ（2020年）より ／ 「ひざ上」と回答した割合</p>
+
+    <div class="stat-row">
+      <div class="stat-label">① 神奈川</div>
+      <div class="bar-wrap"><div class="bar bar-pink" style="width:80%">約80%</div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-label">② 東京</div>
+      <div class="bar-wrap"><div class="bar bar-pink" style="width:77%">約77%</div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-label">③ 千葉</div>
+      <div class="bar-wrap"><div class="bar bar-pink" style="width:58%">約58%</div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-label">④ 岡山</div>
+      <div class="bar-wrap"><div class="bar bar-pink" style="width:55%">約55%</div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-label">⑤ 島根</div>
+      <div class="bar-wrap"><div class="bar bar-pink" style="width:52%">約52%</div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-label">大阪</div>
+      <div class="bar-wrap"><div class="bar bar-blue" style="width:30%">約30%</div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-label">長崎・佐賀</div>
+      <div class="bar-wrap"><div class="bar bar-blue" style="width:22%">約22%</div></div>
+    </div>
+
+    <p style="font-size:0.8rem; color:#aaa; margin-top:12px;">※概算値。詳細な数値は出典記事を参照</p>
+  </div>
+
+  <!-- スカート丈7分類 -->
+  <div class="section">
+    <h2>📏 スカート丈の7分類（朝日新聞調査基準）</h2>
+    <div class="seven-class">
+      <div class="sc-row">
+        <div class="sc-num">1</div>
+        <div class="sc-desc">ひざ上15cmよりさらに短い</div>
+        <div class="sc-tag">超ミニ</div>
+      </div>
+      <div class="sc-row">
+        <div class="sc-num">2</div>
+        <div class="sc-desc">ひざ真上〜15cmの間</div>
+        <div class="sc-tag">ミニ</div>
+      </div>
+      <div class="sc-row">
+        <div class="sc-num">3</div>
+        <div class="sc-desc">ひざぴったり上</div>
+        <div class="sc-tag">ひざ上</div>
+      </div>
+      <div class="sc-row">
+        <div class="sc-num">4</div>
+        <div class="sc-desc">ひざにかかる</div>
+        <div class="sc-tag">ひざ丈</div>
+      </div>
+      <div class="sc-row">
+        <div class="sc-num">5</div>
+        <div class="sc-desc">ひざ下ぴったり</div>
+        <div class="sc-tag">ひざ下</div>
+      </div>
+      <div class="sc-row">
+        <div class="sc-num">6</div>
+        <div class="sc-desc">ひざ下〜さらに15cmの間</div>
+        <div class="sc-tag">ロング</div>
+      </div>
+      <div class="sc-row">
+        <div class="sc-num">7</div>
+        <div class="sc-desc">ひざ下15cmよりさらに長い</div>
+        <div class="sc-tag">超ロング</div>
+      </div>
+    </div>
+    <p style="font-size:0.85rem; margin-top:16px; color:#555;">
+      全国平均では<strong>「ひざ丈（④）」が約48%</strong>で最多（cancam調査）。
+      東京はひざ上が他より多く、首都圏と関西で傾向が真逆になるのが大きな特徴。
+    </p>
+  </div>
+
+  <!-- 制服タイプ -->
+  <div class="section">
+    <h2>👗 制服タイプ（セーラー vs ブレザー）</h2>
+    <div class="type-grid">
+      <div class="type-card">
+        <div class="icon">⛵</div>
+        <h3>セーラー服</h3>
+        <p>中学校では約53.5%で主流（カンコー学生服調査）。<br>高校はブレザーが逆転。<br>東北・九州に多い傾向。</p>
+      </div>
+      <div class="type-card">
+        <div class="icon">🧥</div>
+        <h3>ブレザー</h3>
+        <p>高校では全体的にブレザーが多数。<br>首都圏・関西の私立に多く、おしゃれ感が高い。<br>近年増加傾向。</p>
+      </div>
+    </div>
+    <div style="margin-top:18px;">
+      <div class="stat-row">
+        <div class="stat-label">ブレザー（高校）</div>
+        <div class="bar-wrap"><div class="bar bar-pink" style="width:65%">約65%</div></div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-label">セーラー服（高校）</div>
+        <div class="bar-wrap"><div class="bar bar-blue" style="width:30%">約30%</div></div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-label">その他</div>
+        <div class="bar-wrap"><div class="bar bar-purple" style="width:5%">約5%</div></div>
+      </div>
+    </div>
+    <p class="source">出典：公正取引委員会「学校制服の取引実態に関する事後検証報告書（2023年）」・カンコー学生服調査</p>
+  </div>
+
+  <!-- 地域別コメント集 -->
+  <div class="section">
+    <h2>💬 地域別・生徒の声</h2>
+    <div class="comment-grid">
+
+      <div class="comment-card">
+        <div class="pref-name">🗼 東京</div>
+        <p>「めっちゃ短いですよ、みんな」（私立3年）<br>「普段はもっと短い」（公立3年）</p>
+      </div>
+
+      <div class="comment-card">
+        <div class="pref-name">🏯 大阪</div>
+        <p>「ひざ丈はめっちゃださいから、限界まで下げて腰ではいてる」<br>「本当はもっと下げたいけど、これ以上下げられへんから嫌」</p>
+      </div>
+
+      <div class="comment-card">
+        <div class="pref-name">⚓ 神戸</div>
+        <p>「校則でひざを全部見せたらダメ。でも、見せたいとも思わない」（私立2年）<br>お嬢様風スタイルが主流。</p>
+      </div>
+
+      <div class="comment-card">
+        <div class="pref-name">🏔 滋賀</div>
+        <p>ひざが完全に見える人が9割超。チェック柄スカートでオシャレを楽しむ傾向。</p>
+      </div>
+
+      <div class="comment-card">
+        <div class="pref-name">❄️ 札幌</div>
+        <p>「冬はタイツをはいてしのぐ」。<br>極寒でもミニを貫くスタイルが定番。</p>
+      </div>
+
+      <div class="comment-card">
+        <div class="pref-name">🌊 九州（長崎・佐賀）</div>
+        <p>ひざ下派が約7割。<br>落ち着いたスタイルが多く、地方らしい保守的傾向。</p>
+      </div>
+
+    </div>
+    <p class="source">出典：朝日新聞スカート丈取材班（2017年）</p>
+  </div>
+
+  <!-- まとめ -->
+  <div class="section">
+    <h2>📌 まとめ</h2>
+    <table style="width:100%; border-collapse:collapse; font-size:0.9rem;">
+      <thead>
+        <tr style="background:#e91e8c; color:white;">
+          <th style="padding:10px; text-align:left; border-radius:8px 0 0 0;">カテゴリ</th>
+          <th style="padding:10px; text-align:left;">地域</th>
+          <th style="padding:10px; text-align:left; border-radius:0 8px 0 0;">特徴</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#fff0f7;">
+          <td style="padding:10px; font-weight:bold; color:#e91e8c;">🥇 最も短い</td>
+          <td style="padding:10px;">神奈川（横浜）・東京</td>
+          <td style="padding:10px;">ひざ上派75〜80%。超ミニが当たり前</td>
+        </tr>
+        <tr>
+          <td style="padding:10px; font-weight:bold; color:#1976d2;">📏 最も長い</td>
+          <td style="padding:10px;">九州（長崎・佐賀）・大阪・神戸</td>
+          <td style="padding:10px;">ひざ下派7割。「長いのがオシャレ」文化</td>
+        </tr>
+        <tr style="background:#fff0f7;">
+          <td style="padding:10px; font-weight:bold; color:#7b1fa2;">🌀 独自スタイル</td>
+          <td style="padding:10px;">神戸・滋賀</td>
+          <td style="padding:10px;">神戸＝お嬢様ロング、滋賀＝関西唯一の超ミニ</td>
+        </tr>
+        <tr>
+          <td style="padding:10px; font-weight:bold; color:#388e3c;">📊 全国平均</td>
+          <td style="padding:10px;">全国</td>
+          <td style="padding:10px;">「ひざ丈」が最多（約48%）。ブレザーが主流</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<footer>
+  データ出典：朝日新聞（2017）・LINEリサーチ（2020）・cancam・DIME・公正取引委員会（2023） ｜ 作成：小莉 (Xiao Li)
+</footer>
+
+</body>
+</html>
