@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>東京 天気レポート｜2026年4月17日</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      color: #e0e0e0;
+      padding: 24px;
+    }
+    .container { max-width: 720px; margin: 0 auto; }
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .subtitle { color: #94a3b8; font-size: 0.9rem; margin-bottom: 28px; }
+
+    .card {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(10px);
+    }
+    .card h2 { font-size: 1rem; color: #94a3b8; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+    .current-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .big-temp {
+      font-size: 4rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+    }
+    .condition { font-size: 1.1rem; color: #60a5fa; margin-top: 6px; }
+    .stat-item { margin-bottom: 10px; }
+    .stat-label { font-size: 0.78rem; color: #94a3b8; }
+    .stat-value { font-size: 1.1rem; color: #fff; font-weight: 600; }
+
+    .forecast-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .forecast-day {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 16px 12px;
+      text-align: center;
+    }
+    .forecast-date { font-size: 0.8rem; color: #94a3b8; margin-bottom: 8px; }
+    .forecast-icon { font-size: 2rem; margin-bottom: 8px; }
+    .forecast-hi { font-size: 1.2rem; font-weight: 700; color: #f97316; }
+    .forecast-lo { font-size: 0.95rem; color: #60a5fa; margin-top: 2px; }
+    .forecast-desc { font-size: 0.75rem; color: #94a3b8; margin-top: 6px; }
+
+    .bar-row { margin-bottom: 10px; }
+    .bar-label { font-size: 0.82rem; color: #94a3b8; margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .bar-track { background: rgba(255,255,255,0.1); border-radius: 99px; height: 8px; }
+    .bar-fill { height: 8px; border-radius: 99px; }
+
+    .footer { text-align: center; color: #475569; font-size: 0.75rem; margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌤 東京 天気レポート</h1>
+    <div class="subtitle">2026年4月17日（金）午後7時59分現在 ／ データ: wttr.in</div>
+
+    <div class="card">
+      <h2>現在の天気</h2>
+      <div class="current-grid">
+        <div>
+          <div class="big-temp">16°C</div>
+          <div class="condition">☁️ 曇り</div>
+          <div style="color:#94a3b8; font-size:0.85rem; margin-top:8px;">体感: 16°C</div>
+        </div>
+        <div>
+          <div class="stat-item">
+            <div class="stat-label">湿度</div>
+            <div class="stat-value">67%</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">風速・風向</div>
+            <div class="stat-value">30 km/h（北北東）</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">本日の最高 / 最低</div>
+            <div class="stat-value">16°C / 13°C</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>3日間の予報</h2>
+      <div class="forecast-grid">
+        <div class="forecast-day">
+          <div class="forecast-date">4/17（今日）</div>
+          <div class="forecast-icon">☁️</div>
+          <div class="forecast-hi">16°C</div>
+          <div class="forecast-lo">13°C</div>
+          <div class="forecast-desc">夜にかけて曇り</div>
+        </div>
+        <div class="forecast-day">
+          <div class="forecast-date">4/18（土）</div>
+          <div class="forecast-icon">🌦</div>
+          <div class="forecast-hi">18°C</div>
+          <div class="forecast-lo">16°C</div>
+          <div class="forecast-desc">午後に一時雨のち晴れ</div>
+        </div>
+        <div class="forecast-day">
+          <div class="forecast-date">4/19（日）</div>
+          <div class="forecast-icon">☀️</div>
+          <div class="forecast-hi">18°C</div>
+          <div class="forecast-lo">17°C</div>
+          <div class="forecast-desc">おおむね晴れ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>コンディション指標</h2>
+      <div class="bar-row">
+        <div class="bar-label"><span>湿度</span><span>67%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:67%; background: linear-gradient(90deg,#38bdf8,#0ea5e9);"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label"><span>体感快適度</span><span>75%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:75%; background: linear-gradient(90deg,#34d399,#10b981);"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label"><span>風速（30km/h 最大100想定）</span><span>30%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:30%; background: linear-gradient(90deg,#a78bfa,#7c3aed);"></div></div>
+      </div>
+    </div>
+
+    <div class="footer">Generated by Claude Code · haoge124/html-pages · 2026-04-17</div>
+  </div>
+</body>
+</html>
