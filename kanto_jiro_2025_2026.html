@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>関東圏 新オープン二郎系ラーメン 2025-2026</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+      background: #0d0a08;
+      color: #e8e0d8;
+      min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(135deg, #1a0a00 0%, #2d1200 50%, #4a1e00 100%);
+      padding: 40px 20px;
+      text-align: center;
+      border-bottom: 1px solid #3d2010;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '🍜';
+      position: absolute;
+      font-size: 8rem;
+      opacity: 0.06;
+      top: -10px;
+      right: 20px;
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #ff8c42;
+      margin-bottom: 8px;
+      text-shadow: 0 0 30px #ff6b0055;
+    }
+    header p {
+      color: #9a7a5a;
+      font-size: 0.9rem;
+    }
+    .badge {
+      display: inline-block;
+      background: #c23b00;
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 12px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 16px;
+    }
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #ff8c42;
+      margin: 40px 0 16px;
+      padding-left: 14px;
+      border-left: 4px solid #c23b00;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #161008;
+      border: 1px solid #3d2010;
+      border-radius: 12px;
+      padding: 20px;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card:hover {
+      border-color: #ff8c42;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px #ff6b0022;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #c23b00, #ff8c42);
+    }
+    .card-tag {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 2px 10px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      letter-spacing: 0.04em;
+    }
+    .tag-new { background: #c23b0033; color: #ff8c42; border: 1px solid #c23b0066; }
+    .tag-hot { background: #8b000033; color: #ff4444; border: 1px solid #8b000066; }
+    .tag-noted { background: #2a1a0033; color: #d4a574; border: 1px solid #5a3a1055; }
+    .card h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #f5ede0;
+      margin-bottom: 6px;
+    }
+    .meta {
+      font-size: 0.78rem;
+      color: #7a6040;
+      margin-bottom: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .meta span { display: flex; align-items: center; gap: 4px; }
+    .features {
+      font-size: 0.82rem;
+      color: #c8b898;
+      line-height: 1.75;
+      margin-bottom: 14px;
+      list-style: none;
+    }
+    .features li {
+      padding-left: 18px;
+      position: relative;
+    }
+    .features li::before {
+      content: '🍖';
+      position: absolute;
+      left: 0;
+      font-size: 0.72rem;
+      top: 2px;
+    }
+    .price {
+      display: inline-block;
+      background: #2a1500;
+      color: #ff8c42;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      border: 1px solid #c23b0044;
+    }
+    .links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      padding: 5px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.75; }
+    .btn-site { background: #1a1008; color: #ff8c42; border: 1px solid #3d2010; }
+    .btn-map { background: #0a1a0a; color: #56d364; border: 1px solid #2ea04355; }
+    .call-box {
+      background: #1a0800;
+      border: 1px dashed #5a2a00;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.75rem;
+      color: #a07040;
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+    footer {
+      text-align: center;
+      color: #4a3520;
+      font-size: 0.8rem;
+      padding: 32px 16px;
+      border-top: 1px solid #2a1500;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🍜 関東圏 新オープン二郎系ラーメン</h1>
+  <p>2025年〜2026年 新店・注目インスパイア系まとめ <span class="badge">Updated 2026.04</span></p>
+</header>
+
+<div class="container">
+
+  <div class="section-title">🔥 2026年 新オープン</div>
+  <div class="grid">
+
+    <div class="card">
+      <span class="card-tag tag-new">NEW 2026.01.26</span>
+      <h3>CRAZY PORK（クレイジーポーク）</h3>
+      <div class="meta">
+        <span>📍 千代田区神田小川町（御茶ノ水駅 徒歩5分）</span>
+      </div>
+      <div class="call-box">「令和の二郎系」── コールなし・記入式で初心者も安心</div>
+      <span class="price">ラーメン並 ¥1,200</span>
+      <ul class="features">
+        <li>『俺の生きる道』出身の元店長が独立開業</li>
+        <li>中華鍋で炒めた「炒め野菜」が最大の特徴、キャベツ比率高くシャキシャキ</li>
+        <li>口頭コールなし、記入用紙でカスタム指定（初心者フレンドリー）</li>
+        <li>豚の部位を「バラ・腕・薄切り」から選択可能</li>
+        <li>乳化豚スープで濃厚かつマイルドな味わい</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-map" href="https://www.google.com/maps/search/CRAZY+PORK+千代田区神田小川町" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-title">🆕 2025年 注目新店</div>
+  <div class="grid">
+
+    <div class="card">
+      <span class="card-tag tag-hot">HOT 2025年</span>
+      <h3>らーめん 玄</h3>
+      <div class="meta">
+        <span>📍 世田谷区北沢（下北沢駅 徒歩4分）</span>
+      </div>
+      <ul class="features">
+        <li>ラーメン二郎 目黒店出身の店主が独立</li>
+        <li>「メグジ（目黒二郎）らしさ全開」バチバチにキレのある非乳化スープ</li>
+        <li>下北沢の洗練された立地で本格直系の味を提供</li>
+        <li>豚の仕込みにこだわり、ホロホロ食感</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-site" href="https://tabelog.com/tokyo/A1318/A131802/13237219/" target="_blank">🌐 食べログ</a>
+        <a class="btn btn-map" href="https://www.google.com/maps/search/らーめん玄+世田谷区北沢+下北沢" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-hot">HOT 2025年</span>
+      <h3>えどもんど（西日暮里・中野・新橋）</h3>
+      <div class="meta">
+        <span>📍 荒川区西日暮里（本店）ほか都内3店舗</span>
+      </div>
+      <ul class="features">
+        <li>大門の名店「中華そばいづる」店主が立ち上げた二郎系ブランド</li>
+        <li>富士丸インスパイア系、オーション小麦のワッシワシ極太麺</li>
+        <li>背脂で表面を覆う濃厚スープ、醤油のキレが際立つ</li>
+        <li>閉店間際でも外に行列が出来るほどの大盛況</li>
+        <li>西日暮里（本店）・中野・新橋で各店の味の個性が異なる</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-map" href="https://www.google.com/maps/search/えどもんど+西日暮里+ラーメン" target="_blank">📍 Google Map（本店）</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-hot">HOT 2025年</span>
+      <h3>俺の生きる道 白山</h3>
+      <div class="meta">
+        <span>📍 文京区白山（白山駅 近く）</span>
+      </div>
+      <ul class="features">
+        <li>元横浜DeNAベイスターズ育成選手が経営する話題店</li>
+        <li>ラーメン二郎 富士丸で修業を積んだ本格派</li>
+        <li>盛りの良さとコスパの高さで人気急上昇</li>
+        <li>豚の旨味を存分に活かした濃厚スープ</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-map" href="https://www.google.com/maps/search/俺の生きる道+白山+文京区" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-noted">2025年</span>
+      <h3>じゃっくぽっと</h3>
+      <div class="meta">
+        <span>📍 足立区谷中（北千住エリア）</span>
+      </div>
+      <ul class="features">
+        <li>「炒め野菜」を使用した新世代の二郎系スタイル</li>
+        <li>野菜を炒めることで甘みと食感を同時に実現</li>
+        <li>「新時代の二郎系」として界隈で注目を集める</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-map" href="https://www.google.com/maps/search/じゃっくぽっと+足立区" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-noted">2025年</span>
+      <h3>自家製麺 浜一</h3>
+      <div class="meta">
+        <span>📍 横浜市鶴見区矢向（矢向駅 徒歩4分）</span>
+      </div>
+      <ul class="features">
+        <li>ガーリック油のパンチと甘辛い牛100%挽肉が特徴</li>
+        <li>花椒を使った台湾風アレンジメニューも展開</li>
+        <li>冷たいメニューも用意した独自スタイル</li>
+        <li>矢向駅近くの地元密着型人気店</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-map" href="https://www.google.com/maps/search/自家製麺浜一+横浜市鶴見区矢向" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-noted">2025年</span>
+      <h3>麺屋 歩夢</h3>
+      <div class="meta">
+        <span>📍 神奈川県相模原市中央区淵野辺（淵野辺駅 徒歩15分）</span>
+      </div>
+      <ul class="features">
+        <li>人気店「豚星。」出身の店主が独立開業</li>
+        <li>「麺カタメでバキバキ系」の極太麺</li>
+        <li>微乳化スープでマイルドかつしっかりパンチ</li>
+        <li>柔らかさとコシを両立した唯一無二の麺</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-map" href="https://www.google.com/maps/search/麺屋歩夢+相模原市淵野辺" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-title">📍 2024〜2025年 話題の直系・インスパイア系（定番化）</div>
+  <div class="grid">
+
+    <div class="card">
+      <span class="card-tag tag-noted">2024〜</span>
+      <h3>自家製麺 No11 ASAKUSA</h3>
+      <div class="meta">
+        <span>📍 台東区浅草</span>
+      </div>
+      <ul class="features">
+        <li>独特なギザギザ形状の自家製麺で食感に変化</li>
+        <li>微乳化スープで飽きのこない仕上がり</li>
+        <li>浅草の観光エリアで外国人客にも人気</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-map" href="https://www.google.com/maps/search/自家製麺No11+ASAKUSA+台東区浅草" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-noted">2024〜</span>
+      <h3>豚ノヴァ 零-zero- 神田水道橋店</h3>
+      <div class="meta">
+        <span>📍 千代田区西神田（水道橋駅 近く）</span>
+      </div>
+      <ul class="features">
+        <li>汁なし大盛が名物の二郎インスパイア</li>
+        <li>豊富なトッピングで自分好みにカスタマイズ</li>
+        <li>水道橋・神田エリアのランチ需要を牽引</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-map" href="https://www.google.com/maps/search/豚ノヴァ零+千代田区西神田" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-noted">再オープン 2024年</span>
+      <h3>ラーメン二郎 めじろ台店</h3>
+      <div class="meta">
+        <span>📍 東京都八王子市椚田町（めじろ台駅 徒歩11分）</span>
+        <span>🔖 直系</span>
+      </div>
+      <ul class="features">
+        <li>一時閉店から待望の再オープンを果たした直系店</li>
+        <li>自家製平打ち太麺でバチバチにキマったスープ</li>
+        <li>味付けアブラが逸品と評判、ジロリアン歓喜</li>
+        <li>八王子エリア唯一の直系二郎として不動の人気</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-map" href="https://www.google.com/maps/search/ラーメン二郎めじろ台店+八王子市椚田町" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-noted">定番化 2024〜</span>
+      <h3>ラーメン 池田屋 高田馬場店</h3>
+      <div class="meta">
+        <span>📍 新宿区下落合（高田馬場駅近く）</span>
+      </div>
+      <ul class="features">
+        <li>京都・一乗寺の有名二郎インスパイアが関東初進出</li>
+        <li>デフォルトで豚がたっぷり乗るボリューム満点仕様</li>
+        <li>京都本店の味を関東で再現、関西出身者にも人気</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-map" href="https://www.google.com/maps/search/ラーメン池田屋+高田馬場+新宿区" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-title">💡 二郎系 用語ガイド（初心者向け）</div>
+  <div style="background:#161008; border:1px solid #3d2010; border-radius:12px; padding:20px; font-size:0.85rem; color:#c8b898; line-height:2;">
+    <strong style="color:#ff8c42;">コール</strong> ── 注文時に「ニンニク入れますか？」と聞かれること。「ニンニク・ヤサイ・アブラ・カラメ」の有無と量を答える<br>
+    <strong style="color:#ff8c42;">ヤサイ</strong> ── もやし・キャベツのこと。「マシ」「マシマシ」で増量<br>
+    <strong style="color:#ff8c42;">アブラ</strong> ── 背脂のこと。スープをまろやかにする<br>
+    <strong style="color:#ff8c42;">カラメ</strong> ── タレを追加して味を濃くすること<br>
+    <strong style="color:#ff8c42;">非乳化・乳化</strong> ── スープの状態。非乳化＝サラサラ醤油、乳化＝白濁こってり<br>
+    <strong style="color:#ff8c42;">ブタ</strong> ── チャーシューのこと（通称）
+  </div>
+
+</div>
+
+<footer>
+  <p>📅 情報更新: 2026年4月 ／ 店舗情報・営業時間は変更される場合があります。訪問前に各店のSNS・食べログをご確認ください。</p>
+</footer>
+
+</body>
+</html>
