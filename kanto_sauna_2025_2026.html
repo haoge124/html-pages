@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>関東圏 新オープン・リニューアルサウナ 2025-2026</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      padding: 40px 20px;
+      text-align: center;
+      border-bottom: 1px solid #30363d;
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #58a6ff;
+      margin-bottom: 8px;
+    }
+    header p {
+      color: #8b949e;
+      font-size: 0.9rem;
+    }
+    .badge {
+      display: inline-block;
+      background: #1f6feb;
+      color: #fff;
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 16px;
+    }
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #79c0ff;
+      margin: 40px 0 16px;
+      padding-left: 12px;
+      border-left: 4px solid #1f6feb;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 20px;
+      transition: border-color 0.2s, transform 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card:hover {
+      border-color: #58a6ff;
+      transform: translateY(-2px);
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #1f6feb, #58a6ff);
+    }
+    .card.renew::before {
+      background: linear-gradient(90deg, #388bfd, #79c0ff);
+    }
+    .card-tag {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    .tag-new { background: #1f6feb22; color: #58a6ff; border: 1px solid #1f6feb55; }
+    .tag-renew { background: #2ea04322; color: #56d364; border: 1px solid #2ea04355; }
+    .tag-soon { background: #d29922aa; color: #e3b341; border: 1px solid #d2992266; }
+    .card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #f0f6fc;
+      margin-bottom: 6px;
+    }
+    .meta {
+      font-size: 0.78rem;
+      color: #8b949e;
+      margin-bottom: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .meta span { display: flex; align-items: center; gap: 4px; }
+    .features {
+      font-size: 0.82rem;
+      color: #c9d1d9;
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+    .features li { list-style: none; padding-left: 16px; position: relative; }
+    .features li::before { content: '🔥'; position: absolute; left: 0; font-size: 0.75rem; top: 1px; }
+    .links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      padding: 5px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.8; }
+    .btn-site { background: #21262d; color: #58a6ff; border: 1px solid #30363d; }
+    .btn-map { background: #1a3a1a; color: #56d364; border: 1px solid #2ea04355; }
+    footer {
+      text-align: center;
+      color: #484f58;
+      font-size: 0.8rem;
+      padding: 32px 16px;
+      border-top: 1px solid #21262d;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🧖 関東圏 新オープン・リニューアルサウナ</h1>
+  <p>2025年〜2026年 オープン・リフォーム済み施設まとめ <span class="badge">Updated 2026.04</span></p>
+</header>
+
+<div class="container">
+
+  <div class="section-title">🆕 2026年 新オープン施設</div>
+  <div class="grid">
+
+    <div class="card">
+      <span class="card-tag tag-new">NEW 2026.02.09</span>
+      <h3>高輪SAUNAS</h3>
+      <div class="meta">
+        <span>📍 品川区高輪（高輪ゲートウェイ駅直結）</span>
+        <span>🕐 7:00〜24:00</span>
+      </div>
+      <ul class="features">
+        <li>『サ道』著者タナカカツキ氏がプロデュース</li>
+        <li>男性5室・女性3室の多彩なサウナ室</li>
+        <li>アウフグース・ウィスキング体験あり</li>
+        <li>レストラン・ワークスペース・仮眠室完備の都市型リトリート</li>
+        <li>アロマラボでオリジナルブレンドも体験可</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-site" href="https://saunas-saunas.com/takanawa/" target="_blank">🌐 公式サイト</a>
+        <a class="btn btn-map" href="https://www.google.com/maps/search/高輪SAUNAS+品川区高輪" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-new">NEW 2026.02.01</span>
+      <h3>PARADISE 大手町</h3>
+      <div class="meta">
+        <span>📍 千代田区大手町（大手町駅直結・26F）</span>
+        <span>🕐 7:00〜22:00</span>
+      </div>
+      <ul class="features">
+        <li>ジム・スパ・ワークスペース一体型複合施設</li>
+        <li>水上ハンモックが楽しめるプール</li>
+        <li>黙浴エリア設置、ビジネス利用を想定した設計</li>
+        <li>都心のビル最上階ならではの眺望</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-site" href="http://paradise-otemachi.com/" target="_blank">🌐 公式サイト</a>
+        <a class="btn btn-map" href="https://www.google.com/maps/search/PARADISE+大手町+千代田区" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-new">NEW 2026.02（下旬）</span>
+      <h3>荒木町サウナ Logout</h3>
+      <div class="meta">
+        <span>📍 新宿区荒木町（四谷三丁目駅 徒歩5分）</span>
+        <span>👨 男性専用</span>
+      </div>
+      <ul class="features">
+        <li>「深海」をコンセプト、青い光が揺らめく幻想的空間</li>
+        <li>明かりを極限まで抑えた没入感のあるサウナ室</li>
+        <li>青の洞窟風「ととのいスペース」</li>
+        <li>ジャズ演奏が流れる落ち着いた雰囲気</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-map" href="https://www.google.com/maps/search/荒木町サウナLogout+新宿区荒木町" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-new">NEW 2026.02.22（プレ）</span>
+      <h3>SHIAGARU SAUNA 神田×秋葉原店</h3>
+      <div class="meta">
+        <span>📍 千代田区岩本町（岩本町駅 徒歩3分）</span>
+        <span>👨 男性専用</span>
+      </div>
+      <ul class="features">
+        <li>福岡・天神発祥の人気メンズサウナが関東初上陸</li>
+        <li>屋久島地杉使用のハーフバレルサウナ</li>
+        <li>足の指先まで温まる「末端体温サウナ」</li>
+        <li>専門家監修の音楽・水風呂設計</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-map" href="https://www.google.com/maps/search/SHIAGARU+SAUNA+千代田区岩本町" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-new">NEW 2026.03.28</span>
+      <h3>サウナメッツァ 大井町トラックス</h3>
+      <div class="meta">
+        <span>📍 品川区大井（JR大井町駅 直結）</span>
+        <span>🏗 OIMACHI TRACKS内</span>
+      </div>
+      <ul class="features">
+        <li>日本初「トラムサウナ」を設置（路面電車型サウナ）</li>
+        <li>TTNEプロデュース（有名サウナプロデュース集団）</li>
+        <li>薬草ロウリュサウナ完備</li>
+        <li>コワーキングエリア併設</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-map" href="https://www.google.com/maps/search/サウナメッツァ+大井町トラックス+品川区" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-soon">COMING 2026年春</span>
+      <h3>毎日サウナ東京 幕張店</h3>
+      <div class="meta">
+        <span>📍 千葉市幕張</span>
+      </div>
+      <ul class="features">
+        <li>約40人収容の大型「薪火サウナ」</li>
+        <li>特濃炭酸泉・3種類の温度帯の水風呂</li>
+        <li>天然地下水の滝で外気浴</li>
+        <li>広大な敷地の大型施設</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-map" href="https://www.google.com/maps/search/毎日サウナ東京+幕張+千葉市" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-soon">COMING 2026年春</span>
+      <h3>SAUNA 汽汽（きき）</h3>
+      <div class="meta">
+        <span>📍 目黒区中目黒</span>
+      </div>
+      <ul class="features">
+        <li>完全プライベートサウナで贅沢な時間</li>
+        <li>男女共用スチームサウナ</li>
+        <li>「体験価値の最大化」を設計コンセプトに</li>
+        <li>中目黒の洗練されたロケーション</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-site" href="https://sauna-kiki.jp/" target="_blank">🌐 公式サイト</a>
+        <a class="btn btn-map" href="https://www.google.com/maps/search/SAUNA汽汽+目黒区中目黒" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-soon">COMING 2026年5月末</span>
+      <h3>黄金湯 新宿店</h3>
+      <div class="meta">
+        <span>📍 新宿区東新宿</span>
+      </div>
+      <ul class="features">
+        <li>1964年創業「金沢浴場」のブランド進出</li>
+        <li>太陽熱を導入したサステナブル設計</li>
+        <li>自社醸造クラフトビール提供</li>
+        <li>既存施設のタイル絵を移築した文化継承</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-map" href="https://www.google.com/maps/search/黄金湯+新宿店+東新宿" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-title">🔄 2026年 リニューアル施設</div>
+  <div class="grid">
+
+    <div class="card renew">
+      <span class="card-tag tag-renew">RENEWAL 2026.01.15</span>
+      <h3>スパ＆ホテル 舞浜ユーラシア</h3>
+      <div class="meta">
+        <span>📍 千葉県浦安市舞浜（舞浜駅 徒歩5分）</span>
+      </div>
+      <ul class="features">
+        <li>国内最大級の展望サウナ「グランビューサウナ」新設</li>
+        <li>希少な「ケロ（枯れ木）」材を使用した高級サウナ室</li>
+        <li>ログサウナ・SALT BRICK・えん発酵温熱木浴®など8種以上</li>
+        <li>ディズニーリゾート近くの好立地</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-site" href="https://www.maihama-eurasia.co.jp/" target="_blank">🌐 公式サイト</a>
+        <a class="btn btn-map" href="https://www.google.com/maps/search/舞浜ユーラシア+浦安市舞浜" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-title">✨ 2025年 新オープン注目施設</div>
+  <div class="grid">
+
+    <div class="card">
+      <span class="card-tag tag-new">NEW 2025年</span>
+      <h3>saunahouse（サウナハウス）</h3>
+      <div class="meta">
+        <span>📍 神奈川県川崎市</span>
+      </div>
+      <ul class="features">
+        <li>個性豊かな全5種類のサウナ室</li>
+        <li>温度別3種類の水風呂で細かく調整可能</li>
+        <li>作業スペース完備でサウナワーク対応</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-site" href="https://nus-saunahouse.com/" target="_blank">🌐 公式サイト</a>
+        <a class="btn btn-map" href="https://www.google.com/maps/search/saunahouse+川崎市" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-new">NEW 2025年</span>
+      <h3>Sauna&Drink YOQ</h3>
+      <div class="meta">
+        <span>📍 渋谷区代々木上原（代々木上原駅 徒歩5分）</span>
+        <span>👨 男性専用</span>
+      </div>
+      <ul class="features">
+        <li>フィンランド製「HARVIA」ストーブ使用</li>
+        <li>サウナ後のドリンクを楽しめるラウンジ</li>
+        <li>渋谷の好立地・アクセス良好</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-site" href="http://yoq.jp/" target="_blank">🌐 公式サイト</a>
+        <a class="btn btn-map" href="https://www.google.com/maps/search/Sauna+YOQ+渋谷区代々木上原" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-new">NEW 2025年</span>
+      <h3>JIKON SAUNA TOKYO</h3>
+      <div class="meta">
+        <span>📍 東京都青梅市</span>
+      </div>
+      <ul class="features">
+        <li>関東初「アースバッグサウナ」を導入</li>
+        <li>古民家リノベーションの空間</li>
+        <li>井戸水掛け流しの水風呂</li>
+        <li>自然豊かな青梅の環境でととのう</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-site" href="https://jikonsauna.com/" target="_blank">🌐 公式サイト</a>
+        <a class="btn btn-map" href="https://www.google.com/maps/search/JIKON+SAUNA+TOKYO+青梅市" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-new">NEW 2025年</span>
+      <h3>COCO VILLA 長瀞</h3>
+      <div class="meta">
+        <span>📍 埼玉県秩父郡長瀞町</span>
+        <span>👥 最大12名</span>
+      </div>
+      <ul class="features">
+        <li>完全プライベートヴィラで贅沢なサウナ体験</li>
+        <li>電気式バレルサウナ＋アロマセルフロウリュ</li>
+        <li>長瀞の自然の中での外気浴が絶品</li>
+        <li>グループ・家族利用に最適（最大12名）</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-site" href="https://coco-villa.jp/villa/nagatoro/" target="_blank">🌐 公式サイト</a>
+        <a class="btn btn-map" href="https://www.google.com/maps/search/COCO+VILLA+長瀞+埼玉県" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-new">NEW 2025年</span>
+      <h3>FLOBA（フロバ）</h3>
+      <div class="meta">
+        <span>📍 東京都三鷹市</span>
+      </div>
+      <ul class="features">
+        <li>薬草ロウリュが楽しめる本格サウナ</li>
+        <li>1万冊以上のマンガが読める漫画サウナ</li>
+        <li>カフェ併設でサウナ後もゆったり過ごせる</li>
+        <li>複合型温浴施設で一日中楽しめる</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-site" href="https://floba-mitaka.jp/" target="_blank">🌐 公式サイト</a>
+        <a class="btn btn-map" href="https://www.google.com/maps/search/FLOBA+三鷹市" target="_blank">📍 Google Map</a>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  <p>📅 情報更新: 2026年4月 ／ 施設情報は変更される場合があります。最新情報は各公式サイトをご確認ください。</p>
+</footer>
+
+</body>
+</html>
