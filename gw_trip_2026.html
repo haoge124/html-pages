@@ -19,7 +19,7 @@
   .hero::before {
     content: '';
     position: absolute; inset: 0;
-    background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Uzunomichi_Naruto.jpg/1280px-Uzunomichi_Naruto.jpg') center/cover;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Naruto_Whirlpools_taken_4-21-2008.jpg/1280px-Naruto_Whirlpools_taken_4-21-2008.jpg') center/cover;
     opacity: 0.22;
   }
   .hero-inner { position: relative; z-index: 1; }
@@ -52,7 +52,13 @@
 
   .spot { display: flex; border-bottom: 1px solid #f0f0f0; }
   .spot:last-child { border-bottom: none; }
-  .spot-img { width: 120px; flex-shrink: 0; background: #ddd; overflow: hidden; min-height: 110px; }
+  .spot-img {
+    width: 120px; flex-shrink: 0;
+    min-height: 110px;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+  }
   .spot-img img { width: 100%; height: 100%; object-fit: cover; display: block; min-height: 110px; }
   .spot-body { padding: 13px 15px; flex: 1; }
   .spot-name { font-size: 1rem; font-weight: 700; color: #1a4a6e; }
@@ -108,7 +114,9 @@
       <div><div class="day-title">東京 → 徳島【鳴門・徳島市】</div><div class="day-date">4月29日（水）昭和の日</div></div>
     </div>
     <div class="spot">
-      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Naruto_whirlpools_01.jpg/480px-Naruto_whirlpools_01.jpg" alt="渦の道"></div>
+      <div class="spot-img" style="background:#1a5276;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Naruto_Whirlpools_taken_4-21-2008.jpg/480px-Naruto_Whirlpools_taken_4-21-2008.jpg" alt="渦の道" onerror="this.parentNode.innerHTML='🌀'">
+      </div>
       <div class="spot-body">
         <div class="spot-name">🌀 渦の道</div>
         <div class="spot-hours">⏰ GW特別：8:00〜19:00（最終入館18:30）</div>
@@ -117,7 +125,9 @@
       </div>
     </div>
     <div class="spot">
-      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Awa_odori_4.jpg/480px-Awa_odori_4.jpg" alt="阿波おどり会館"></div>
+      <div class="spot-img" style="background:#7d2c00;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Awa_Odori_Tokushima_Aug2009.jpg/480px-Awa_Odori_Tokushima_Aug2009.jpg" alt="阿波おどり会館" onerror="this.parentNode.innerHTML='🕺'">
+      </div>
       <div class="spot-body">
         <div class="spot-name">🕺 阿波おどり会館</div>
         <div class="spot-hours">⏰ 昼公演：11:00 / 14:00 / 15:00 / 16:00（各40分）</div>
@@ -137,7 +147,9 @@
       <div><div class="day-title">大歩危・祖谷 → 高知</div><div class="day-date">4月30日（木）</div></div>
     </div>
     <div class="spot">
-      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Oboke_gorge.jpg/480px-Oboke_gorge.jpg" alt="大歩危峡"></div>
+      <div class="spot-img" style="background:#145a32;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Yoshinogawa_Daijuzeki.jpg/480px-Yoshinogawa_Daijuzeki.jpg" alt="大歩危峡" onerror="this.parentNode.innerHTML='🚤'">
+      </div>
       <div class="spot-body">
         <div class="spot-name">🚤 大歩危峡 観光遊覧船</div>
         <div class="spot-hours">⏰ 9:00〜17:00（最終出航16:30）随時運航</div>
@@ -146,7 +158,9 @@
       </div>
     </div>
     <div class="spot">
-      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Iya_Kazurabashi.jpg/480px-Iya_Kazurabashi.jpg" alt="かずら橋"></div>
+      <div class="spot-img" style="background:#7d6608;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Kazurabashi_2006.jpg/480px-Kazurabashi_2006.jpg" alt="かずら橋" onerror="this.parentNode.innerHTML='🌉'">
+      </div>
       <div class="spot-body">
         <div class="spot-name">🌉 祖谷のかずら橋</div>
         <div class="spot-hours">⏰ 4〜6月：8:00〜18:00（橋入口）</div>
@@ -165,7 +179,9 @@
       <div><div class="day-title">高知観光 → 松山</div><div class="day-date">5月1日（金）</div></div>
     </div>
     <div class="spot">
-      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Katsurahama_beach.jpg/480px-Katsurahama_beach.jpg" alt="桂浜"></div>
+      <div class="spot-img" style="background:#1a6a8e;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Katsurahama_Beach_in_Kochi.jpg/480px-Katsurahama_Beach_in_Kochi.jpg" alt="桂浜" onerror="this.parentNode.innerHTML='🏖'">
+      </div>
       <div class="spot-body">
         <div class="spot-name">🏖 桂浜・坂本龍馬像</div>
         <div class="spot-hours">⏰ 公園：24時間（無料）</div>
@@ -174,7 +190,9 @@
       </div>
     </div>
     <div class="spot">
-      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Katurahama_aquarium_2010.jpg/480px-Katurahama_aquarium_2010.jpg" alt="桂浜水族館"></div>
+      <div class="spot-img" style="background:#0e6655;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Katurahama_aquarium_otodo.jpg/480px-Katurahama_aquarium_otodo.jpg" alt="桂浜水族館" onerror="this.parentNode.innerHTML='🐚'">
+      </div>
       <div class="spot-body">
         <div class="spot-name">🐚 桂浜水族館（創業95周年！）</div>
         <div class="spot-hours">⏰ 9:00〜17:00（最終入館16:30）</div>
@@ -183,7 +201,9 @@
       </div>
     </div>
     <div class="spot">
-      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Kochi_Castle_01.jpg/480px-Kochi_Castle_01.jpg" alt="高知城"></div>
+      <div class="spot-img" style="background:#4a3728;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Kochi_Castle_2025.jpg/480px-Kochi_Castle_2025.jpg" alt="高知城" onerror="this.parentNode.innerHTML='🏯'">
+      </div>
       <div class="spot-body">
         <div class="spot-name">🏯 高知城</div>
         <div class="spot-hours">⏰ 9:00〜17:00（最終入館16:30）※GW延長あり</div>
@@ -202,7 +222,9 @@
       <div><div class="day-title">松山【松山城・道後温泉・下灘駅】</div><div class="day-date">5月2日（土）</div></div>
     </div>
     <div class="spot">
-      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Matsuyama_Castle_200904.jpg/480px-Matsuyama_Castle_200904.jpg" alt="松山城"></div>
+      <div class="spot-img" style="background:#4a3728;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Matsuyama_castle%28Iyo%296.JPG/480px-Matsuyama_castle%28Iyo%296.JPG" alt="松山城" onerror="this.parentNode.innerHTML='🏯'">
+      </div>
       <div class="spot-body">
         <div class="spot-name">🏯 松山城</div>
         <div class="spot-hours">⏰ 天守：9:00〜16:30</div>
@@ -212,7 +234,9 @@
       </div>
     </div>
     <div class="spot">
-      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Dogo_Onsen_Honkan_2010.jpg/480px-Dogo_Onsen_Honkan_2010.jpg" alt="道後温泉"></div>
+      <div class="spot-img" style="background:#8e6f3e;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Dogo_onsen_honkan_long_exposure.jpg/480px-Dogo_onsen_honkan_long_exposure.jpg" alt="道後温泉" onerror="this.parentNode.innerHTML='♨️'">
+      </div>
       <div class="spot-body">
         <div class="spot-name">♨️ 道後温泉本館</div>
         <div class="spot-hours">⏰ 神の湯（階下）：6:00〜23:00（最終22:30）</div>
@@ -222,7 +246,9 @@
       </div>
     </div>
     <div class="spot">
-      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Shimonada_station.jpg/480px-Shimonada_station.jpg" alt="下灘駅"></div>
+      <div class="spot-img" style="background:#1a6a8e;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Shimonada_Station_201507%281%29.JPG/480px-Shimonada_Station_201507%281%29.JPG" alt="下灘駅" onerror="this.parentNode.innerHTML='🚉'">
+      </div>
       <div class="spot-body">
         <div class="spot-name">🚉 下灘駅</div>
         <div class="spot-hours">⏰ 24時間・無料</div>
@@ -241,7 +267,9 @@
       <div><div class="day-title">亀老山展望公園 → 高松</div><div class="day-date">5月3日（日）</div></div>
     </div>
     <div class="spot">
-      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Kurushima_Strait_from_Kirosan.jpg/480px-Kurushima_Strait_from_Kirosan.jpg" alt="亀老山展望公園"></div>
+      <div class="spot-img" style="background:#1a5276;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Kurushima-Kaikyo_Bridge_from_Kirosan.jpg/480px-Kurushima-Kaikyo_Bridge_from_Kirosan.jpg" alt="亀老山展望公園" onerror="this.parentNode.innerHTML='🏔'">
+      </div>
       <div class="spot-body">
         <div class="spot-name">🏔 亀老山展望公園</div>
         <div class="spot-hours">⏰ 24時間・入場無料</div>
@@ -260,17 +288,21 @@
       <div><div class="day-title">高松【金刀比羅宮・栗林公園】</div><div class="day-date">5月4日（月・振替休日）</div></div>
     </div>
     <div class="spot">
-      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Kotohiragu_steps.jpg/480px-Kotohiragu_steps.jpg" alt="金刀比羅宮"></div>
+      <div class="spot-img" style="background:#6e4c1e;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Kotohira-gu01s.jpg/480px-Kotohira-gu01s.jpg" alt="金刀比羅宮" onerror="this.parentNode.innerHTML='⛩'">
+      </div>
       <div class="spot-body">
         <div class="spot-name">⛩ 金刀比羅宮（こんぴらさん）</div>
         <div class="spot-hours">⏰ 境内：6:00〜18:30</div>
         <div class="spot-hours">⏰ 御本宮：7:00〜17:00（785段）/ 奥社：9:00〜16:30（+583段）</div>
         <div class="tags"><span class="tag tag-free">参拝無料</span></div>
-        <div class="spot-tip">海上守護の神として有名。石段785段を登ると御本宮。片道約40分。さらに583段登ると奥社。香川県琴平町。</div>
+        <div class="spot-tip">海上守護の神として有名。石段785段を登ると御本宮。片道約40分。香川県琴平町。</div>
       </div>
     </div>
     <div class="spot">
-      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Ritsurin_Garden_Takamatsu02s3200.jpg/480px-Ritsurin_Garden_Takamatsu02s3200.jpg" alt="栗林公園"></div>
+      <div class="spot-img" style="background:#2d6a4f;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Ritsurin_park16s3200.jpg/480px-Ritsurin_park16s3200.jpg" alt="栗林公園" onerror="this.parentNode.innerHTML='🌿'">
+      </div>
       <div class="spot-body">
         <div class="spot-name">🌿 栗林公園</div>
         <div class="spot-hours">⏰ 4〜5月：5:30〜18:30（早朝から開園！）</div>
@@ -289,7 +321,9 @@
       <div><div class="day-title">アドベンチャーワールド（白浜） → 和歌山</div><div class="day-date">5月5日（火・こどもの日）</div></div>
     </div>
     <div class="spot">
-      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Adventure_World%2C_Shirahama%2C_Japan.jpg/480px-Adventure_World%2C_Shirahama%2C_Japan.jpg" alt="アドベンチャーワールド"></div>
+      <div class="spot-img" style="background:#2c6e49;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Giant_Panda_at_Adventure_World.jpg/480px-Giant_Panda_at_Adventure_World.jpg" alt="アドベンチャーワールド" onerror="this.parentNode.innerHTML='🐼'">
+      </div>
       <div class="spot-body">
         <div class="spot-name">🐼 アドベンチャーワールド</div>
         <div class="spot-hours">⏰ 5/5 GW特別延長：9:30〜20:30</div>
@@ -317,7 +351,7 @@
 </div>
 
 <div class="footer">
-  GW 四国・紀伊半島 8日間の旅 2026 ／ 最終更新: 2026年4月24日<br>
+  GW 四国・紀伊半島 8日間の旅 2026 ／ 最終更新: 2026年4月25日<br>
   ※営業時間・料金は変更になる場合があります。各施設の公式サイトで事前にご確認ください。
 </div>
 
