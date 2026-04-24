@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>GW四国・紀伊半島 8日間の旅 2026</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic', sans-serif; background: #f5f0eb; color: #2c2c2c; }
+
+  .hero {
+    background: linear-gradient(135deg, #1a5276 0%, #2e86c1 50%, #117a65 100%);
+    color: white;
+    text-align: center;
+    padding: 60px 20px 50px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Uzunomichi_Naruto.jpg/1280px-Uzunomichi_Naruto.jpg') center/cover;
+    opacity: 0.22;
+  }
+  .hero-inner { position: relative; z-index: 1; }
+  .hero h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: 0.05em; text-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+  .hero .subtitle { font-size: 1.05rem; margin-top: 10px; opacity: 0.88; }
+  .hero .dates { font-size: 1.25rem; font-weight: 700; margin-top: 14px; background: rgba(255,255,255,0.2); display: inline-block; padding: 6px 22px; border-radius: 30px; }
+
+  .summary {
+    max-width: 860px;
+    margin: 28px auto;
+    padding: 0 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+  }
+  .stat { background: white; border-radius: 12px; padding: 14px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+  .stat .num { font-size: 1.7rem; font-weight: 800; color: #2e86c1; }
+  .stat .label { font-size: 0.78rem; color: #888; margin-top: 3px; }
+
+  .days { max-width: 860px; margin: 0 auto 50px; padding: 0 16px; }
+
+  .day-card { background: white; border-radius: 18px; margin-bottom: 28px; overflow: hidden; box-shadow: 0 3px 16px rgba(0,0,0,0.09); }
+
+  .day-header { display: flex; align-items: center; gap: 14px; padding: 15px 20px; color: white; }
+  .day-badge { background: rgba(255,255,255,0.25); border-radius: 50%; width: 46px; height: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; }
+  .day-badge .dn { font-size: 1.2rem; line-height: 1; }
+  .day-badge .dl { font-size: 0.58rem; opacity: 0.85; }
+  .day-title { font-size: 1.05rem; font-weight: 700; }
+  .day-date { font-size: 0.82rem; opacity: 0.85; margin-top: 2px; }
+
+  .spot { display: flex; border-bottom: 1px solid #f0f0f0; }
+  .spot:last-child { border-bottom: none; }
+  .spot-img { width: 120px; flex-shrink: 0; background: #ddd; overflow: hidden; min-height: 110px; }
+  .spot-img img { width: 100%; height: 100%; object-fit: cover; display: block; min-height: 110px; }
+  .spot-body { padding: 13px 15px; flex: 1; }
+  .spot-name { font-size: 1rem; font-weight: 700; color: #1a4a6e; }
+  .spot-hours { font-size: 0.78rem; color: #e67e22; margin-top: 4px; }
+  .spot-tip { font-size: 0.78rem; color: #555; margin-top: 6px; line-height: 1.5; }
+  .tags { margin-top: 5px; }
+  .tag { display: inline-block; font-size: 0.68rem; padding: 2px 7px; border-radius: 20px; margin-right: 3px; font-weight: 600; }
+  .tag-free { background: #d5f5e3; color: #1e8449; }
+  .tag-paid { background: #fef9e7; color: #b7950b; }
+  .tag-warn { background: #fadbd8; color: #c0392b; }
+
+  .hotel-row { display: flex; align-items: center; gap: 10px; padding: 11px 16px; background: #f8f9fa; border-top: 2px dashed #d0e8f5; }
+  .hotel-name { font-size: 0.88rem; font-weight: 600; color: #555; }
+  .hotel-addr { font-size: 0.73rem; color: #888; }
+
+  .map-btn { display: inline-flex; align-items: center; gap: 6px; background: #111; color: white; text-decoration: none; padding: 9px 16px; border-radius: 10px; font-weight: 700; font-size: 0.88rem; margin: 13px 16px; }
+
+  .return-day { padding: 18px 16px; color: #555; font-size: 0.92rem; line-height: 1.8; }
+
+  .footer { text-align: center; padding: 28px; color: #aaa; font-size: 0.78rem; border-top: 1px solid #e0e0e0; background: white; }
+
+  @media (max-width: 560px) {
+    .hero h1 { font-size: 1.4rem; }
+    .spot-img { width: 85px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div style="font-size:0.85rem;opacity:0.8;margin-bottom:8px;">🚗 ドライブ旅行</div>
+    <h1>GW 四国・紀伊半島の旅</h1>
+    <p class="subtitle">徳島 → 高知 → 松山 → 高松 → 和歌山</p>
+    <div class="dates">2026年 4月29日（水）〜 5月6日（水）</div>
+  </div>
+</div>
+
+<div class="summary">
+  <div class="stat"><div class="num">8</div><div class="label">日間</div></div>
+  <div class="stat"><div class="num">7</div><div class="label">泊</div></div>
+  <div class="stat"><div class="num">14</div><div class="label">観光スポット</div></div>
+  <div class="stat"><div class="num">4</div><div class="label">県訪問</div></div>
+  <div class="stat"><div class="num">約1,200</div><div class="label">km（推定）</div></div>
+</div>
+
+<div class="days">
+
+  <!-- DAY 1 -->
+  <div class="day-card">
+    <div class="day-header" style="background:linear-gradient(90deg,#1a5276,#2e86c1);">
+      <div class="day-badge"><div class="dn">1</div><div class="dl">DAY</div></div>
+      <div><div class="day-title">東京 → 徳島【鳴門・徳島市】</div><div class="day-date">4月29日（水）昭和の日</div></div>
+    </div>
+    <div class="spot">
+      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Naruto_whirlpools_01.jpg/480px-Naruto_whirlpools_01.jpg" alt="渦の道"></div>
+      <div class="spot-body">
+        <div class="spot-name">🌀 渦の道</div>
+        <div class="spot-hours">⏰ GW特別：8:00〜19:00（最終入館18:30）</div>
+        <div class="tags"><span class="tag tag-paid">大人 510円</span></div>
+        <div class="spot-tip">大鳴門橋の遊歩道。海上45mのガラス床から鳴門の渦潮を見下ろせる。観潮船「わんだーなると」は予約不要・随時出航。渦潮ベスト時間は潮見表（uzusio.com）で確認を。</div>
+      </div>
+    </div>
+    <div class="spot">
+      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Awa_odori_4.jpg/480px-Awa_odori_4.jpg" alt="阿波おどり会館"></div>
+      <div class="spot-body">
+        <div class="spot-name">🕺 阿波おどり会館</div>
+        <div class="spot-hours">⏰ 昼公演：11:00 / 14:00 / 15:00 / 16:00（各40分）</div>
+        <div class="spot-hours">⏰ 夜公演（有名連）：20:00〜20:50（50分）</div>
+        <div class="tags"><span class="tag tag-paid">昼 800円 / 夜 1,000円</span></div>
+        <div class="spot-tip">徳島市新町橋2-20。本場の阿波おどりが年中毎日楽しめる施設。夜公演は有名連が日替わり出演。踊り体験コーナーあり。</div>
+      </div>
+    </div>
+    <a class="map-btn" href="https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=%E6%9D%B1%E4%BA%AC%E9%A7%85&destination=%E3%83%9B%E3%83%86%E3%83%AB%E3%82%B5%E3%83%B3%E3%83%AB%E3%83%BC%E3%83%88%E5%BE%B3%E5%B3%B6+%E5%BE%B3%E5%B3%B6%E7%9C%8C%E5%BE%B3%E5%B3%B6%E5%B8%82%E5%85%83%E7%94%BA1-5-1&waypoints=%E6%B8%A6%E3%81%AE%E9%81%93+%E5%BE%B3%E5%B3%B6%E7%9C%8C%E9%B3%B4%E9%96%80%E5%B8%82|%E9%81%93%E3%81%AE%E9%A7%85%E3%81%8F%E3%82%8B%E3%81%8F%E3%82%8B%E3%81%AA%E3%82%8B%E3%81%A8|%E9%98%BF%E6%B3%A2%E3%81%8A%E3%81%A9%E3%82%8A%E4%BC%9A%E9%A4%A8+%E5%BE%B3%E5%B3%B6%E5%B8%82" target="_blank">🗺 Googleマップで開く</a>
+    <div class="hotel-row">🏨<div><div class="hotel-name">ホテルサンルート徳島</div><div class="hotel-addr">徳島市元町1-5-1</div></div></div>
+  </div>
+
+  <!-- DAY 2 -->
+  <div class="day-card">
+    <div class="day-header" style="background:linear-gradient(90deg,#145a32,#1e8449);">
+      <div class="day-badge"><div class="dn">2</div><div class="dl">DAY</div></div>
+      <div><div class="day-title">大歩危・祖谷 → 高知</div><div class="day-date">4月30日（木）</div></div>
+    </div>
+    <div class="spot">
+      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Oboke_gorge.jpg/480px-Oboke_gorge.jpg" alt="大歩危峡"></div>
+      <div class="spot-body">
+        <div class="spot-name">🚤 大歩危峡 観光遊覧船</div>
+        <div class="spot-hours">⏰ 9:00〜17:00（最終出航16:30）随時運航</div>
+        <div class="tags"><span class="tag tag-paid">大人 1,500円</span><span class="tag tag-free">予約不要</span></div>
+        <div class="spot-tip">所要約30分。吉野川の深い碧と結晶片岩の絶壁が迫る。増水・強風時は欠航あり。徳島県三好市山城町西宇1520。</div>
+      </div>
+    </div>
+    <div class="spot">
+      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Iya_Kazurabashi.jpg/480px-Iya_Kazurabashi.jpg" alt="かずら橋"></div>
+      <div class="spot-body">
+        <div class="spot-name">🌉 祖谷のかずら橋</div>
+        <div class="spot-hours">⏰ 4〜6月：8:00〜18:00（橋入口）</div>
+        <div class="tags"><span class="tag tag-paid">大人 550円</span></div>
+        <div class="spot-tip">シラクチカズラで編まれた原始的な吊橋。所要約15分。足元の隙間から渓谷が見えてスリル満点。日本三奇橋の一つ。徳島県三好市西祖谷山村。</div>
+      </div>
+    </div>
+    <a class="map-btn" style="background:#1e8449;" href="https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=%E3%83%9B%E3%83%86%E3%83%AB%E3%82%B5%E3%83%B3%E3%83%AB%E3%83%BC%E3%83%88%E5%BE%B3%E5%B3%B6+%E5%BE%B3%E5%B3%B6%E5%B8%82%E5%85%83%E7%94%BA1-5-1&destination=%E3%83%89%E3%83%BC%E3%83%9F%E3%83%BC%E3%82%A4%E3%83%B3%E9%AB%98%E7%9F%A5+%E9%AB%98%E7%9F%A5%E5%B8%82%E5%B8%AF%E5%B1%8B%E7%94%BA1-9-12&waypoints=%E5%A4%A7%E6%AD%A9%E5%8D%B1%E5%B3%A1%E8%A6%B3%E5%85%89%E9%81%8A%E8%A6%A7%E8%88%B9+%E5%BE%B3%E5%B3%B6%E7%9C%8C%E4%B8%89%E5%A5%BD%E5%B8%82|%E7%A5%96%E8%B0%B7%E3%81%AE%E3%81%8B%E3%81%9A%E3%82%89%E6%A9%8B+%E5%BE%B3%E5%B3%B6%E7%9C%8C%E4%B8%89%E5%A5%BD%E5%B8%82" target="_blank">🗺 Googleマップで開く</a>
+    <div class="hotel-row">🏨<div><div class="hotel-name">ドーミーイン高知</div><div class="hotel-addr">高知市帯屋町1-9-12</div></div></div>
+  </div>
+
+  <!-- DAY 3 -->
+  <div class="day-card">
+    <div class="day-header" style="background:linear-gradient(90deg,#6e2f1a,#c0392b);">
+      <div class="day-badge"><div class="dn">3</div><div class="dl">DAY</div></div>
+      <div><div class="day-title">高知観光 → 松山</div><div class="day-date">5月1日（金）</div></div>
+    </div>
+    <div class="spot">
+      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Katsurahama_beach.jpg/480px-Katsurahama_beach.jpg" alt="桂浜"></div>
+      <div class="spot-body">
+        <div class="spot-name">🏖 桂浜・坂本龍馬像</div>
+        <div class="spot-hours">⏰ 公園：24時間（無料）</div>
+        <div class="tags"><span class="tag tag-free">入場無料</span></div>
+        <div class="spot-tip">太平洋を望む美しい砂浜と松林。龍馬の大きな銅像が有名。高知県高知市浦戸。</div>
+      </div>
+    </div>
+    <div class="spot">
+      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Katurahama_aquarium_2010.jpg/480px-Katurahama_aquarium_2010.jpg" alt="桂浜水族館"></div>
+      <div class="spot-body">
+        <div class="spot-name">🐚 桂浜水族館（創業95周年！）</div>
+        <div class="spot-hours">⏰ 9:00〜17:00（最終入館16:30）</div>
+        <div class="tags"><span class="tag tag-paid">大人 1,600円</span></div>
+        <div class="spot-tip">トド・アシカ・カワウソのアクティビティタイム毎日開催。ユニークなキャラクター「おとどちゃん」が人気。2026年は創業95周年記念イベントあり。</div>
+      </div>
+    </div>
+    <div class="spot">
+      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Kochi_Castle_01.jpg/480px-Kochi_Castle_01.jpg" alt="高知城"></div>
+      <div class="spot-body">
+        <div class="spot-name">🏯 高知城</div>
+        <div class="spot-hours">⏰ 9:00〜17:00（最終入館16:30）※GW延長あり</div>
+        <div class="tags"><span class="tag tag-paid">大人 420円</span></div>
+        <div class="spot-tip">現存12天守の一つ。本丸建築群が完全に残る全国唯一の城。山内一豊ゆかりの地。</div>
+      </div>
+    </div>
+    <a class="map-btn" style="background:#c0392b;" href="https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=%E3%83%89%E3%83%BC%E3%83%9F%E3%83%BC%E3%82%A4%E3%83%B3%E9%AB%98%E7%9F%A5+%E9%AB%98%E7%9F%A5%E5%B8%82%E5%B8%AF%E5%B1%8B%E7%94%BA1-9-12&destination=%E3%83%89%E3%83%BC%E3%83%9F%E3%83%BC%E3%82%A4%E3%83%B3%E6%9D%BE%E5%B1%B1+%E6%9D%BE%E5%B1%B1%E5%B8%82%E5%A4%A7%E8%A1%97%E9%81%932-6-5&waypoints=%E6%A1%82%E6%B5%9C+%E9%AB%98%E7%9F%A5%E5%B8%82|%E6%A1%82%E6%B5%9C%E6%B0%B4%E6%97%8F%E9%A4%A8+%E9%AB%98%E7%9F%A5%E5%B8%82|%E9%AB%98%E7%9F%A5%E5%9F%8E+%E9%AB%98%E7%9F%A5%E5%B8%82" target="_blank">🗺 Googleマップで開く</a>
+    <div class="hotel-row">🏨<div><div class="hotel-name">ドーミーイン松山</div><div class="hotel-addr">松山市大街道2-6-5</div></div></div>
+  </div>
+
+  <!-- DAY 4 -->
+  <div class="day-card">
+    <div class="day-header" style="background:linear-gradient(90deg,#4a235a,#8e44ad);">
+      <div class="day-badge"><div class="dn">4</div><div class="dl">DAY</div></div>
+      <div><div class="day-title">松山【松山城・道後温泉・下灘駅】</div><div class="day-date">5月2日（土）</div></div>
+    </div>
+    <div class="spot">
+      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Matsuyama_Castle_200904.jpg/480px-Matsuyama_Castle_200904.jpg" alt="松山城"></div>
+      <div class="spot-body">
+        <div class="spot-name">🏯 松山城</div>
+        <div class="spot-hours">⏰ 天守：9:00〜16:30</div>
+        <div class="spot-hours">⏰ ロープウェイ：9:00〜17:45（10分毎）</div>
+        <div class="tags"><span class="tag tag-paid">天守 520円 / ロープウェイ往復 610円</span></div>
+        <div class="spot-tip">現存12天守の一つ。市街地の丘の上にそびえる城。ロープウェイかリフトで山頂へ。</div>
+      </div>
+    </div>
+    <div class="spot">
+      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Dogo_Onsen_Honkan_2010.jpg/480px-Dogo_Onsen_Honkan_2010.jpg" alt="道後温泉"></div>
+      <div class="spot-body">
+        <div class="spot-name">♨️ 道後温泉本館</div>
+        <div class="spot-hours">⏰ 神の湯（階下）：6:00〜23:00（最終22:30）</div>
+        <div class="spot-hours">⏰ 霊の湯（二階席）：6:00〜22:00</div>
+        <div class="tags"><span class="tag tag-paid">神の湯 700円〜</span></div>
+        <div class="spot-tip">日本最古の温泉の一つ。夏目漱石「坊っちゃん」の舞台。朝6時から入浴可能。早朝の朝風呂も格別。</div>
+      </div>
+    </div>
+    <div class="spot">
+      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Shimonada_station.jpg/480px-Shimonada_station.jpg" alt="下灘駅"></div>
+      <div class="spot-body">
+        <div class="spot-name">🚉 下灘駅</div>
+        <div class="spot-hours">⏰ 24時間・無料</div>
+        <div class="tags"><span class="tag tag-free">無料</span></div>
+        <div class="spot-tip">「海に一番近い駅」として有名な絶景スポット。夕暮れ時が最も美しい。CMや映画のロケ地にもなった名所。愛媛県伊予市双海町。</div>
+      </div>
+    </div>
+    <a class="map-btn" style="background:#8e44ad;" href="https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=%E3%83%89%E3%83%BC%E3%83%9F%E3%83%BC%E3%82%A4%E3%83%B3%E6%9D%BE%E5%B1%B1+%E6%9D%BE%E5%B1%B1%E5%B8%82%E5%A4%A7%E8%A1%97%E9%81%932-6-5&destination=%E5%96%9C%E5%8A%A9%E3%81%AE%E5%AE%BF+%E6%9D%BE%E5%B1%B1%E9%A7%85%E5%89%8D%E5%BA%97+%E6%9D%BE%E5%B1%B1%E5%B8%82%E5%AE%AE%E7%94%B0%E7%94%BA9-41&waypoints=%E6%9D%BE%E5%B1%B1%E5%9F%8E+%E6%9D%BE%E5%B1%B1%E5%B8%82|%E9%81%93%E5%BE%8C%E6%B8%A9%E6%B3%89%E6%9C%AC%E9%A4%A8+%E6%9D%BE%E5%B1%B1%E5%B8%82|%E4%B8%8B%E7%81%98%E9%A7%85+%E6%84%9B%E5%AA%9B%E7%9C%8C%E4%BC%8A%E4%BA%88%E5%B8%82" target="_blank">🗺 Googleマップで開く</a>
+    <div class="hotel-row">🏨<div><div class="hotel-name">喜助の宿 松山駅前店</div><div class="hotel-addr">松山市宮田町9-41</div></div></div>
+  </div>
+
+  <!-- DAY 5 -->
+  <div class="day-card">
+    <div class="day-header" style="background:linear-gradient(90deg,#1a5276,#2471a3);">
+      <div class="day-badge"><div class="dn">5</div><div class="dl">DAY</div></div>
+      <div><div class="day-title">亀老山展望公園 → 高松</div><div class="day-date">5月3日（日）</div></div>
+    </div>
+    <div class="spot">
+      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Kurushima_Strait_from_Kirosan.jpg/480px-Kurushima_Strait_from_Kirosan.jpg" alt="亀老山展望公園"></div>
+      <div class="spot-body">
+        <div class="spot-name">🏔 亀老山展望公園</div>
+        <div class="spot-hours">⏰ 24時間・入場無料</div>
+        <div class="tags"><span class="tag tag-free">無料</span></div>
+        <div class="spot-tip">来島海峡大橋（しまなみ海道）を一望できる絶景展望台。建築家・隈研吾設計。朝日・夕日どちらも絶景。愛媛県今治市吉海町。</div>
+      </div>
+    </div>
+    <a class="map-btn" href="https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=%E5%96%9C%E5%8A%A9%E3%81%AE%E5%AE%BF+%E6%9D%BE%E5%B1%B1%E9%A7%85%E5%89%8D%E5%BA%97+%E6%9D%BE%E5%B1%B1%E5%B8%82%E5%AE%AE%E7%94%B0%E7%94%BA9-41&destination=%E3%83%93%E3%82%B8%E3%83%8D%E3%82%B9%E3%83%9B%E3%83%86%E3%83%AB%E3%83%97%E3%83%AA%E3%83%B3%E3%82%B9+%E9%AB%98%E6%9D%BE%E5%B8%82%E6%9C%A8%E5%A4%AA%E7%94%BA2505-2&waypoints=%E4%BA%80%E8%80%81%E5%B1%B1%E5%B1%95%E6%9C%9B%E5%85%AC%E5%9C%92+%E6%84%9B%E5%AA%9B%E7%9C%8C%E4%BB%8A%E6%B2%BB%E5%B8%82" target="_blank">🗺 Googleマップで開く</a>
+    <div class="hotel-row">🏨<div><div class="hotel-name">ビジネスホテル プリンス</div><div class="hotel-addr">高松市木太町2505-2</div></div></div>
+  </div>
+
+  <!-- DAY 6 -->
+  <div class="day-card">
+    <div class="day-header" style="background:linear-gradient(90deg,#784212,#d35400);">
+      <div class="day-badge"><div class="dn">6</div><div class="dl">DAY</div></div>
+      <div><div class="day-title">高松【金刀比羅宮・栗林公園】</div><div class="day-date">5月4日（月・振替休日）</div></div>
+    </div>
+    <div class="spot">
+      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Kotohiragu_steps.jpg/480px-Kotohiragu_steps.jpg" alt="金刀比羅宮"></div>
+      <div class="spot-body">
+        <div class="spot-name">⛩ 金刀比羅宮（こんぴらさん）</div>
+        <div class="spot-hours">⏰ 境内：6:00〜18:30</div>
+        <div class="spot-hours">⏰ 御本宮：7:00〜17:00（785段）/ 奥社：9:00〜16:30（+583段）</div>
+        <div class="tags"><span class="tag tag-free">参拝無料</span></div>
+        <div class="spot-tip">海上守護の神として有名。石段785段を登ると御本宮。片道約40分。さらに583段登ると奥社。香川県琴平町。</div>
+      </div>
+    </div>
+    <div class="spot">
+      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Ritsurin_Garden_Takamatsu02s3200.jpg/480px-Ritsurin_Garden_Takamatsu02s3200.jpg" alt="栗林公園"></div>
+      <div class="spot-body">
+        <div class="spot-name">🌿 栗林公園</div>
+        <div class="spot-hours">⏰ 4〜5月：5:30〜18:30（早朝から開園！）</div>
+        <div class="tags"><span class="tag tag-paid">大人 410円</span></div>
+        <div class="spot-tip">ミシュラン・グリーンガイド三つ星。六つの池と十三の築山を配した国の特別名勝。早朝の朝靄の中の景色が特に美しい。高松市栗林町。</div>
+      </div>
+    </div>
+    <a class="map-btn" style="background:#d35400;" href="https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=%E3%83%93%E3%82%B8%E3%83%8D%E3%82%B9%E3%83%9B%E3%83%86%E3%83%AB%E3%83%97%E3%83%AA%E3%83%B3%E3%82%B9+%E9%AB%98%E6%9D%BE%E5%B8%82%E6%9C%A8%E5%A4%AA%E7%94%BA2505-2&destination=%E3%83%9B%E3%83%86%E3%83%AB%E3%83%91%E3%83%BC%E3%83%AB%E3%82%AC%E3%83%BC%E3%83%87%E3%83%B3+%E9%AB%98%E6%9D%BE%E5%B8%82%E7%A6%8F%E5%B2%A1%E7%94%BA2-2-1&waypoints=%E9%87%91%E5%88%80%E6%AF%94%E7%BE%85%E5%AE%AE+%E9%A6%99%E5%B7%9D%E7%9C%8C%E7%90%B4%E5%B9%B3%E7%94%BA|%E6%A0%97%E6%9E%97%E5%85%AC%E5%9C%92+%E9%AB%98%E6%9D%BE%E5%B8%82" target="_blank">🗺 Googleマップで開く</a>
+    <div class="hotel-row">🏨<div><div class="hotel-name">ホテル パールガーデン</div><div class="hotel-addr">高松市福岡町2-2-1</div></div></div>
+  </div>
+
+  <!-- DAY 7 -->
+  <div class="day-card">
+    <div class="day-header" style="background:linear-gradient(90deg,#1b4f72,#2980b9);">
+      <div class="day-badge"><div class="dn">7</div><div class="dl">DAY</div></div>
+      <div><div class="day-title">アドベンチャーワールド（白浜） → 和歌山</div><div class="day-date">5月5日（火・こどもの日）</div></div>
+    </div>
+    <div class="spot">
+      <div class="spot-img"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Adventure_World%2C_Shirahama%2C_Japan.jpg/480px-Adventure_World%2C_Shirahama%2C_Japan.jpg" alt="アドベンチャーワールド"></div>
+      <div class="spot-body">
+        <div class="spot-name">🐼 アドベンチャーワールド</div>
+        <div class="spot-hours">⏰ 5/5 GW特別延長：9:30〜20:30</div>
+        <div class="tags"><span class="tag tag-warn">⚠ 完全事前予約制・当日券なし</span></div>
+        <div class="spot-tip">チケット確保済み（ハーフデー入園券・14:30〜）。世界最多のジャイアントパンダ飼育数。サファリ・マリンライブも見どころ。和歌山県西牟婁郡白浜町。</div>
+      </div>
+    </div>
+    <a class="map-btn" style="background:#2980b9;" href="https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=%E3%83%9B%E3%83%86%E3%83%AB%E3%83%91%E3%83%BC%E3%83%AB%E3%82%AC%E3%83%BC%E3%83%87%E3%83%B3+%E9%AB%98%E6%9D%BE%E5%B8%82%E7%A6%8F%E5%B2%A1%E7%94%BA2-2-1&destination=%E3%83%89%E3%83%BC%E3%83%9F%E3%83%BC%E3%82%A4%E3%83%B3PREMIUM%E5%92%8C%E6%AD%8C%E5%B1%B1+%E5%92%8C%E6%AD%8C%E5%B1%B1%E5%B8%82%E7%BE%8E%E5%9C%92%E7%94%BA3-36&waypoints=%E3%82%A2%E3%83%89%E3%83%99%E3%83%B3%E3%83%81%E3%83%A3%E3%83%BC%E3%83%AF%E3%83%BC%E3%83%AB%E3%83%89+%E5%92%8C%E6%AD%8C%E5%B1%B1%E7%9C%8C%E7%99%BD%E6%B5%9C%E7%94%BA" target="_blank">🗺 Googleマップで開く</a>
+    <div class="hotel-row">🏨<div><div class="hotel-name">ドーミーインPREMIUM和歌山</div><div class="hotel-addr">和歌山市美園町3-36</div></div></div>
+  </div>
+
+  <!-- DAY 8 -->
+  <div class="day-card">
+    <div class="day-header" style="background:linear-gradient(90deg,#555,#888);">
+      <div class="day-badge"><div class="dn">8</div><div class="dl">DAY</div></div>
+      <div><div class="day-title">和歌山 → 東京（帰宅）</div><div class="day-date">5月6日（水）</div></div>
+    </div>
+    <div class="return-day">
+      🚗 ドーミーインPREMIUM和歌山 → 東京駅<br>
+      <span style="font-size:0.82rem;color:#888;">約680km・高速で約8時間。5/6は上り渋滞が予想されるため早めの出発を推奨。</span>
+    </div>
+    <a class="map-btn" style="background:#888;" href="https://www.google.com/maps/dir/?api=1&travelmode=driving&origin=%E3%83%89%E3%83%BC%E3%83%9F%E3%83%BC%E3%82%A4%E3%83%B3PREMIUM%E5%92%8C%E6%AD%8C%E5%B1%B1+%E5%92%8C%E6%AD%8C%E5%B1%B1%E5%B8%82%E7%BE%8E%E5%9C%92%E7%94%BA3-36&destination=%E6%9D%B1%E4%BA%AC%E9%A7%85" target="_blank">🗺 Googleマップで開く</a>
+  </div>
+
+</div>
+
+<div class="footer">
+  GW 四国・紀伊半島 8日間の旅 2026 ／ 最終更新: 2026年4月24日<br>
+  ※営業時間・料金は変更になる場合があります。各施設の公式サイトで事前にご確認ください。
+</div>
+
+</body>
+</html>
