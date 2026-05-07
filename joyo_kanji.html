@@ -108,8 +108,8 @@ function accentHTML(reading,acc){
 }
 function makeCard(d){
   const[k,g,on,kun,m,exs]=d;
-  const onH=on.map(([r,a])=>`<div class="reading-row"><span class="label">音</span><span class="reading-text">${accentHTML(r,a)}</span></div>`).join('');
-  const kunH=kun.map(([r,a])=>`<div class="reading-row"><span class="label">訓</span><span class="reading-text">${accentHTML(r,a)}</span></div>`).join('');
+  const onH=on.filter(r=>r.length>=2).map(([r,a])=>`<div class="reading-row"><span class="label">音</span><span class="reading-text">${accentHTML(r,a)}</span></div>`).join('');
+  const kunH=kun.filter(r=>r.length>=2).map(([r,a])=>`<div class="reading-row"><span class="label">訓</span><span class="reading-text">${accentHTML(r,a)}</span></div>`).join('');
   const exH=exs&&exs.length?`<div class="examples"><div class="ex-label">例文</div>${exs.map(e=>`<div class="ex">${e}</div>`).join('')}</div>`:'';
   return`<div class="card" data-g="${g}">
 <div class="kanji">${k}</div>
