@@ -125,7 +125,7 @@ function makeCard(d){
   const isChecked=checked.has(word);
   const exH=exs&&exs.length?`<div class="examples"><div class="ex-label">例文</div>${exs.map(e=>`<div class="ex">${e}</div>`).join('')}</div>`:'';
   return`<div class="card" data-lv="${lv}">
-<button class="check-btn${isChecked?' checked':''}" onclick="toggleCheck(${JSON.stringify(word)})" title="覚えた">✓</button>
+<button class="check-btn${isChecked?' checked':''}" data-word="${word}" title="覚えた">✓</button>
 <div class="word">${word}</div>
 <div class="level-badge"><span class="${LV_CLASS[lv]||''}">${LV_LABEL[lv]||''}</span></div>
 <div class="reading-row"><span class="pos">${pos}</span><span class="reading-text">${accentHTML(yomi,acc)}</span></div>
@@ -186,6 +186,10 @@ document.querySelector('.levels').addEventListener('click',e=>{
 });
 document.getElementById('show-checked-btn').addEventListener('click',()=>{
   showChecked=!showChecked;render(currentData());
+});
+document.getElementById('grid').addEventListener('click',e=>{
+  const btn=e.target.closest('.check-btn');if(!btn)return;
+  toggleCheck(btn.dataset.word);
 });
 
 init();
