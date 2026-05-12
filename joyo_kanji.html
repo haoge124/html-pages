@@ -49,12 +49,29 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:#aaa;border-top:1px
 .check-btn.checked{background:#22c55e;border-color:#22c55e;color:#fff}
 #show-checked-btn{padding:5px 11px;border:1.5px solid #ccc;border-radius:16px;background:#fff;font-size:.78rem;cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap}
 #show-checked-btn.active{background:#22c55e;color:#fff;border-color:#22c55e}
+#settings-btn{padding:5px 10px;border:1.5px solid #ccc;border-radius:16px;background:#fff;font-size:.85rem;cursor:pointer;transition:.15s}
+#settings-btn:hover{border-color:#1a1a2e}
+.speak-btn{position:absolute;top:10px;left:10px;width:28px;height:28px;border-radius:50%;border:1.5px solid #ccc;background:#fff;font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#aaa;transition:.15s;-webkit-tap-highlight-color:transparent}
+.speak-btn:hover{border-color:#3b82f6;color:#3b82f6}
+.speak-btn.speaking{background:#3b82f6;border-color:#3b82f6;color:#fff}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:14px;padding:24px;width:min(420px,90vw);box-shadow:0 8px 32px rgba(0,0,0,.18)}
+.modal h2{font-size:1rem;margin-bottom:14px;color:#1a1a2e}
+.modal label{font-size:.78rem;color:#666;display:block;margin-bottom:4px}
+.modal input{width:100%;padding:7px 12px;border:1.5px solid #ccc;border-radius:8px;font-size:.85rem;font-family:inherit;outline:none;margin-bottom:12px}
+.modal input:focus{border-color:#3b82f6}
+.modal .hint{font-size:.7rem;color:#aaa;margin-top:-8px;margin-bottom:12px}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end}
+.modal-btns button{padding:6px 16px;border-radius:8px;border:none;cursor:pointer;font-size:.82rem;font-family:inherit}
+.btn-save{background:#1a1a2e;color:#fff}
+.btn-cancel{background:#f0ede8;color:#555}
 </style>
 </head>
 <body>
 <header>
   <h1>常用漢字一覧 — 読み・アクセント・意味・例文</h1>
-  <p>全2136字（現在：1917字収録）｜読み・ピッチアクセント・日本語説明・例文付き</p>
+  <p>全2136字収録｜読み・ピッチアクセント・日本語説明・例文・音声付き</p>
   <div class="legend">
     <span><span class="h-demo">高</span> 高い音（上線）</span>
     <span><span class="drop-demo">高</span>↓ 下がり目（右線）</span>
@@ -75,12 +92,72 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:#aaa;border-top:1px
     <button data-g="7">中学</button>
   </div>
   <button id="show-checked-btn">✓ 0字</button>
+  <button id="settings-btn" title="音声設定">⚙️</button>
 </div>
 <div id="stats"></div>
 <div id="grid"></div>
-<footer>アクセントはNHK東京方言基準。詳細はNHK日本語発音アクセント新辞典でご確認ください。</footer>
+<footer>アクセントはNHK東京方言基準。音声は VOICEVOX を使用。⚙️ から URL を設定してください。</footer>
+
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal">
+    <h2>🔊 音声設定（VOICEVOX）</h2>
+    <label>VOICEVOX サーバーURL</label>
+    <input type="url" id="vv-url-input" placeholder="https://xxxx.trycloudflare.com">
+    <div class="hint">空欄の場合はブラウザ内蔵音声を使用。</div>
+    <label>話者</label>
+    <input type="number" id="vv-speaker-input" value="3" min="1" max="99">
+    <div class="hint">3=ずんだもん / 2=四国めたん / 8=春日部つむぎ など</div>
+    <div class="modal-btns">
+      <button class="btn-cancel" id="settings-cancel">キャンセル</button>
+      <button class="btn-save" id="settings-save">保存</button>
+    </div>
+  </div>
+</div>
 
 <script>
+const VV_KEY='vv_url_v1';
+const VV_SPK_KEY='vv_speaker_v1';
+const VV_DEFAULT='https://grande-slip-capitol-hydrocodone.trycloudflare.com';
+function getVvUrl(){return localStorage.getItem(VV_KEY)||VV_DEFAULT;}
+function getVvSpeaker(){return parseInt(localStorage.getItem(VV_SPK_KEY)||'3');}
+
+function setBtnState(id,on){
+  const btn=document.querySelector(`.speak-btn[data-id="${id}"]`);
+  if(btn)btn.classList.toggle('speaking',on);
+}
+async function speakVoicevox(text,id){
+  const base=getVvUrl().replace(/\/$/,'');
+  const spk=getVvSpeaker();
+  setBtnState(id,true);
+  try{
+    const qr=await fetch(`${base}/audio_query?text=${encodeURIComponent(text)}&speaker=${spk}`,{method:'POST'});
+    if(!qr.ok)throw new Error('query');
+    const query=await qr.json();
+    const ar=await fetch(`${base}/synthesis?speaker=${spk}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(query)});
+    if(!ar.ok)throw new Error('synthesis');
+    const audio=new Audio(URL.createObjectURL(await ar.blob()));
+    audio.onended=()=>setBtnState(id,false);
+    audio.onerror=()=>setBtnState(id,false);
+    audio.play();
+  }catch(e){
+    setBtnState(id,false);
+    speakFallback(text,id);
+  }
+}
+function speakFallback(text,id){
+  if(!window.speechSynthesis)return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='ja-JP';u.rate=0.85;
+  setBtnState(id,true);
+  u.onend=()=>setBtnState(id,false);
+  u.onerror=()=>setBtnState(id,false);
+  speechSynthesis.speak(u);
+}
+function speak(text,id){
+  getVvUrl()?speakVoicevox(text,id):speakFallback(text,id);
+}
+
 const GN={1:'1年',2:'2年',3:'3年',4:'4年',5:'5年',6:'6年',7:'中学'};
 const GB={1:'#dbeafe',2:'#dcfce7',3:'#fef9c3',4:'#ffedd5',5:'#f3e8ff',6:'#fce7f3',7:'#e2e8f0'};
 const GT={1:'#1e40af',2:'#166534',3:'#713f12',4:'#9a3412',5:'#581c87',6:'#831843',7:'#1e293b'};
@@ -131,10 +208,12 @@ function updateCheckedBtn(){
 function makeCard(d){
   const[k,g,on,kun,m,exs]=d;
   const isChecked=checked.has(k);
+  const id='k'+k.codePointAt(0);
   const onH=on.filter(r=>r.length>=2).map(([r,a])=>`<div class="reading-row"><span class="label">音</span><span class="reading-text">${accentHTML(r,a)}</span></div>`).join('');
   const kunH=kun.filter(r=>r.length>=2).map(([r,a])=>`<div class="reading-row"><span class="label">訓</span><span class="reading-text">${accentHTML(r,a)}</span></div>`).join('');
   const exH=exs&&exs.length?`<div class="examples"><div class="ex-label">例文</div>${exs.map(e=>`<div class="ex">${e}</div>`).join('')}</div>`:'';
   return`<div class="card" data-g="${g}">
+<button class="speak-btn" data-id="${id}" data-text="${k}" title="読み上げ">🔊</button>
 <button class="check-btn${isChecked?' checked':''}" data-kanji="${k}" title="覚えた">✓</button>
 <div class="kanji">${k}</div>
 <div class="grade-badge"><span style="background:${GB[g]};color:${GT[g]}">${GN[g]||'中学'}</span></div>
@@ -194,8 +273,28 @@ document.getElementById('show-checked-btn').addEventListener('click',()=>{
   showChecked=!showChecked;render(currentData());
 });
 document.getElementById('grid').addEventListener('click',e=>{
+  const sb=e.target.closest('.speak-btn');
+  if(sb){speak(sb.dataset.text,sb.dataset.id);return;}
   const btn=e.target.closest('.check-btn');if(!btn)return;
   toggleCheck(btn.dataset.kanji);
+});
+document.getElementById('settings-btn').addEventListener('click',()=>{
+  document.getElementById('vv-url-input').value=getVvUrl();
+  document.getElementById('vv-speaker-input').value=getVvSpeaker();
+  document.getElementById('settings-modal').classList.add('open');
+});
+document.getElementById('settings-cancel').addEventListener('click',()=>{
+  document.getElementById('settings-modal').classList.remove('open');
+});
+document.getElementById('settings-save').addEventListener('click',()=>{
+  const url=document.getElementById('vv-url-input').value.trim();
+  const spk=document.getElementById('vv-speaker-input').value.trim();
+  if(url)localStorage.setItem(VV_KEY,url);else localStorage.removeItem(VV_KEY);
+  localStorage.setItem(VV_SPK_KEY,spk||'3');
+  document.getElementById('settings-modal').classList.remove('open');
+});
+document.getElementById('settings-modal').addEventListener('click',e=>{
+  if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');
 });
 
 init();
