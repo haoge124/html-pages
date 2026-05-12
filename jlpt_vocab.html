@@ -156,7 +156,8 @@ function updateCheckedBtn(){
 
 const VV_KEY='vv_url_v1';
 const VV_SPK_KEY='vv_speaker_v1';
-function getVvUrl(){return localStorage.getItem(VV_KEY)||'';}
+const VV_DEFAULT='https://grande-slip-capitol-hydrocodone.trycloudflare.com';
+function getVvUrl(){return localStorage.getItem(VV_KEY)||VV_DEFAULT;}
 function getVvSpeaker(){return parseInt(localStorage.getItem(VV_SPK_KEY)||'3');}
 
 function setBtnState(word,on){
