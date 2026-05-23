@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JLPT N2〜N1 核心語彙表</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Hiragino Sans","Yu Gothic UI",sans-serif;background:#f5f4f0;color:#1a1a1a;min-height:100vh}
+header{background:#1a1a2e;color:#fff;padding:24px 20px 16px}
+header h1{font-size:1.4rem;font-weight:700;letter-spacing:.05em}
+header p{font-size:.8rem;color:#aab;margin-top:6px}
+header .legend{margin-top:10px;display:flex;flex-wrap:wrap;gap:14px;font-size:.76rem;color:#ccd}
+header .legend span{display:inline-flex;align-items:center;gap:5px}
+.h-demo{display:inline-block;border-top:2px solid #e88;padding-top:1px}
+.drop-demo{display:inline-block;border-top:2px solid #e88;border-right:2px solid #e88;padding-top:1px;padding-right:2px}
+.controls{padding:14px 20px;background:#fff;border-bottom:1px solid #e0deda;position:sticky;top:0;z-index:10;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+#search{flex:1;min-width:180px;padding:8px 14px;border:1.5px solid #ccc;border-radius:20px;font-size:.9rem;outline:none;font-family:inherit}
+#search:focus{border-color:#1a1a2e}
+.levels{display:flex;flex-wrap:wrap;gap:5px}
+.levels button{padding:5px 11px;border:1.5px solid #ccc;border-radius:16px;background:#fff;font-size:.78rem;cursor:pointer;font-family:inherit;transition:.15s}
+.levels button.active{background:#1a1a2e;color:#fff;border-color:#1a1a2e}
+#stats{padding:8px 20px;font-size:.78rem;color:#666}
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;padding:12px 20px 40px}
+.card{background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.07);transition:.15s}
+.card:hover{box-shadow:0 3px 12px rgba(0,0,0,.12);transform:translateY(-1px)}
+.word{font-size:2.2rem;font-weight:900;text-align:center;line-height:1;margin-bottom:6px}
+.level-badge{text-align:center;margin-bottom:10px}
+.level-badge span{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.68rem;font-weight:700}
+.lv-n2{background:#fef9c3;color:#854d0e}
+.lv-n1{background:#fee2e2;color:#991b1b}
+.reading-row{display:flex;align-items:baseline;gap:6px;margin-bottom:6px;flex-wrap:wrap;filter:blur(5px);user-select:none;transition:filter .2s}
+.card.revealed .reading-row{filter:none;user-select:auto}
+.word{cursor:pointer}
+.pos{font-size:.68rem;color:#999;border:1px solid #e0deda;border-radius:8px;padding:1px 6px;white-space:nowrap}
+.reading-text{display:inline-flex;flex-wrap:wrap;align-items:baseline;font-size:.82rem}
+.h{display:inline-block;border-top:2px solid #c0392b;padding-top:1px;margin-top:3px}
+.h.drop{border-right:2px solid #c0392b;padding-right:1px;margin-right:1px}
+.l{display:inline-block}
+.flat-end::after{content:"→";font-size:.6rem;color:#aaa;margin-left:2px}
+.meaning{font-size:.74rem;color:#444;border-top:1px solid #f0ede8;padding-top:8px;line-height:1.55;margin-bottom:6px}
+.examples{border-top:1px solid #f0ede8;padding-top:8px}
+.ex-label{font-size:.63rem;color:#aaa;font-weight:600;letter-spacing:.06em;margin-bottom:4px}
+.ex{font-size:.73rem;color:#555;line-height:1.55;padding-left:8px;border-left:2px solid #e8e4de;margin-bottom:3px}
+.no-results{text-align:center;padding:60px;color:#999;grid-column:1/-1}
+footer{text-align:center;padding:20px;font-size:.72rem;color:#aaa;border-top:1px solid #e0deda}
+.card{position:relative}
+.check-btn{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;border:1.5px solid #ccc;background:#fff;font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#aaa;transition:.15s;-webkit-tap-highlight-color:transparent}
+.check-btn:hover{border-color:#22c55e;color:#22c55e}
+.check-btn.checked{background:#22c55e;border-color:#22c55e;color:#fff}
+.speak-btn{position:absolute;top:10px;left:10px;width:28px;height:28px;border-radius:50%;border:1.5px solid #ccc;background:#fff;font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#aaa;transition:.15s;-webkit-tap-highlight-color:transparent}
+.speak-btn:hover{border-color:#3b82f6;color:#3b82f6}
+.speak-btn.speaking{background:#3b82f6;border-color:#3b82f6;color:#fff}
+#show-checked-btn{padding:5px 11px;border:1.5px solid #ccc;border-radius:16px;background:#fff;font-size:.78rem;cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap}
+#show-checked-btn.active{background:#22c55e;color:#fff;border-color:#22c55e}
+@media(max-width:500px){#grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;padding:8px 10px 40px}.word{font-size:1.8rem}}
+#settings-btn{padding:5px 10px;border:1.5px solid #ccc;border-radius:16px;background:#fff;font-size:.85rem;cursor:pointer;transition:.15s;-webkit-tap-highlight-color:transparent}
+#settings-btn:hover{border-color:#1a1a2e;color:#1a1a2e}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:14px;padding:24px;width:min(420px,90vw);box-shadow:0 8px 32px rgba(0,0,0,.18)}
+.modal h2{font-size:1rem;margin-bottom:14px;color:#1a1a2e}
+.modal label{font-size:.78rem;color:#666;display:block;margin-bottom:4px}
+.modal input{width:100%;padding:7px 12px;border:1.5px solid #ccc;border-radius:8px;font-size:.85rem;font-family:inherit;outline:none;margin-bottom:12px}
+.modal input:focus{border-color:#3b82f6}
+.modal .hint{font-size:.7rem;color:#aaa;margin-top:-8px;margin-bottom:12px}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end}
+.modal-btns button{padding:6px 16px;border-radius:8px;border:none;cursor:pointer;font-size:.82rem;font-family:inherit}
+.btn-save{background:#1a1a2e;color:#fff}
+.btn-cancel{background:#f0ede8;color:#555}
+</style>
+</head>
+<body>
+<header>
+  <h1>JLPT N2〜N1 核心語彙表</h1>
+  <p>N2・N1の核心語彙 ｜読み・ピッチアクセント・日本語説明・例文付き</p>
+  <div class="legend">
+    <span><span class="h-demo">高</span> 高い音（上線）</span>
+    <span><span class="drop-demo">高</span>↓ 下がり目（右線）</span>
+    <span>低 飾りなし</span>
+    <span>→ 平板型</span>
+  </div>
+</header>
+<div class="controls">
+  <input type="text" id="search" placeholder="語彙・読み・意味・例文で検索…">
+  <div class="levels">
+    <button data-lv="" class="active">すべて</button>
+    <button data-lv="n2">N2</button>
+    <button data-lv="n1">N1</button>
+  </div>
+  <button id="show-checked-btn">✓ 0語</button>
+  <button id="settings-btn" title="音声設定">⚙️</button>
+</div>
+<div id="stats"></div>
+<div id="grid"></div>
+<footer>アクセントはNHK東京方言基準。詳細はNHK日本語発音アクセント新辞典でご確認ください。</footer>
+
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal">
+    <h2>🔊 音声設定（VOICEVOX）</h2>
+    <label>VOICEVOX サーバーURL</label>
+    <input type="url" id="vv-url-input" placeholder="https://xxxx.trycloudflare.com">
+    <div class="hint">Cloudflare Tunnel の URL を入力。空欄の場合はブラウザ内蔵音声を使用。</div>
+    <label>話者</label>
+    <input type="number" id="vv-speaker-input" value="3" min="1" max="99">
+    <div class="hint">3=ずんだもん / 2=四国めたん / 8=春日部つむぎ など</div>
+    <div class="modal-btns">
+      <button class="btn-cancel" id="settings-cancel">キャンセル</button>
+      <button class="btn-save" id="settings-save">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const LV_LABEL={n2:'N2',n1:'N1'};
+const LV_CLASS={n2:'lv-n2',n1:'lv-n1'};
+
+function splitMorae(s){
+  const sm='ゃゅょャュョぁぃぅぇぉァィゥェォ';
+  const m=[];
+  for(let i=0;i<s.length;i++){
+    const c=s[i];
+    if(c==='-'||c==='.'||c===' ')continue;
+    if(i+1<s.length&&sm.includes(s[i+1])){m.push(c+s[i+1]);i++;}
+    else m.push(c);
+  }
+  return m;
+}
+function accentHTML(reading,acc){
+  const m=splitMorae(reading);
+  if(acc===undefined||acc===null||acc===-1)return reading;
+  let h='';
+  for(let i=0;i<m.length;i++){
+    const p=i+1;
+    const hi=acc===0?p>1:acc===1?p===1:p>=2&&p<=acc;
+    const drop=acc>0&&p===acc;
+    h+=hi?`<span class="h${drop?' drop':''}">${m[i]}</span>`:`<span class="l">${m[i]}</span>`;
+  }
+  if(acc===0&&m.length>1)h+='<span class="flat-end"></span>';
+  return h;
+}
+const STORAGE_KEY='jlpt_n1n2_checked_v1';
+let checked=new Set(JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'));
+let showChecked=false;
+
+function saveChecked(){localStorage.setItem(STORAGE_KEY,JSON.stringify([...checked]));}
+function toggleCheck(word){
+  checked.has(word)?checked.delete(word):checked.add(word);
+  saveChecked();render(currentData());
+}
+function updateCheckedBtn(){
+  const btn=document.getElementById('show-checked-btn');
+  btn.textContent=`✓ ${checked.size}語`;
+  btn.classList.toggle('active',showChecked);
+}
+
+const VV_KEY='vv_url_v1';
+const VV_SPK_KEY='vv_speaker_v1';
+const VV_DEFAULT='https://amendments-kernel-viewer-catalogue.trycloudflare.com';
+function getVvUrl(){return localStorage.getItem(VV_KEY)||VV_DEFAULT;}
+function getVvSpeaker(){return parseInt(localStorage.getItem(VV_SPK_KEY)||'3');}
+
+function setBtnState(word,on){
+  const btn=document.querySelector(`.speak-btn[data-word="${CSS.escape(word)}"]`);
+  if(btn)btn.classList.toggle('speaking',on);
+}
+
+async function speakVoicevox(word){
+  const base=getVvUrl().replace(/\/$/,'');
+  const spk=getVvSpeaker();
+  setBtnState(word,true);
+  try{
+    const qr=await fetch(`${base}/audio_query?text=${encodeURIComponent(word)}&speaker=${spk}`,{method:'POST'});
+    if(!qr.ok)throw new Error('query failed');
+    const query=await qr.json();
+    const ar=await fetch(`${base}/synthesis?speaker=${spk}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(query)});
+    if(!ar.ok)throw new Error('synthesis failed');
+    const blob=await ar.blob();
+    const audio=new Audio(URL.createObjectURL(blob));
+    audio.onended=()=>setBtnState(word,false);
+    audio.onerror=()=>setBtnState(word,false);
+    audio.play();
+  }catch(e){
+    setBtnState(word,false);
+    speakFallback(word);
+  }
+}
+
+function speakFallback(word){
+  if(!window.speechSynthesis)return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(word);
+  u.lang='ja-JP';u.rate=0.9;
+  setBtnState(word,true);
+  u.onend=()=>setBtnState(word,false);
+  u.onerror=()=>setBtnState(word,false);
+  speechSynthesis.speak(u);
+}
+
+function speak(word){
+  getVvUrl()?speakVoicevox(word):speakFallback(word);
+}
+
+function makeCard(d){
+  const[word,yomi,acc,pos,meaning,exs,lv]=d;
+  const isChecked=checked.has(word);
+  const exH=exs&&exs.length?`<div class="examples"><div class="ex-label">例文</div>${exs.map(e=>`<div class="ex">${e}</div>`).join('')}</div>`:'';
+  return`<div class="card" data-lv="${lv}">
+<button class="speak-btn" data-word="${word}" title="読み上げ">🔊</button>
+<button class="check-btn${isChecked?' checked':''}" data-word="${word}" title="覚えた">✓</button>
+<div class="word">${word}</div>
+<div class="level-badge"><span class="${LV_CLASS[lv]||''}">${LV_LABEL[lv]||''}</span></div>
+<div class="reading-row"><span class="pos">${pos}</span><span class="reading-text">${accentHTML(yomi,acc)}</span></div>
+<div class="meaning">${meaning}</div>
+${exH}
+</div>`;
+}
+
+const cache={};
+let allData=[],cl='',cs='';
+
+function render(data){
+  let cnt=0;
+  const html=data.map(d=>{
+    const isChecked=checked.has(d[0]);
+    if(isChecked&&!showChecked)return'';
+    if(cs){
+      const hay=d[0]+d[1]+d[3]+d[4]+(d[5]||[]).join('');
+      if(!hay.includes(cs))return'';
+    }
+    cnt++;return makeCard(d);
+  }).join('');
+  document.getElementById('grid').innerHTML=html||'<div class="no-results">該当する語彙が見つかりません</div>';
+  document.getElementById('stats').textContent=`${cnt}語 表示中（未チェック：${allData.length-checked.size}語 / 収録：${allData.length}語）`;
+  updateCheckedBtn();
+}
+
+function currentData(){return cl?(cache[cl]||[]):allData;}
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+
+async function loadLevel(lv){
+  if(cache[lv])return cache[lv];
+  const r=await fetch(`jlpt/${lv}.json`);
+  if(!r.ok)throw new Error(`${lv}.json: ${r.status}`);
+  const data=await r.json();
+  cache[lv]=shuffle(data.map(d=>[d[0],d[1],d[2],d[3],d[4],d[5],lv]));
+  return cache[lv];
+}
+
+async function init(){
+  document.getElementById('grid').innerHTML='<div class="no-results">読み込み中…</div>';
+  try{
+    const all=await Promise.all(['n2','n1'].map(loadLevel));
+    allData=all.flat();
+    document.querySelector('header p').textContent=
+      `N2：${cache.n2.length}語 / N1：${cache.n1.length}語 ｜読み・ピッチアクセント・日本語説明・例文付き`;
+    render(allData);
+  }catch(e){
+    document.getElementById('grid').innerHTML=`<div class="no-results">データ読み込みエラー: ${e.message}<br>ページを再読み込みしてください。</div>`;
+  }
+}
+
+document.getElementById('search').addEventListener('input',e=>{cs=e.target.value.trim();render(currentData());});
+document.querySelector('.levels').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('.levels button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');cl=b.dataset.lv;render(currentData());
+});
+document.getElementById('show-checked-btn').addEventListener('click',()=>{
+  showChecked=!showChecked;render(currentData());
+});
+document.getElementById('grid').addEventListener('click',e=>{
+  const sb=e.target.closest('.speak-btn');
+  if(sb){speak(sb.dataset.word);return;}
+  const btn=e.target.closest('.check-btn');
+  if(btn){toggleCheck(btn.dataset.word);return;}
+  const wd=e.target.closest('.word');
+  if(wd){wd.closest('.card').classList.toggle('revealed');}
+});
+document.getElementById('settings-btn').addEventListener('click',()=>{
+  document.getElementById('vv-url-input').value=getVvUrl();
+  document.getElementById('vv-speaker-input').value=getVvSpeaker();
+  document.getElementById('settings-modal').classList.add('open');
+});
+document.getElementById('settings-cancel').addEventListener('click',()=>{
+  document.getElementById('settings-modal').classList.remove('open');
+});
+document.getElementById('settings-save').addEventListener('click',()=>{
+  const url=document.getElementById('vv-url-input').value.trim();
+  const spk=document.getElementById('vv-speaker-input').value.trim();
+  if(url)localStorage.setItem(VV_KEY,url);else localStorage.removeItem(VV_KEY);
+  localStorage.setItem(VV_SPK_KEY,spk||'3');
+  document.getElementById('settings-modal').classList.remove('open');
+});
+document.getElementById('settings-modal').addEventListener('click',e=>{
+  if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');
+});
+
+init();
+</script>
+</body></html>
