@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JLPT 文法 Grammar — N5~N3</title>
+<style>
+  :root {
+    --bg: #0f0f13;
+    --surface: #1a1a22;
+    --surface2: #22222e;
+    --border: #2e2e3e;
+    --text: #e8e8f0;
+    --text-muted: #8888aa;
+    --text-faint: #4a4a60;
+    --accent: #7c6fef;
+    --accent2: #5cb8b2;
+    --accent3: #e07a5f;
+    --n5: #4ade80;
+    --n4: #60a5fa;
+    --n3: #f59e0b;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hiragino Koto', 'Noto Sans JP', 'Yu Gothic', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ─── Header ─── */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(15,15,19,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+  }
+
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    height: 56px;
+    flex-wrap: wrap;
+  }
+
+  .site-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .level-tabs {
+    display: flex;
+    gap: 6px;
+  }
+
+  .tab-btn {
+    padding: 5px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+  .tab-btn:hover { border-color: var(--accent); color: var(--text); }
+  .tab-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .tab-btn[data-level="n5"].active { background: var(--n5); border-color: var(--n5); color: #000; }
+  .tab-btn[data-level="n4"].active { background: var(--n4); border-color: var(--n4); color: #000; }
+  .tab-btn[data-level="n3"].active { background: var(--n3); border-color: var(--n3); color: #000; }
+
+  .search-wrap {
+    flex: 1;
+    min-width: 160px;
+    max-width: 300px;
+  }
+  .search-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    padding: 6px 12px;
+    font-size: 0.82rem;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .search-input:focus { border-color: var(--accent); }
+  .search-input::placeholder { color: var(--text-faint); }
+
+  /* VOICEVOX URL input */
+  .vv-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+  .vv-input {
+    width: 200px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    padding: 4px 8px;
+    font-size: 0.72rem;
+    outline: none;
+  }
+  .vv-input:focus { border-color: var(--accent); color: var(--text); }
+
+  /* ─── Progress bar ─── */
+  .progress-bar-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 14px 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .progress-info {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .progress-track {
+    flex: 1;
+    min-width: 120px;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+
+  /* ─── Main grid ─── */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+  }
+
+  /* ─── Card ─── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.15s, transform 0.12s;
+    position: relative;
+  }
+  .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .card.done {
+    opacity: 0.5;
+    border-color: var(--text-faint);
+  }
+  .card.done:hover { opacity: 0.7; transform: none; }
+
+  .card-level-stripe {
+    height: 3px;
+  }
+  .card[data-level="n5"] .card-level-stripe { background: var(--n5); }
+  .card[data-level="n4"] .card-level-stripe { background: var(--n4); }
+  .card[data-level="n3"] .card-level-stripe { background: var(--n3); }
+
+  .card-header {
+    padding: 14px 16px 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .check-btn {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--text-faint);
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent;
+    font-size: 11px;
+  }
+  .check-btn:hover { border-color: var(--accent); }
+  .card.done .check-btn {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .pattern-text {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.4;
+    flex: 1;
+    color: #fff;
+  }
+
+  .badges {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    max-width: 110px;
+  }
+
+  .badge {
+    font-size: 0.65rem;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .badge-level { border: 1px solid; }
+  .card[data-level="n5"] .badge-level { color: var(--n5); border-color: var(--n5); background: rgba(74,222,128,0.08); }
+  .card[data-level="n4"] .badge-level { color: var(--n4); border-color: var(--n4); background: rgba(96,165,250,0.08); }
+  .card[data-level="n3"] .badge-level { color: var(--n3); border-color: var(--n3); background: rgba(245,158,11,0.08); }
+
+  .badge-register {
+    background: var(--surface2);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+
+  .connection-text {
+    padding: 0 16px 10px 48px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    font-family: monospace;
+  }
+
+  .meaning-text {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    color: var(--text);
+    line-height: 1.6;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Nuance: blur to reveal */
+  .nuance-wrap {
+    padding: 0 16px 10px;
+    cursor: pointer;
+  }
+  .nuance-label {
+    font-size: 0.68rem;
+    color: var(--text-faint);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .nuance-text {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    filter: blur(4px);
+    transition: filter 0.2s;
+    user-select: none;
+  }
+  .nuance-wrap.revealed .nuance-text {
+    filter: none;
+    user-select: text;
+  }
+  .nuance-hint {
+    font-size: 0.68rem;
+    color: var(--text-faint);
+    margin-top: 3px;
+    display: block;
+  }
+  .nuance-wrap.revealed .nuance-hint { display: none; }
+
+  /* Examples */
+  .examples-wrap {
+    border-top: 1px solid var(--border);
+    padding: 10px 16px;
+  }
+  .example-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 4px 0;
+  }
+  .example-item + .example-item {
+    border-top: 1px solid rgba(46,46,62,0.6);
+  }
+  .example-text {
+    flex: 1;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--text);
+  }
+  .tts-btn {
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.1s;
+    margin-top: 2px;
+  }
+  .tts-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+  .tts-btn.playing { background: var(--accent2); color: #fff; border-color: var(--accent2); }
+
+  /* Similar */
+  .similar-wrap {
+    padding: 8px 16px 14px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .similar-label {
+    color: var(--text-faint);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .similar-tag {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+
+  /* Empty state */
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-faint);
+    font-size: 0.9rem;
+  }
+
+  /* Actions row */
+  .actions-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+  }
+  .reset-btn {
+    font-size: 0.75rem;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .reset-btn:hover { border-color: var(--accent3); color: var(--accent3); }
+
+  .count-text {
+    font-size: 0.78rem;
+    color: var(--text-faint);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 600px) {
+    .vv-wrap { display: none; }
+    .search-wrap { max-width: 100%; }
+    .cards-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="site-title">JLPT 文法</div>
+
+    <div class="level-tabs">
+      <button class="tab-btn active" data-level="all">ALL</button>
+      <button class="tab-btn" data-level="n5">N5</button>
+      <button class="tab-btn" data-level="n4">N4</button>
+      <button class="tab-btn" data-level="n3">N3</button>
+    </div>
+
+    <div class="search-wrap">
+      <input class="search-input" type="search" id="searchInput" placeholder="文型・意味で検索...">
+    </div>
+
+    <div class="vv-wrap">
+      <span>VV:</span>
+      <input class="vv-input" id="vvUrl" placeholder="VOICEVOX URL" />
+    </div>
+  </div>
+</header>
+
+<div class="progress-bar-wrap">
+  <div class="progress-info" id="progressInfo">読み込み中...</div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill" style="width:0%"></div>
+  </div>
+</div>
+
+<div class="actions-row">
+  <span class="count-text" id="countText"></span>
+  <button class="reset-btn" onclick="resetAll()">✕ 学習済みをリセット</button>
+</div>
+
+<main>
+  <div class="cards-grid" id="cardsGrid"></div>
+</main>
+
+<script>
+const VV_DEFAULT = 'https://amendments-kernel-viewer-catalogue.trycloudflare.com';
+const STORAGE_KEY = 'jlpt_grammar_done';
+const VV_STORAGE_KEY = 'jlpt_grammar_vv_url';
+
+const DATA_FILES = [
+  { level: 'n5', file: 'grammar/n5.json' },
+  { level: 'n4', file: 'grammar/n4.json' },
+  { level: 'n3', file: 'grammar/n3.json' },
+];
+
+let allItems = [];
+let doneSet = new Set();
+let activeLevel = 'all';
+let searchQuery = '';
+let currentAudio = null;
+let currentTtsBtn = null;
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const savedVV = localStorage.getItem(VV_STORAGE_KEY) || VV_DEFAULT;
+  document.getElementById('vvUrl').value = savedVV;
+  document.getElementById('vvUrl').addEventListener('change', e => {
+    localStorage.setItem(VV_STORAGE_KEY, e.target.value.trim());
+  });
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    doneSet = new Set(saved);
+  } catch {}
+
+  for (const { level, file } of DATA_FILES) {
+    try {
+      const res = await fetch(file);
+      const rows = await res.json();
+      for (const row of rows) {
+        allItems.push({
+          level,
+          pattern: row[0],
+          connection: row[1],
+          meaning: row[2],
+          nuance: row[3],
+          examples: row[4] || [],
+          similar: row[5] || '',
+          register: row[6] || '',
+        });
+      }
+    } catch (e) {
+      console.warn('Failed to load ' + file, e);
+    }
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeLevel = btn.dataset.level;
+      render();
+    });
+  });
+
+  document.getElementById('searchInput').addEventListener('input', e => {
+    searchQuery = e.target.value.trim().toLowerCase();
+    render();
+  });
+
+  render();
+});
+
+function getVisible() {
+  return allItems.filter(item => {
+    if (activeLevel !== 'all' && item.level !== activeLevel) return false;
+    if (searchQuery) {
+      const hay = (item.pattern + item.meaning + item.nuance + item.connection).toLowerCase();
+      if (!hay.includes(searchQuery)) return false;
+    }
+    return true;
+  });
+}
+
+function render() {
+  const visible = getVisible();
+  const grid = document.getElementById('cardsGrid');
+
+  const doneCount = visible.filter(item => doneSet.has(itemKey(item))).length;
+  const pct = visible.length > 0 ? Math.round(doneCount / visible.length * 100) : 0;
+  document.getElementById('progressInfo').textContent =
+    doneCount + ' / ' + visible.length + ' 学習済み (' + pct + '%)';
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('countText').textContent = '表示中: ' + visible.length + '件';
+
+  if (visible.length === 0) {
+    grid.innerHTML = '<div class="empty-state">該当する文型がありません</div>';
+    return;
+  }
+
+  grid.innerHTML = '';
+  for (const item of visible) {
+    grid.appendChild(buildCard(item));
+  }
+}
+
+function itemKey(item) {
+  return item.level + '::' + item.pattern;
+}
+
+function buildCard(item) {
+  const key = itemKey(item);
+  const done = doneSet.has(key);
+
+  const card = document.createElement('article');
+  card.className = 'card' + (done ? ' done' : '');
+  card.dataset.level = item.level;
+
+  const stripe = document.createElement('div');
+  stripe.className = 'card-level-stripe';
+  card.appendChild(stripe);
+
+  // Header
+  const header = document.createElement('div');
+  header.className = 'card-header';
+
+  const checkBtn = document.createElement('button');
+  checkBtn.className = 'check-btn';
+  checkBtn.title = '学習済みにする';
+  checkBtn.innerHTML = '✓';
+  checkBtn.addEventListener('click', () => toggleDone(key, card));
+  header.appendChild(checkBtn);
+
+  const patternEl = document.createElement('div');
+  patternEl.className = 'pattern-text';
+  patternEl.textContent = item.pattern;
+  header.appendChild(patternEl);
+
+  const badges = document.createElement('div');
+  badges.className = 'badges';
+
+  const lvBadge = document.createElement('span');
+  lvBadge.className = 'badge badge-level';
+  lvBadge.textContent = item.level.toUpperCase();
+  badges.appendChild(lvBadge);
+
+  if (item.register) {
+    const regBadge = document.createElement('span');
+    regBadge.className = 'badge badge-register';
+    regBadge.textContent = item.register;
+    badges.appendChild(regBadge);
+  }
+
+  header.appendChild(badges);
+  card.appendChild(header);
+
+  // Connection
+  if (item.connection) {
+    const conn = document.createElement('div');
+    conn.className = 'connection-text';
+    conn.textContent = item.connection;
+    card.appendChild(conn);
+  }
+
+  // Meaning
+  const meaning = document.createElement('div');
+  meaning.className = 'meaning-text';
+  meaning.textContent = item.meaning;
+  card.appendChild(meaning);
+
+  // Nuance (blur)
+  if (item.nuance) {
+    const nuanceWrap = document.createElement('div');
+    nuanceWrap.className = 'nuance-wrap';
+    nuanceWrap.innerHTML =
+      '<div class="nuance-label">ニュアンス</div>' +
+      '<div class="nuance-text">' + escHtml(item.nuance) + '</div>' +
+      '<span class="nuance-hint">タップして表示</span>';
+    nuanceWrap.addEventListener('click', () => nuanceWrap.classList.toggle('revealed'));
+    card.appendChild(nuanceWrap);
+  }
+
+  // Examples
+  if (item.examples.length > 0) {
+    const exWrap = document.createElement('div');
+    exWrap.className = 'examples-wrap';
+    for (const ex of item.examples) {
+      const row = document.createElement('div');
+      row.className = 'example-item';
+      const txt = document.createElement('div');
+      txt.className = 'example-text';
+      txt.textContent = ex;
+      row.appendChild(txt);
+      const ttsBtn = document.createElement('button');
+      ttsBtn.className = 'tts-btn';
+      ttsBtn.title = '読み上げ';
+      ttsBtn.innerHTML = '▶';
+      ttsBtn.addEventListener('click', () => playTTS(ex, ttsBtn));
+      row.appendChild(ttsBtn);
+      exWrap.appendChild(row);
+    }
+    card.appendChild(exWrap);
+  }
+
+  // Similar
+  if (item.similar) {
+    const simWrap = document.createElement('div');
+    simWrap.className = 'similar-wrap';
+    const label = document.createElement('span');
+    label.className = 'similar-label';
+    label.textContent = '類似';
+    simWrap.appendChild(label);
+    const tag = document.createElement('span');
+    tag.className = 'similar-tag';
+    tag.textContent = item.similar;
+    simWrap.appendChild(tag);
+    card.appendChild(simWrap);
+  }
+
+  return card;
+}
+
+function toggleDone(key, card) {
+  if (doneSet.has(key)) {
+    doneSet.delete(key);
+    card.classList.remove('done');
+  } else {
+    doneSet.add(key);
+    card.classList.add('done');
+  }
+  localStorage.setItem(STORAGE_KEY, JSON.stringify([...doneSet]));
+  updateProgress();
+}
+
+function updateProgress() {
+  const visible = getVisible();
+  const doneCount = visible.filter(item => doneSet.has(itemKey(item))).length;
+  const pct = visible.length > 0 ? Math.round(doneCount / visible.length * 100) : 0;
+  document.getElementById('progressInfo').textContent =
+    doneCount + ' / ' + visible.length + ' 学習済み (' + pct + '%)';
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function resetAll() {
+  if (!confirm('学習済みを全てリセットしますか？')) return;
+  doneSet.clear();
+  localStorage.setItem(STORAGE_KEY, '[]');
+  render();
+}
+
+async function playTTS(text, btn) {
+  const baseUrl = (document.getElementById('vvUrl').value.trim() || VV_DEFAULT).replace(/\/$/, '');
+
+  if (currentAudio && !currentAudio.ended) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+    if (currentTtsBtn) currentTtsBtn.classList.remove('playing');
+    if (currentTtsBtn === btn) { currentAudio = null; currentTtsBtn = null; return; }
+  }
+
+  btn.classList.add('playing');
+  currentTtsBtn = btn;
+
+  try {
+    const qRes = await fetch(baseUrl + '/audio_query?text=' + encodeURIComponent(text) + '&speaker=1', {
+      method: 'POST',
+    });
+    if (!qRes.ok) throw new Error('audio_query failed');
+    const query = await qRes.json();
+
+    const sRes = await fetch(baseUrl + '/synthesis?speaker=1', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(query),
+    });
+    if (!sRes.ok) throw new Error('synthesis failed');
+    const blob = await sRes.blob();
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    currentAudio = audio;
+    audio.play();
+    audio.addEventListener('ended', () => {
+      btn.classList.remove('playing');
+      URL.revokeObjectURL(url);
+      if (currentAudio === audio) { currentAudio = null; currentTtsBtn = null; }
+    });
+  } catch (e) {
+    btn.classList.remove('playing');
+    btn.textContent = '✕';
+    setTimeout(() => { btn.textContent = '▶'; }, 1500);
+    console.warn('TTS error:', e);
+  }
+}
+
+function escHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+</script>
+</body>
+</html>
