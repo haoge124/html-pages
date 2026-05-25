@@ -37,8 +37,7 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(15,15,19,0.92);
-    backdrop-filter: blur(12px);
+    background: rgba(13,13,17,0.98);
     border-bottom: 1px solid var(--border);
     padding: 0 20px;
   }
@@ -174,6 +173,8 @@
     overflow: hidden;
     transition: border-color 0.15s, transform 0.12s;
     position: relative;
+    content-visibility: auto;
+    contain-intrinsic-size: 0 400px;
   }
   .card:hover { border-color: var(--accent); transform: translateY(-2px); }
   .card.done {
