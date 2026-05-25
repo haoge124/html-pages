@@ -29,8 +29,10 @@ header .legend span{display:inline-flex;align-items:center;gap:5px}
 .levels button.active{background:var(--gold);color:#0f1117;border-color:var(--gold);font-weight:700}
 #stats{padding:8px 20px;font-size:.78rem;color:var(--text-faint)}
 #grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;padding:12px 20px 40px}
-.card{background:var(--surface);border-radius:10px;padding:16px;border:1px solid var(--border);transition:box-shadow .2s,transform .2s,border-color .2s;position:relative}
+.card{background:var(--surface);border-radius:10px;padding:16px;border:1px solid var(--border);transition:box-shadow .2s,transform .2s,border-color .2s;position:relative;content-visibility:auto;contain-intrinsic-size:0 280px}
 .card:hover{box-shadow:0 0 0 1px var(--gold-dim),0 4px 24px rgba(240,192,64,.08);transform:translateY(-1px);border-color:rgba(240,192,64,.28)}
+@keyframes checkFade{to{opacity:0;transform:scale(.96)}}
+.card.checking{animation:checkFade .18s ease forwards;pointer-events:none}
 .word{font-size:2.2rem;font-weight:900;text-align:center;line-height:1;margin-bottom:6px;font-family:"Hiragino Mincho ProN","Yu Mincho",Georgia,serif;color:var(--text);cursor:pointer}
 .level-badge{text-align:center;margin-bottom:10px}
 .level-badge span{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.68rem;font-weight:700}
@@ -155,13 +157,24 @@ function toggleCheck(word){
   const wasChecked=checked.has(word);
   wasChecked?checked.delete(word):checked.add(word);
   saveChecked();
-  // Targeted DOM update — no full re-render
   const btn=document.querySelector(`.check-btn[data-word="${CSS.escape(word)}"]`);
   if(btn)btn.classList.toggle('checked',!wasChecked);
-  if(!showChecked&&!wasChecked){const card=btn&&btn.closest('.card');if(card)card.remove();}
+  if(!showChecked&&!wasChecked){
+    const card=btn&&btn.closest('.card');
+    if(card){
+      // Fade out (compositor-only), then defer DOM removal to avoid blocking click
+      card.classList.add('checking');
+      card.addEventListener('animationend',()=>{
+        card.remove();
+        const cnt=document.querySelectorAll('#grid .card').length;
+        document.getElementById('stats').textContent=`${cnt}語 表示中（未チェック：${allData.length-checked.size}語 / 収録：${allData.length}語）`;
+      },{once:true});
+    }
+  } else {
+    const cnt=document.querySelectorAll('#grid .card').length;
+    document.getElementById('stats').textContent=`${cnt}語 表示中（未チェック：${allData.length-checked.size}語 / 収録：${allData.length}語）`;
+  }
   updateCheckedBtn();
-  const cnt=document.querySelectorAll('#grid .card').length;
-  document.getElementById('stats').textContent=`${cnt}語 表示中（未チェック：${allData.length-checked.size}語 / 収録：${allData.length}語）`;
 }
 function updateCheckedBtn(){
   const btn=document.getElementById('show-checked-btn');
