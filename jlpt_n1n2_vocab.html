@@ -272,7 +272,7 @@ function shuffle(arr){
 
 async function loadLevel(lv){
   if(cache[lv])return cache[lv];
-  const r=await fetch(`jlpt/${lv}.json`);
+  const r=await fetch(`jlpt/${lv}.json?v=20260530`);
   if(!r.ok)throw new Error(`${lv}.json: ${r.status}`);
   const data=await r.json();
   cache[lv]=shuffle(data.map(d=>[d[0],d[1],d[2],d[3],d[4],d[5],lv]));
