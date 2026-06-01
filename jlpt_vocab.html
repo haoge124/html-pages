@@ -33,6 +33,7 @@ header .legend span{display:inline-flex;align-items:center;gap:5px}
 .card:hover{box-shadow:0 0 0 1px var(--gold-dim),0 4px 24px rgba(240,192,64,.08);transform:translateY(-1px);border-color:rgba(240,192,64,.28)}
 @keyframes checkFade{to{opacity:0;transform:scale(.96)}}
 .card.checking{animation:checkFade .18s ease forwards;pointer-events:none}
+.card.hard-mode{border-color:rgba(245,158,11,.35)}
 .word{font-size:2.2rem;font-weight:900;text-align:center;line-height:1;margin-bottom:6px;font-family:"Hiragino Mincho ProN","Yu Mincho",Georgia,serif;color:var(--text);cursor:pointer}
 .level-badge{text-align:center;margin-bottom:10px}
 .level-badge span{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.68rem;font-weight:700}
@@ -56,17 +57,31 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-faint);b
 .check-btn{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(255,255,255,.12);background:transparent;font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-faint);transition:.15s;-webkit-tap-highlight-color:transparent}
 .check-btn:hover{border-color:#22c55e;color:#22c55e}
 .check-btn.checked{background:#22c55e;border-color:#22c55e;color:#fff}
+.hard-btn{position:absolute;top:10px;right:44px;width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(255,255,255,.12);background:transparent;font-size:.82rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-faint);transition:.15s;-webkit-tap-highlight-color:transparent}
+.hard-btn:hover{border-color:#f59e0b;color:#f59e0b}
+.hard-btn.hard{background:#f59e0b;border-color:#f59e0b;color:#fff}
 .speak-btn{position:absolute;top:10px;left:10px;width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(255,255,255,.12);background:transparent;font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-faint);transition:.15s;-webkit-tap-highlight-color:transparent}
 .speak-btn:hover{border-color:#3b82f6;color:#3b82f6}
 .speak-btn.speaking{background:#3b82f6;border-color:#3b82f6;color:#fff}
-#show-checked-btn{padding:5px 11px;border:1.5px solid rgba(255,255,255,.1);border-radius:16px;background:transparent;color:var(--text-muted);font-size:.78rem;cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap}
+.srs{border-top:1px dashed rgba(245,158,11,.3);margin-top:8px;padding-top:8px}
+.srs-due{font-size:.7rem;font-weight:700;margin-bottom:6px}
+.srs-due.now{color:#f59e0b}
+.srs-due.wait{color:var(--text-faint)}
+.srs-btns{display:flex;gap:6px}
+.srs-btns button{flex:1;padding:5px 0;border-radius:7px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--text-muted);font-size:.7rem;cursor:pointer;font-family:inherit}
+.srs-btns button.good:hover{border-color:#22c55e;color:#22c55e}
+.srs-btns button.vague:hover{border-color:#60a5fa;color:#60a5fa}
+.srs-btns button.forgot:hover{border-color:#e06060;color:#e06060}
+#show-checked-btn,#show-hard-btn{padding:5px 11px;border:1.5px solid rgba(255,255,255,.1);border-radius:16px;background:transparent;color:var(--text-muted);font-size:.78rem;cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap}
 #show-checked-btn.active{background:#22c55e;color:#fff;border-color:#22c55e}
+#show-hard-btn.active{background:#f59e0b;color:#fff;border-color:#f59e0b}
 @media(max-width:500px){#grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;padding:8px 10px 40px}.word{font-size:1.8rem}}
-#settings-btn{padding:5px 10px;border:1.5px solid rgba(255,255,255,.1);border-radius:16px;background:transparent;color:var(--text-muted);font-size:.85rem;cursor:pointer;transition:.15s;-webkit-tap-highlight-color:transparent}
+#settings-btn,#tips-btn{padding:5px 10px;border:1.5px solid rgba(255,255,255,.1);border-radius:16px;background:transparent;color:var(--text-muted);font-size:.85rem;cursor:pointer;transition:.15s;-webkit-tap-highlight-color:transparent}
 #settings-btn:hover{border-color:var(--gold);color:var(--gold)}
+#tips-btn:hover{border-color:#f59e0b;color:#f59e0b}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:100;align-items:center;justify-content:center}
 .modal-overlay.open{display:flex}
-.modal{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:24px;width:min(420px,90vw);box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.modal{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:24px;width:min(460px,90vw);max-height:86vh;overflow:auto;box-shadow:0 8px 32px rgba(0,0,0,.5)}
 .modal h2{font-size:1rem;margin-bottom:14px;color:var(--gold)}
 .modal label{font-size:.78rem;color:var(--text-muted);display:block;margin-bottom:4px}
 .modal input{width:100%;padding:7px 12px;border:1.5px solid rgba(255,255,255,.1);border-radius:8px;font-size:.85rem;font-family:inherit;outline:none;margin-bottom:12px;background:var(--bg);color:var(--text)}
@@ -76,6 +91,10 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-faint);b
 .modal-btns button{padding:6px 16px;border-radius:8px;border:none;cursor:pointer;font-size:.82rem;font-family:inherit}
 .btn-save{background:var(--gold);color:#0f1117;font-weight:700}
 .btn-cancel{background:rgba(255,255,255,.07);color:var(--text-muted)}
+.tips-body{font-size:.8rem;color:var(--text-muted);line-height:1.7}
+.tips-body h3{color:var(--gold);font-size:.85rem;margin:12px 0 4px}
+.tips-body ul{padding-left:18px}
+.tips-body b{color:var(--text)}
 </style>
 </head>
 <body>
@@ -98,6 +117,8 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-faint);b
     <button data-lv="n3">N3</button>
   </div>
   <button id="show-checked-btn">✓ 0語</button>
+  <button id="show-hard-btn">★ 難記 0語</button>
+  <button id="tips-btn" title="記憶のコツ">💡</button>
   <button id="settings-btn" title="音声設定">⚙️</button>
 </div>
 <div id="stats"></div>
@@ -116,6 +137,31 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-faint);b
     <div class="modal-btns">
       <button class="btn-cancel" id="settings-cancel">キャンセル</button>
       <button class="btn-save" id="settings-save">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="tips-modal">
+  <div class="modal">
+    <h2>💡 難記単語の覚え方（忘却曲線）</h2>
+    <div class="tips-body">
+      <p>人は覚えた直後から急速に忘れます（エビングハウスの忘却曲線）。
+      忘れかけた絶妙なタイミングで「思い出す」復習を繰り返すと、長期記憶に定着します。</p>
+      <h3>おすすめの方法</h3>
+      <ul>
+        <li><b>間隔反復</b>：1日→2日→4日→7日→15日→30日…と間隔を広げて復習する</li>
+        <li><b>能動的に想起</b>：答えを見る前に意味を思い出す（読みは「ぼかし表示」を活用）</li>
+        <li><b>例文ごと覚える</b>：単語単体より文脈で覚える方が定着しやすい</li>
+        <li><b>声に出す</b>：🔊 で発音を聞き、自分でも音読する</li>
+        <li><b>関連づけ</b>：似た語・反対語・イメージと結びつける</li>
+      </ul>
+      <h3>このページの復習機能</h3>
+      <p>★ で「難記」マークした語は <b>「★難記」一覧</b> に集まります。復習時に
+      <b>覚えてた / あいまい / 忘れた</b> を押すと、次回の復習日が自動で調整されます
+      （忘却曲線に沿った間隔反復）。「● 復習する」と出た語を優先しましょう。</p>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-save" id="tips-close">閉じる</button>
     </div>
   </div>
 </div>
@@ -148,31 +194,36 @@ function accentHTML(reading,acc){
   if(acc===0&&m.length>1)h+='<span class="flat-end"></span>';
   return h;
 }
+
+// ===== 覚えた(チェック) : 既存。キー・形式は変更しない =====
 const STORAGE_KEY='jlpt_checked_v1';
 let checked=new Set(JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'));
 let showChecked=false;
 
 function saveChecked(){localStorage.setItem(STORAGE_KEY,JSON.stringify([...checked]));}
+function refreshStats(){
+  const cnt=document.querySelectorAll('#grid .card').length;
+  document.getElementById('stats').textContent=showHard
+    ?`★難記 ${Object.keys(hard).length}語（うち表示${cnt}語）`
+    :`${cnt}語 表示中（未チェック：${allData.length-checked.size}語 / 収録：${allData.length}語）`;
+}
 function toggleCheck(word){
   const wasChecked=checked.has(word);
   wasChecked?checked.delete(word):checked.add(word);
   saveChecked();
   const btn=document.querySelector(`.check-btn[data-word="${CSS.escape(word)}"]`);
   if(btn)btn.classList.toggle('checked',!wasChecked);
+  // 難記一覧の表示中はカードを消さず、状態だけ更新
+  if(showHard){refreshStats();updateCheckedBtn();return;}
   if(!showChecked&&!wasChecked){
     const card=btn&&btn.closest('.card');
     if(card){
       // Fade out (compositor-only), then defer DOM removal to avoid blocking click
       card.classList.add('checking');
-      card.addEventListener('animationend',()=>{
-        card.remove();
-        const cnt=document.querySelectorAll('#grid .card').length;
-        document.getElementById('stats').textContent=`${cnt}語 表示中（未チェック：${allData.length-checked.size}語 / 収録：${allData.length}語）`;
-      },{once:true});
+      card.addEventListener('animationend',()=>{card.remove();refreshStats();},{once:true});
     }
   } else {
-    const cnt=document.querySelectorAll('#grid .card').length;
-    document.getElementById('stats').textContent=`${cnt}語 表示中（未チェック：${allData.length-checked.size}語 / 収録：${allData.length}語）`;
+    refreshStats();
   }
   updateCheckedBtn();
 }
@@ -180,6 +231,49 @@ function updateCheckedBtn(){
   const btn=document.getElementById('show-checked-btn');
   btn.textContent=`✓ ${checked.size}語`;
   btn.classList.toggle('active',showChecked);
+}
+
+// ===== 難記マーク + 間隔反復(SRS) : 新機能。別キーを使用 =====
+const HARD_KEY='jlpt_hard_v1';
+// 形式: { 単語: {stage:int, next:ms, added:ms, last:ms} }
+let hard=JSON.parse(localStorage.getItem(HARD_KEY)||'{}');
+let showHard=false;
+const SRS_DAYS=[1,2,4,7,15,30,60];
+const DAY=86400000;
+function saveHard(){localStorage.setItem(HARD_KEY,JSON.stringify(hard));}
+function isHard(word){return Object.prototype.hasOwnProperty.call(hard,word);}
+function toggleHard(word){
+  if(isHard(word)){delete hard[word];}
+  else{const now=Date.now();hard[word]={stage:0,next:now,added:now,last:0};}
+  saveHard();
+  const btn=document.querySelector(`.hard-btn[data-word="${CSS.escape(word)}"]`);
+  if(btn)btn.classList.toggle('hard',isHard(word));
+  const card=btn&&btn.closest('.card');
+  if(card)card.classList.toggle('hard-mode',isHard(word));
+  if(showHard)render(currentData());
+  updateHardBtn();
+}
+function reviewHard(word,result){
+  const h=hard[word];if(!h)return;
+  const now=Date.now();
+  if(result==='good')h.stage=Math.min(h.stage+1,SRS_DAYS.length-1);
+  else if(result==='forgot')h.stage=0;
+  // 'vague' は段階据え置き
+  h.last=now;h.next=now+SRS_DAYS[h.stage]*DAY;
+  saveHard();
+  render(currentData());
+}
+function dueHTML(word){
+  const h=hard[word];if(!h)return'';
+  const now=Date.now();
+  if(h.next<=now)return`<div class="srs-due now">● 復習する（第${h.stage+1}段階・${SRS_DAYS[h.stage]}日間隔）</div>`;
+  const d=Math.ceil((h.next-now)/DAY);
+  return`<div class="srs-due wait">○ あと${d}日（第${h.stage+1}段階）</div>`;
+}
+function updateHardBtn(){
+  const btn=document.getElementById('show-hard-btn');
+  btn.textContent=`★ 難記 ${Object.keys(hard).length}語`;
+  btn.classList.toggle('active',showHard);
 }
 
 const VV_KEY='vv_url_v1';
@@ -232,15 +326,19 @@ function speak(word){
 function makeCard(d){
   const[word,yomi,acc,pos,meaning,exs,lv]=d;
   const isChecked=checked.has(word);
+  const hardOn=isHard(word);
   const exH=exs&&exs.length?`<div class="examples"><div class="ex-label">例文</div>${exs.map(e=>`<div class="ex">${e}</div>`).join('')}</div>`:'';
-  return`<div class="card" data-lv="${lv}">
+  const srsH=(showHard&&hardOn)?`<div class="srs">${dueHTML(word)}<div class="srs-btns"><button class="good" data-rev="good" data-word="${word}">覚えてた</button><button class="vague" data-rev="vague" data-word="${word}">あいまい</button><button class="forgot" data-rev="forgot" data-word="${word}">忘れた</button></div></div>`:'';
+  return`<div class="card${hardOn?' hard-mode':''}" data-lv="${lv}">
 <button class="speak-btn" data-word="${word}" title="読み上げ">🔊</button>
+<button class="hard-btn${hardOn?' hard':''}" data-word="${word}" title="難記マーク">★</button>
 <button class="check-btn${isChecked?' checked':''}" data-word="${word}" title="覚えた">✓</button>
 <div class="word">${word}</div>
 <div class="level-badge"><span class="${LV_CLASS[lv]||''}">${LV_LABEL[lv]||''}</span></div>
 <div class="reading-row"><span class="pos">${pos}</span><span class="reading-text">${accentHTML(yomi,acc)}</span></div>
 <div class="meaning">${meaning}</div>
 ${exH}
+${srsH}
 </div>`;
 }
 
@@ -248,20 +346,32 @@ const cache={};
 let allData=[],cl='',cs='';
 
 function render(data){
+  let list=data;
+  if(showHard){
+    // 難記一覧：マーク語のみ、復習期限が近い順
+    list=data.filter(d=>isHard(d[0])).sort((a,b)=>hard[a[0]].next-hard[b[0]].next);
+  }
   let cnt=0;
-  const html=data.map(d=>{
-    const isChecked=checked.has(d[0]);
-    if(isChecked&&!showChecked)return'';
+  const html=list.map(d=>{
+    const word=d[0];
+    if(!showHard){
+      const isChecked=checked.has(word);
+      if(isChecked&&!showChecked)return'';
+    }
     if(cs){
       const hay=d[0]+d[1]+d[3]+d[4]+(d[5]||[]).join('');
       if(!hay.includes(cs))return'';
     }
     cnt++;return makeCard(d);
   }).join('');
-  document.getElementById('grid').innerHTML=html||'<div class="no-results">該当する語彙が見つかりません</div>';
-  const total=data.filter(d=>!checked.has(d[0])||showChecked).length;
-  document.getElementById('stats').textContent=`${cnt}語 表示中（未チェック：${allData.length-checked.size}語 / 収録：${allData.length}語）`;
+  let empty='該当する語彙が見つかりません';
+  if(showHard&&Object.keys(hard).length===0)empty='まだ「★難記」マークがありません。気になる単語の ★ を押してマークしましょう。';
+  document.getElementById('grid').innerHTML=html||`<div class="no-results">${empty}</div>`;
+  document.getElementById('stats').textContent=showHard
+    ?`★難記 ${Object.keys(hard).length}語（うち表示${cnt}語） — 「●復習する」を優先`
+    :`${cnt}語 表示中（未チェック：${allData.length-checked.size}語 / 収録：${allData.length}語）`;
   updateCheckedBtn();
+  updateHardBtn();
 }
 
 function currentData(){return cl?(cache[cl]||[]):allData;}
@@ -303,11 +413,22 @@ document.querySelector('.levels').addEventListener('click',e=>{
   b.classList.add('active');cl=b.dataset.lv;render(currentData());
 });
 document.getElementById('show-checked-btn').addEventListener('click',()=>{
-  showChecked=!showChecked;render(currentData());
+  showChecked=!showChecked;
+  if(showChecked)showHard=false;
+  render(currentData());
+});
+document.getElementById('show-hard-btn').addEventListener('click',()=>{
+  showHard=!showHard;
+  if(showHard)showChecked=false;
+  render(currentData());
 });
 document.getElementById('grid').addEventListener('click',e=>{
   const sb=e.target.closest('.speak-btn');
   if(sb){speak(sb.dataset.word);return;}
+  const hb=e.target.closest('.hard-btn');
+  if(hb){toggleHard(hb.dataset.word);return;}
+  const rv=e.target.closest('[data-rev]');
+  if(rv){reviewHard(rv.dataset.word,rv.dataset.rev);return;}
   const btn=e.target.closest('.check-btn');
   if(btn){toggleCheck(btn.dataset.word);return;}
   const wd=e.target.closest('.word');
@@ -331,6 +452,17 @@ document.getElementById('settings-save').addEventListener('click',()=>{
   document.getElementById('settings-modal').classList.remove('open');
 });
 document.getElementById('settings-modal').addEventListener('click',e=>{
+  if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');
+});
+
+// Tips modal
+document.getElementById('tips-btn').addEventListener('click',()=>{
+  document.getElementById('tips-modal').classList.add('open');
+});
+document.getElementById('tips-close').addEventListener('click',()=>{
+  document.getElementById('tips-modal').classList.remove('open');
+});
+document.getElementById('tips-modal').addEventListener('click',e=>{
   if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');
 });
 
