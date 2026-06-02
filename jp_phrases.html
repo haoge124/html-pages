@@ -39,6 +39,11 @@ header p{font-size:.8rem;color:var(--text-muted);margin-top:6px}
 .t-慣用句{background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.25)}
 .reading{text-align:center;font-size:.8rem;color:var(--text-muted);margin-bottom:10px;letter-spacing:.04em;filter:blur(5px);user-select:none;transition:filter .2s}
 .card.revealed .reading{filter:none;user-select:auto}
+.anim-box{position:relative;margin:10px auto 12px;max-width:170px;aspect-ratio:1/1;border-radius:14px;overflow:hidden;border:1px solid rgba(240,192,64,.16);background:var(--surface2);box-shadow:inset 0 0 0 1px rgba(255,255,255,.03);-webkit-tap-highlight-color:transparent}
+.anim-box img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.95);transform:translateZ(0)}
+.anim-play{position:absolute;inset:auto 8px 8px auto;min-width:36px;height:32px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(15,17,23,.78);backdrop-filter:blur(8px);color:var(--gold);font-size:.88rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s}
+.anim-box:hover .anim-play,.anim-box.playing .anim-play{background:var(--gold);color:#0f1117;border-color:var(--gold)}
+.anim-box.loading .anim-play{opacity:.65;pointer-events:none}
 .meaning{font-size:.74rem;color:var(--text-muted);border-top:1px solid rgba(255,255,255,.05);padding-top:8px;line-height:1.6;margin-bottom:6px;filter:blur(5px);user-select:none;transition:filter .2s}
 .card.revealed .meaning{filter:none;user-select:auto}
 .examples{border-top:1px solid rgba(255,255,255,.05);padding-top:8px;filter:blur(5px);user-select:none;transition:filter .2s}
@@ -81,7 +86,7 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-faint);b
 const STORAGE_KEY='jp_phrases_checked_v1';
 let checked=new Set(JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'));
 let showChecked=false;
-let allData=[],ct='',cs='';
+let allData=[],ct='',cs='',animMap=new Map();
 
 function saveChecked(){localStorage.setItem(STORAGE_KEY,JSON.stringify([...checked]));}
 
@@ -130,6 +135,30 @@ function updateStats(){
 }
 
 function esc(s){return s.replace(/'/g,"\\'");}
+function attr(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+
+function makeAnim(phrase){
+  const a=animMap.get(phrase);
+  if(!a)return'';
+  return`<div class="anim-box" data-phrase="${attr(phrase)}" data-thumb="${attr(a.thumbnail)}" data-webp="${attr(a.webp)}" onclick="toggleAnim(this,event)">
+<img src="${attr(a.thumbnail)}" alt="${attr(phrase)} animation preview" loading="lazy" decoding="async">
+<button class="anim-play" type="button" aria-label="アニメーション再生">▶</button>
+</div>`;
+}
+
+function toggleAnim(box,e){
+  e.stopPropagation();
+  const img=box.querySelector('img');
+  const btn=box.querySelector('.anim-play');
+  const playing=box.classList.contains('playing');
+  const next=playing?box.dataset.thumb:box.dataset.webp;
+  box.classList.toggle('playing',!playing);
+  box.classList.add('loading');
+  btn.textContent=playing?'▶':'■';
+  img.onload=()=>box.classList.remove('loading');
+  img.onerror=()=>{box.classList.remove('loading');box.classList.remove('playing');btn.textContent='▶';};
+  img.src=next;
+}
 
 function makeCard(d){
   const[phrase,yomi,type,meaning,exs]=d;
@@ -143,6 +172,7 @@ function makeCard(d){
 <div class="phrase">${phrase}</div>
 <div class="type-badge"><span class="t-${type}">${type}</span></div>
 <div class="reading">${yomi}</div>
+${makeAnim(phrase)}
 <div class="meaning">${meaning}</div>
 ${exH}
 <div class="reveal-hint">タップして読み・意味を表示</div>
@@ -168,9 +198,16 @@ function render(data){
 async function init(){
   document.getElementById('grid').innerHTML='<div class="no-results">読み込み中…</div>';
   try{
-    const r=await fetch('phrases/main.json');
+    const [r,ar]=await Promise.all([
+      fetch('phrases/main.json'),
+      fetch('phrases/animations/manifest.json').catch(()=>null)
+    ]);
     if(!r.ok)throw new Error(`main.json: ${r.status}`);
     allData=await r.json();
+    if(ar&&ar.ok){
+      const anims=await ar.json();
+      animMap=new Map(anims.map(a=>[a.phrase,a]));
+    }
     const counts={};
     allData.forEach(d=>{counts[d[2]]=(counts[d[2]]||0)+1;});
     document.getElementById('subtitle').textContent=
