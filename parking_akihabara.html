@@ -36,8 +36,10 @@
   .row { padding:9px 14px; border-bottom:1px solid #f1f1f1; cursor:pointer; display:flex; gap:10px; align-items:baseline; }
   .row:hover { background:#fafafa; }
   .row .d { font-variant-numeric:tabular-nums; font-size:12px; color:#888; min-width:46px; }
+  .row .hb { display:flex; flex-direction:column; gap:1px; }
   .row .h { font-weight:600; font-size:13.5px; }
-  .row .m { font-size:11.5px; color:#777; margin-left:auto; }
+  .row .note { font-size:10.5px; color:#999; line-height:1.35; }
+  .row .m { font-size:11.5px; color:#777; margin-left:auto; white-space:nowrap; }
   .legend { display:flex; gap:14px; padding:9px 14px; font-size:11.5px; color:#444; }
   .legend i { display:inline-block; width:14px; height:4px; border-radius:2px; vertical-align:middle; margin-right:5px; }
   .pop b { font-size:14px; } .pop table { font-size:12px; border-collapse:collapse; margin-top:6px; }
@@ -83,13 +85,14 @@ function popHtml(p) {
   if (p['普通車']==='True') veh.push('普通車');
   if (p['二輪車']==='True') veh.push('二輪車');
   if (p['貨物用有り']==='True') veh.push('貨物');
-  const lim = [p['制限事項1'], p['制限事項2']].filter(Boolean).join(' / ');
+  const notes = [p['制限事項1'], p['制限事項2']].filter(Boolean).map(s => '※' + s);
+  const hoursCell = (p['利用時間'] || '-')
+    + (notes.length ? `<br><span style="color:#b45309;font-size:11px">${notes.join('<br>')}</span>` : '');
   return `<div class="pop"><b>${p['種別']||''}</b><table>`
-    + `<tr><td>利用時間</td><td>${p['利用時間']||'-'}</td></tr>`
+    + `<tr><td>利用時間</td><td>${hoursCell}</td></tr>`
     + `<tr><td>制限時間</td><td>${p['制限時間']||'-'}分</td></tr>`
     + `<tr><td>手数料</td><td>${p['手数料']||'-'}円</td></tr>`
     + `<tr><td>対象車種</td><td>${veh.join('・')||'-'}</td></tr>`
-    + (lim?`<tr><td>制限事項</td><td>${lim}</td></tr>`:'')
     + `<tr><td>中心から</td><td>約${p['_dist']}m</td></tr>`
     + `</table></div>`;
 }
@@ -111,7 +114,10 @@ DATA.features.forEach(f => {
   const p = f.properties;
   const row = document.createElement('div');
   row.className = 'row';
-  row.innerHTML = `<span class="d">${p['_dist']}m</span><span class="h">${p['利用時間']||'-'}</span>`
+  const notes = [p['制限事項1'], p['制限事項2']].filter(Boolean).map(s => '※' + s).join(' ');
+  row.innerHTML = `<span class="d">${p['_dist']}m</span>`
+                + `<span class="hb"><span class="h">${p['利用時間']||'-'}</span>`
+                + (notes ? `<span class="note">${notes}</span>` : '') + `</span>`
                 + `<span class="m">${p['制限時間']}分/${p['手数料']}円</span>`;
   row.onclick = () => { const l = layers[p['識別id']]; if(l){ map.fitBounds(l.getBounds().pad(2)); l.openPopup(); } };
   list.appendChild(row);
