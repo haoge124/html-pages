@@ -40,7 +40,7 @@
   .row .h { font-weight:600; font-size:13.5px; }
   .row .note { font-size:10.5px; color:#999; line-height:1.35; }
   .row .m { font-size:11.5px; color:#777; margin-left:auto; white-space:nowrap; }
-  .legend { display:flex; gap:14px; padding:9px 14px; font-size:11.5px; color:#444; }
+  .legend { display:flex; flex-wrap:wrap; gap:6px 14px; padding:9px 14px; font-size:11.5px; color:#444; }
   .legend i { display:inline-block; width:14px; height:4px; border-radius:2px; vertical-align:middle; margin-right:5px; }
   .pop b { font-size:14px; } .pop table { font-size:12px; border-collapse:collapse; margin-top:6px; }
   .pop td { padding:2px 6px 2px 0; vertical-align:top; } .pop td:first-child { color:#888; white-space:nowrap; }
@@ -57,8 +57,10 @@
 <div class="panel">
   <div class="sum"><b>150</b> <span>区間が範囲内 / 利用時間: 09:00-19:00（62区間）、08:00-20:00（41区間）、07:00-20:00（36区間）、09:00-20:00（4区間）、10:00-16:30（2区間）、10:00-19:00（2区間）、09:30-20:00（1区間）、09:00-17:30（1区間）、09:30-19:00（1区間）</span></div>
   <div class="legend">
-    <span><i style="background:var(--accent)"></i>パーキング・メーター</span>
-    <span><i style="background:var(--accent-ticket)"></i>パーキング・チケット</span>
+    <span><i style="background:#e8453c"></i>19時終了</span>
+    <span><i style="background:#f59e0b"></i>20時終了</span>
+    <span><i style="background:#6b7280"></i>その他終了</span>
+    <span><i style="background:repeating-linear-gradient(90deg,#16a34a 0 4px,transparent 4px 8px)"></i>日曜・休日を除く</span>
   </div>
   <div class="list" id="list"></div>
 </div>
@@ -77,7 +79,14 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 L.circle(CENTER, { radius:RADIUS, color:'#3b82f6', weight:1, fillColor:'#3b82f6', fillOpacity:0.06 }).addTo(map);
 L.marker(CENTER).addTo(map).bindPopup('<b>秋葉原駅</b><br>中心地点');
 
-function colorFor(p) { return (p['種別']||'').indexOf('チケット')>=0 ? '#f59e0b' : '#e8453c'; }
+function endTime(p) { const t = p['利用時間']||''; return t.indexOf('-')>=0 ? t.split('-')[1] : ''; }
+function colorFor(p) {
+  const e = endTime(p);
+  if (e === '19:00') return '#e8453c';   // 19時終了 = 赤
+  if (e === '20:00') return '#f59e0b';   // 20時終了 = 橙
+  return '#6b7280';                       // その他 = 灰
+}
+function hasSun(p) { return ((p['制限事項1']||'') + (p['制限事項2']||'')).indexOf('日曜') >= 0; }
 
 const layers = {};
 function popHtml(p) {
@@ -105,6 +114,13 @@ const gj = L.geoJSON(DATA, {
     l.on('mouseover', ()=> l.setStyle({ weight:9, opacity:1 }));
     l.on('mouseout',  ()=> l.setStyle({ weight:6, opacity:0.85 }));
   }
+}).addTo(map);
+
+// 日曜・休日を除く区間に緑の破線を重ねて表示（クリックは下のベース線へ通す）
+const sunFC = { type:'FeatureCollection', features: DATA.features.filter(f => hasSun(f.properties)) };
+L.geoJSON(sunFC, {
+  interactive:false,
+  style: { color:'#16a34a', weight:3, opacity:0.95, dashArray:'2,7', lineCap:'round' }
 }).addTo(map);
 
 if (DATA.features.length) map.fitBounds(gj.getBounds().pad(0.1));
