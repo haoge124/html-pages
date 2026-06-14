@@ -44,6 +44,8 @@
   .legend i { display:inline-block; width:14px; height:4px; border-radius:2px; vertical-align:middle; margin-right:5px; }
   .pop b { font-size:14px; } .pop table { font-size:12px; border-collapse:collapse; margin-top:6px; }
   .pop td { padding:2px 6px 2px 0; vertical-align:top; } .pop td:first-child { color:#888; white-space:nowrap; }
+  .pop .navbtn { display:block; margin-top:9px; text-align:center; background:#1a73e8; color:#fff; text-decoration:none; padding:9px; border-radius:9px; font-size:13px; font-weight:700; }
+  .pop .navbtn:active { background:#155ab6; }
   .toggle { position:absolute; z-index:1001; top:64px; right:14px; background:#fff; border:none; border-radius:10px; padding:8px 11px; font-size:12px; box-shadow:0 3px 12px rgba(0,0,0,.18); cursor:pointer; }
 </style>
 </head>
@@ -89,7 +91,16 @@ function colorFor(p) {
 function hasSun(p) { return ((p['制限事項1']||'') + (p['制限事項2']||'')).indexOf('日曜') >= 0; }
 
 const layers = {};
-function popHtml(p) {
+
+// 区間の代表座標（パスの中間頂点）を [lat,lng] で返す
+function repPoint(geom) {
+  const pts = [];
+  geom.coordinates.forEach(line => line.forEach(c => pts.push(c)));  // c = [lng,lat]
+  const m = pts[Math.floor(pts.length / 2)];
+  return [m[1], m[0]];
+}
+
+function popHtml(p, navUrl) {
   const veh = [];
   if (p['普通車']==='True') veh.push('普通車');
   if (p['二輪車']==='True') veh.push('二輪車');
@@ -103,13 +114,17 @@ function popHtml(p) {
     + `<tr><td>手数料</td><td>${p['手数料']||'-'}円</td></tr>`
     + `<tr><td>対象車種</td><td>${veh.join('・')||'-'}</td></tr>`
     + `<tr><td>中心から</td><td>約${p['_dist']}m</td></tr>`
-    + `</table></div>`;
+    + `</table>`
+    + (navUrl ? `<a class="navbtn" href="${navUrl}" target="_blank" rel="noopener">📍 Googleマップでナビ開始</a>` : '')
+    + `</div>`;
 }
 
 const gj = L.geoJSON(DATA, {
   style: f => ({ color: colorFor(f.properties), weight:6, opacity:0.85, lineCap:'round' }),
   onEachFeature: (f,l) => {
-    l.bindPopup(popHtml(f.properties));
+    const rp = repPoint(f.geometry);
+    const navUrl = `https://www.google.com/maps/dir/?api=1&destination=${rp[0]},${rp[1]}&travelmode=driving`;
+    l.bindPopup(popHtml(f.properties, navUrl));
     layers[f.properties['識別id']] = l;
     l.on('mouseover', ()=> l.setStyle({ weight:9, opacity:1 }));
     l.on('mouseout',  ()=> l.setStyle({ weight:6, opacity:0.85 }));
