@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>池袋駅 周辺のパーキングメーター（徒歩15分）</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root {
+    --accent: #e8453c;
+    --accent-ticket: #f59e0b;
+    --ink: #1a1a1a;
+    --panel: rgba(255,255,255,0.96);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin:0; height:100%; font-family: -apple-system, "Hiragino Sans", "Yu Gothic UI", sans-serif; color: var(--ink); }
+  #map { position:absolute; inset:0; z-index:1; }
+  .hdr {
+    position:absolute; top:0; left:0; right:0; z-index:1000;
+    background: linear-gradient(180deg, rgba(20,20,25,0.92), rgba(20,20,25,0.6) 70%, transparent);
+    color:#fff; padding:14px 18px 26px; pointer-events:none;
+  }
+  .hdr h1 { margin:0; font-size:17px; font-weight:700; letter-spacing:.02em; }
+  .hdr p { margin:4px 0 0; font-size:12.5px; opacity:.85; }
+  .panel {
+    position:absolute; z-index:1000; bottom:14px; left:14px; right:14px;
+    max-width:380px; background:var(--panel); border-radius:14px;
+    box-shadow:0 8px 30px rgba(0,0,0,.22); overflow:hidden;
+    backdrop-filter: blur(8px);
+  }
+  .panel.hide .list, .panel.hide .legend, .panel.hide .sum span { display:none; }
+  .panel .sum { padding:12px 14px; border-bottom:1px solid #eee; }
+  .panel .sum b { font-size:24px; color:var(--accent); }
+  .panel .sum span { font-size:12px; color:#555; }
+  .panel .list { max-height:34vh; overflow:auto; }
+  .row { padding:9px 14px; border-bottom:1px solid #f1f1f1; cursor:pointer; display:flex; gap:10px; align-items:baseline; }
+  .row:hover { background:#fafafa; }
+  .row .d { font-variant-numeric:tabular-nums; font-size:12px; color:#888; min-width:46px; }
+  .row .hb { display:flex; flex-direction:column; gap:1px; }
+  .row .h { font-weight:600; font-size:13.5px; }
+  .row .note { font-size:10.5px; color:#999; line-height:1.35; }
+  .row .m { font-size:11.5px; color:#777; margin-left:auto; white-space:nowrap; }
+  .legend { display:flex; flex-wrap:wrap; gap:6px 14px; padding:9px 14px; font-size:11.5px; color:#444; }
+  .legend i { display:inline-block; width:14px; height:4px; border-radius:2px; vertical-align:middle; margin-right:5px; }
+  .pop b { font-size:14px; } .pop table { font-size:12px; border-collapse:collapse; margin-top:6px; }
+  .pop td { padding:2px 6px 2px 0; vertical-align:top; } .pop td:first-child { color:#888; white-space:nowrap; }
+  .toggle { position:absolute; z-index:1001; top:64px; right:14px; background:#fff; border:none; border-radius:10px; padding:8px 11px; font-size:12px; box-shadow:0 3px 12px rgba(0,0,0,.18); cursor:pointer; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div class="hdr">
+  <h1>池袋駅 周辺のパーキングメーター</h1>
+  <p>徒歩15分以内（半径約1200m・直線距離） / 該当 9 区間</p>
+</div>
+<button class="toggle" onclick="document.querySelector('.panel').classList.toggle('hide')">一覧</button>
+<div class="panel">
+  <div class="sum"><b>9</b> <span>区間が範囲内 / 利用時間: 09:00-19:00（6区間）、07:00-20:00（3区間）</span></div>
+  <div class="legend">
+    <span><i style="background:#e8453c"></i>19時終了</span>
+    <span><i style="background:#f59e0b"></i>20時終了</span>
+    <span><i style="background:#6b7280"></i>その他終了</span>
+    <span><i style="background:repeating-linear-gradient(90deg,#16a34a 0 4px,transparent 4px 8px)"></i>日曜・休日を除く</span>
+  </div>
+  <div class="list" id="list"></div>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const DATA = {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"識別id": 455, "利用時間": "07:00-20:00", "制限時間": 40, "手数料": 200, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 139}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.71220149888867, 35.728828865585974], [139.7131372297132, 35.72826613051764]]]}}, {"type": "Feature", "properties": {"識別id": 454, "利用時間": "07:00-20:00", "制限時間": 40, "手数料": 200, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 264}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.71392836717348, 35.72776045509786], [139.7133154881897, 35.72816246927119]]]}}, {"type": "Feature", "properties": {"識別id": 620, "利用時間": "09:00-19:00", "制限時間": 60, "手数料": 300, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 294}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.70775632838124, 35.73020234454604], [139.70725378532762, 35.72921910054586]]]}}, {"type": "Feature", "properties": {"識別id": 1065, "利用時間": "09:00-19:00", "制限時間": 60, "手数料": 300, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": false, "二輪車": false, "標章車専用有り": false, "_dist": 404}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.70630724635794, 35.727700581028486], [139.70658812884218, 35.72823518255418]], [[139.70673411514795, 35.728168912065705], [139.70670139705237, 35.72813622922633], [139.70646883913824, 35.72770951756879], [139.70644331135776, 35.72764550538142]]]}}, {"type": "Feature", "properties": {"識別id": 717, "利用時間": "09:00-19:00", "制限時間": 60, "手数料": 300, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 424}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.70904676794706, 35.73305873433688], [139.7091468263008, 35.733248282926745], [139.70924426098958, 35.733482899051836], [139.70930341383996, 35.733714793488055], [139.70937795982474, 35.73431480894187], [139.70954975614387, 35.7354895678123], [139.70966708189005, 35.73631089330783], [139.70969234175314, 35.73661798076038], [139.70977942862837, 35.737068408368955], [139.7098140623249, 35.73717204770588], [139.70987529642667, 35.73732369468343], [139.71004067426844, 35.73765178181709], [139.71029020586548, 35.738177873655076], [139.71050676492382, 35.73870438332396]], [[139.71062444553485, 35.738602809232404], [139.71019172429476, 35.73771289602596], [139.7099421598397, 35.73718061161646], [139.7098972778464, 35.737034027867125], [139.70982573051612, 35.736616135426445], [139.70966725682436, 35.735471870802236], [139.70955590103858, 35.73460029198961], [139.70951573329876, 35.73431773928802], [139.70942116546553, 35.73365811040089], [139.7093270334389, 35.733335298739156], [139.70919685352703, 35.73305165168987]]]}}, {"type": "Feature", "properties": {"識別id": 664, "利用時間": "09:00-19:00", "制限時間": 60, "手数料": 300, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 448}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.6996562029314, 35.73314149137118], [139.7006450682298, 35.73293839990442], [139.7011601676068, 35.732906663365874], [139.70342538814597, 35.73294998349775], [139.70374725106782, 35.732918814369846], [139.70407451715187, 35.73286200297721], [139.70445929518448, 35.73274220547374], [139.7048174626125, 35.732582503732054], [139.7058185304689, 35.73211800674145], [139.70608211821755, 35.73203861919277], [139.7063135427173, 35.73198384897692], [139.70688002794756, 35.731855591981464]], [[139.7067721854862, 35.73177177003868], [139.70612296109877, 35.73192942241042]], [[139.7056164822722, 35.732093029908214], [139.7045166332624, 35.73260524924994], [139.70425520489897, 35.732702681253926], [139.70389352881796, 35.73279611714662], [139.7035035301636, 35.73284668835146], [139.70305306742046, 35.73284767650546], [139.70254483458882, 35.732836820257056], [139.7013138400088, 35.73281309007482], [139.70081925160608, 35.732822308045584], [139.7004911764845, 35.732864736676646], [139.69961565986713, 35.73304082941187]]]}}, {"type": "Feature", "properties": {"識別id": 1107, "利用時間": "09:00-19:00", "制限時間": 20, "手数料": 100, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": false, "二輪車": false, "標章車専用有り": false, "_dist": 509}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.70612318015702, 35.731929367193835], [139.70581607382417, 35.73200963129253], [139.7056160415183, 35.73209322450887]]]}}, {"type": "Feature", "properties": {"識別id": 453, "利用時間": "07:00-20:00", "制限時間": 40, "手数料": 200, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 558}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.71451889862757, 35.725050474026304], [139.71573488382887, 35.726366899447164], [139.71662225383534, 35.72732331668407]]]}}, {"type": "Feature", "properties": {"識別id": 631, "利用時間": "09:00-19:00", "制限時間": 60, "手数料": 300, "制限事項1": "日曜・休日を除く", "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・チケット", "普通車": true, "貨物用有り": false, "二輪車": false, "標章車専用有り": false, "_dist": 974}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.7219763659377, 35.723806306067544], [139.72148000905884, 35.72412077228808], [139.7208963868911, 35.72449468075931], [139.72014515910757, 35.72496106210742]], [[139.72032873309251, 35.72524759964144], [139.722153952791, 35.72408437394439]]]}}]};
+const CENTER = [35.7295, 139.7109];
+const RADIUS = 1200;
+
+const map = L.map('map', { zoomControl:false }).setView(CENTER, 15);
+L.control.zoom({ position:'topright' }).addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19, attribution: '&copy; OpenStreetMap | データ: 警視庁(parking-meter.jp)'
+}).addTo(map);
+
+L.circle(CENTER, { radius:RADIUS, color:'#3b82f6', weight:1, fillColor:'#3b82f6', fillOpacity:0.06 }).addTo(map);
+L.marker(CENTER).addTo(map).bindPopup('<b>池袋駅</b><br>中心地点');
+
+function endTime(p) { const t = p['利用時間']||''; return t.indexOf('-')>=0 ? t.split('-')[1] : ''; }
+function colorFor(p) {
+  const e = endTime(p);
+  if (e === '19:00') return '#e8453c';   // 19時終了 = 赤
+  if (e === '20:00') return '#f59e0b';   // 20時終了 = 橙
+  return '#6b7280';                       // その他 = 灰
+}
+function hasSun(p) { return ((p['制限事項1']||'') + (p['制限事項2']||'')).indexOf('日曜') >= 0; }
+
+const layers = {};
+function popHtml(p) {
+  const veh = [];
+  if (p['普通車']==='True') veh.push('普通車');
+  if (p['二輪車']==='True') veh.push('二輪車');
+  if (p['貨物用有り']==='True') veh.push('貨物');
+  const notes = [p['制限事項1'], p['制限事項2']].filter(Boolean).map(s => '※' + s);
+  const hoursCell = (p['利用時間'] || '-')
+    + (notes.length ? `<br><span style="color:#b45309;font-size:11px">${notes.join('<br>')}</span>` : '');
+  return `<div class="pop"><b>${p['種別']||''}</b><table>`
+    + `<tr><td>利用時間</td><td>${hoursCell}</td></tr>`
+    + `<tr><td>制限時間</td><td>${p['制限時間']||'-'}分</td></tr>`
+    + `<tr><td>手数料</td><td>${p['手数料']||'-'}円</td></tr>`
+    + `<tr><td>対象車種</td><td>${veh.join('・')||'-'}</td></tr>`
+    + `<tr><td>中心から</td><td>約${p['_dist']}m</td></tr>`
+    + `</table></div>`;
+}
+
+const gj = L.geoJSON(DATA, {
+  style: f => ({ color: colorFor(f.properties), weight:6, opacity:0.85, lineCap:'round' }),
+  onEachFeature: (f,l) => {
+    l.bindPopup(popHtml(f.properties));
+    layers[f.properties['識別id']] = l;
+    l.on('mouseover', ()=> l.setStyle({ weight:9, opacity:1 }));
+    l.on('mouseout',  ()=> l.setStyle({ weight:6, opacity:0.85 }));
+  }
+}).addTo(map);
+
+// 日曜・休日を除く区間に緑の破線を重ねて表示（クリックは下のベース線へ通す）
+const sunFC = { type:'FeatureCollection', features: DATA.features.filter(f => hasSun(f.properties)) };
+L.geoJSON(sunFC, {
+  interactive:false,
+  style: { color:'#16a34a', weight:3, opacity:0.95, dashArray:'2,7', lineCap:'round' }
+}).addTo(map);
+
+if (DATA.features.length) map.fitBounds(gj.getBounds().pad(0.1));
+
+const list = document.getElementById('list');
+DATA.features.forEach(f => {
+  const p = f.properties;
+  const row = document.createElement('div');
+  row.className = 'row';
+  const notes = [p['制限事項1'], p['制限事項2']].filter(Boolean).map(s => '※' + s).join(' ');
+  row.innerHTML = `<span class="d">${p['_dist']}m</span>`
+                + `<span class="hb"><span class="h">${p['利用時間']||'-'}</span>`
+                + (notes ? `<span class="note">${notes}</span>` : '') + `</span>`
+                + `<span class="m">${p['制限時間']}分/${p['手数料']}円</span>`;
+  row.onclick = () => { const l = layers[p['識別id']]; if(l){ map.fitBounds(l.getBounds().pad(2)); l.openPopup(); } };
+  list.appendChild(row);
+});
+</script>
+</body>
+</html>

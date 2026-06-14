@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>新宿駅 周辺のパーキングメーター（徒歩15分）</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root {
+    --accent: #e8453c;
+    --accent-ticket: #f59e0b;
+    --ink: #1a1a1a;
+    --panel: rgba(255,255,255,0.96);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin:0; height:100%; font-family: -apple-system, "Hiragino Sans", "Yu Gothic UI", sans-serif; color: var(--ink); }
+  #map { position:absolute; inset:0; z-index:1; }
+  .hdr {
+    position:absolute; top:0; left:0; right:0; z-index:1000;
+    background: linear-gradient(180deg, rgba(20,20,25,0.92), rgba(20,20,25,0.6) 70%, transparent);
+    color:#fff; padding:14px 18px 26px; pointer-events:none;
+  }
+  .hdr h1 { margin:0; font-size:17px; font-weight:700; letter-spacing:.02em; }
+  .hdr p { margin:4px 0 0; font-size:12.5px; opacity:.85; }
+  .panel {
+    position:absolute; z-index:1000; bottom:14px; left:14px; right:14px;
+    max-width:380px; background:var(--panel); border-radius:14px;
+    box-shadow:0 8px 30px rgba(0,0,0,.22); overflow:hidden;
+    backdrop-filter: blur(8px);
+  }
+  .panel.hide .list, .panel.hide .legend, .panel.hide .sum span { display:none; }
+  .panel .sum { padding:12px 14px; border-bottom:1px solid #eee; }
+  .panel .sum b { font-size:24px; color:var(--accent); }
+  .panel .sum span { font-size:12px; color:#555; }
+  .panel .list { max-height:34vh; overflow:auto; }
+  .row { padding:9px 14px; border-bottom:1px solid #f1f1f1; cursor:pointer; display:flex; gap:10px; align-items:baseline; }
+  .row:hover { background:#fafafa; }
+  .row .d { font-variant-numeric:tabular-nums; font-size:12px; color:#888; min-width:46px; }
+  .row .hb { display:flex; flex-direction:column; gap:1px; }
+  .row .h { font-weight:600; font-size:13.5px; }
+  .row .note { font-size:10.5px; color:#999; line-height:1.35; }
+  .row .m { font-size:11.5px; color:#777; margin-left:auto; white-space:nowrap; }
+  .legend { display:flex; flex-wrap:wrap; gap:6px 14px; padding:9px 14px; font-size:11.5px; color:#444; }
+  .legend i { display:inline-block; width:14px; height:4px; border-radius:2px; vertical-align:middle; margin-right:5px; }
+  .pop b { font-size:14px; } .pop table { font-size:12px; border-collapse:collapse; margin-top:6px; }
+  .pop td { padding:2px 6px 2px 0; vertical-align:top; } .pop td:first-child { color:#888; white-space:nowrap; }
+  .toggle { position:absolute; z-index:1001; top:64px; right:14px; background:#fff; border:none; border-radius:10px; padding:8px 11px; font-size:12px; box-shadow:0 3px 12px rgba(0,0,0,.18); cursor:pointer; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div class="hdr">
+  <h1>新宿駅 周辺のパーキングメーター</h1>
+  <p>徒歩15分以内（半径約1200m・直線距離） / 該当 22 区間</p>
+</div>
+<button class="toggle" onclick="document.querySelector('.panel').classList.toggle('hide')">一覧</button>
+<div class="panel">
+  <div class="sum"><b>22</b> <span>区間が範囲内 / 利用時間: 09:00-19:00（12区間）、07:00-20:00（8区間）、07:00-14:00（1区間）、09:30-19:00（1区間）</span></div>
+  <div class="legend">
+    <span><i style="background:#e8453c"></i>19時終了</span>
+    <span><i style="background:#f59e0b"></i>20時終了</span>
+    <span><i style="background:#6b7280"></i>その他終了</span>
+    <span><i style="background:repeating-linear-gradient(90deg,#16a34a 0 4px,transparent 4px 8px)"></i>日曜・休日を除く</span>
+  </div>
+  <div class="list" id="list"></div>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const DATA = {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"識別id": 1035, "利用時間": "07:00-20:00", "制限時間": 40, "手数料": 200, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 113}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.70181777775468, 35.68983468192226], [139.70147240814944, 35.69064232549026]]]}}, {"type": "Feature", "properties": {"識別id": 1036, "利用時間": "07:00-14:00", "制限時間": 40, "手数料": 200, "制限事項1": "日曜・休日を除く", "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 136}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.70210014899703, 35.689717696577375], [139.70217650502607, 35.690247906512525], [139.70226944771395, 35.69075340540236], [139.70241084266857, 35.691288828106075], [139.70259741124238, 35.69178594551902]]]}}, {"type": "Feature", "properties": {"識別id": 1043, "利用時間": "07:00-20:00", "制限時間": 40, "手数料": 200, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・チケット", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 167}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.7016390180796, 35.69084104463548], [139.7015321481939, 35.69180186240991]], [[139.7015891419424, 35.69178944743173], [139.7017091105162, 35.69086622238261]]]}}, {"type": "Feature", "properties": {"識別id": 1037, "利用時間": "07:00-20:00", "制限時間": 40, "手数料": 200, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 199}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.7043226415867, 35.6904252335223], [139.70349046857237, 35.69059832287582], [139.70325517369824, 35.690642389702894], [139.70233131258735, 35.69070503372904]]]}}, {"type": "Feature", "properties": {"識別id": 1041, "利用時間": "07:00-20:00", "制限時間": 40, "手数料": 200, "制限事項1": "日曜・休日を除く", "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 307}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.70259355329148, 35.69192744152575], [139.70366662341726, 35.691450880938774]], [[139.70359875689496, 35.69139674669728], [139.70206388221, 35.692090507134736]]]}}, {"type": "Feature", "properties": {"識別id": 1104, "利用時間": "07:00-20:00", "制限時間": 20, "手数料": 100, "制限事項1": "日曜・休日を除く", "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": false, "二輪車": false, "標章車専用有り": false, "_dist": 315}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.70210594656407, 35.69215786963119], [139.70249644143445, 35.69197312393431]]]}}, {"type": "Feature", "properties": {"識別id": 2133, "利用時間": "07:00-20:00", "制限時間": 40, "手数料": 200, "制限事項1": "日曜・休日を除く", "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 330}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.7004528073597, 35.69316858436507], [139.70049840491296, 35.692980155625456], [139.70055204909326, 35.69282658042856], [139.70062312763216, 35.69266320223375], [139.70067408960344, 35.69260656438141], [139.7007371215153, 35.69256299677532]]]}}, {"type": "Feature", "properties": {"識別id": 472, "利用時間": "09:00-19:00", "制限時間": 60, "手数料": 300, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 373}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.69646765565327, 35.68837660055863], [139.6962643447819, 35.69090199732745]], [[139.69636737791774, 35.690868774542665], [139.69643384873885, 35.690004330358946]], [[139.69648175707252, 35.68938128299761], [139.69657206643933, 35.68835725119179]]]}}, {"type": "Feature", "properties": {"識別id": 1092, "利用時間": "09:00-19:00", "制限時間": 20, "手数料": 100, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": false, "二輪車": false, "標章車専用有り": false, "_dist": 373}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.69643384873885, 35.690004330358946], [139.69648175026106, 35.689381365520475]]]}}, {"type": "Feature", "properties": {"識別id": 1038, "利用時間": "07:00-20:00", "制限時間": 40, "手数料": 200, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・チケット", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 434}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.7015525314709, 35.69365363131361], [139.70341528659353, 35.69321552800031], [139.70452105456357, 35.6928947078314]], [[139.70443668397516, 35.69267539473612], [139.70308008937798, 35.693065919408554], [139.70146027024265, 35.69344001841634]]]}}, {"type": "Feature", "properties": {"識別id": 2142, "利用時間": "07:00-20:00", "制限時間": 40, "手数料": 200, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 613}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.70717665392596, 35.691699130703995], [139.70719274718004, 35.6916316001361], [139.70719811159807, 35.69159021040496], [139.70719811159807, 35.6915096092879], [139.7072034760161, 35.69140722396775], [139.70720884043413, 35.69126344861543], [139.70716056067187, 35.6910063950669]]]}}, {"type": "Feature", "properties": {"識別id": 521, "利用時間": "09:00-19:00", "制限時間": 60, "手数料": 300, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": false, "二輪車": false, "標章車専用有り": false, "_dist": 882}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.68905118909836, 35.68832864749727], [139.69090098311108, 35.688638632392774]], [[139.6909304988418, 35.688473341154605], [139.68908517427732, 35.68818357335545]]]}}, {"type": "Feature", "properties": {"識別id": 995, "利用時間": "09:00-19:00", "制限時間": 60, "手数料": 300, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 885}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.6916118631071, 35.68597227294824], [139.69140634724877, 35.6868363358579]]]}}, {"type": "Feature", "properties": {"識別id": 505, "利用時間": "09:00-19:00", "制限時間": 60, "手数料": 300, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": false, "二輪車": false, "標章車専用有り": false, "_dist": 891}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.68965199272068, 35.686427781169385], [139.690314816821, 35.686787635811605], [139.69094431133115, 35.68697036163675], [139.69125943802288, 35.68702966981759]]]}}, {"type": "Feature", "properties": {"識別id": 676, "利用時間": "09:30-19:00", "制限時間": 60, "手数料": 300, "制限事項1": "日曜・休日を除く", "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 897}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.71026993488582, 35.69166182846912], [139.7107697390911, 35.69159808618281], [139.71340778142786, 35.69127230648846], [139.71372846029502, 35.69126293660797], [139.71388879529644, 35.691268661991955], [139.71444636104124, 35.69136579211124]], [[139.71450527297432, 35.69124107144238], [139.7142450978677, 35.69119401396393], [139.7138405767801, 35.69114718280457], [139.71369403063673, 35.6911345714376], [139.71311535288888, 35.69115347758482], [139.71244018809747, 35.69122984261423], [139.71075178643167, 35.69142134593412], [139.71026184032283, 35.6914852884004]]]}}, {"type": "Feature", "properties": {"識別id": 394, "利用時間": "09:00-19:00", "制限時間": 60, "手数料": 300, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 933}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.70079925078483, 35.69813932627732], [139.70197087718012, 35.69819430625225], [139.70422759770554, 35.698389981782334], [139.70443041355097, 35.69839019913968], [139.70518649305578, 35.69832129800762], [139.70683846014376, 35.698108343781065]], [[139.70676321445683, 35.69794354499442], [139.7047682065931, 35.69819917671747], [139.70435871797415, 35.698220286850606], [139.70324576748456, 35.69812775509355], [139.70200897028676, 35.69802980560745], [139.7008444545657, 35.69798559300572]]]}}, {"type": "Feature", "properties": {"識別id": 508, "利用時間": "09:00-19:00", "制限時間": 60, "手数料": 300, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 960}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.69015942226133, 35.69202561214567], [139.68981287653125, 35.693473026290775], [139.68978708456626, 35.6937282928134], [139.68981502481526, 35.694059783144866], [139.68985723265104, 35.69420822186633], [139.6899168699589, 35.694364000448736], [139.6899525556334, 35.694445468208166], [139.6903123107562, 35.69508986922138]], [[139.6905819690719, 35.695017276601675], [139.69026581391472, 35.6944718214018], [139.69017934516285, 35.694292907959934], [139.6900986141888, 35.69403002809582], [139.690064346153, 35.69372868994535], [139.69008586289226, 35.69347827408377], [139.69042008344886, 35.69209836004407]]]}}, {"type": "Feature", "properties": {"識別id": 506, "利用時間": "09:00-19:00", "制限時間": 60, "手数料": 300, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・メーター", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 978}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.6873497385513, 35.69121707139665], [139.68858165040726, 35.69171825650628], [139.68901510340996, 35.69182524079459], [139.6893692010355, 35.69189057580161], [139.690150695034, 35.69201503762948]], [[139.69012827508817, 35.69185172072644], [139.68907309722, 35.69167153869753], [139.6887119608844, 35.691590323210974], [139.68739868509326, 35.69103621491304]]]}}, {"type": "Feature", "properties": {"識別id": 448, "利用時間": "09:00-19:00", "制限時間": 60, "手数料": 300, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・チケット", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 1053}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.68931705299377, 35.68631501646986], [139.6889178310404, 35.68823443199245], [139.68879592415408, 35.68873489370884], [139.68868001996515, 35.6890272692702], [139.6886217238633, 35.68913412674327], [139.6884535395544, 35.68933508199427], [139.68755670580808, 35.6904523945676], [139.68740938276014, 35.69065809563157], [139.68726603838496, 35.6909588147751], [139.68718882682452, 35.691209831618174], [139.68693007112375, 35.69221403578842], [139.68694217369057, 35.69277580977625], [139.6870198968244, 35.693419535203134], [139.68711736033387, 35.6939647498642], [139.6873001740481, 35.694307006509504], [139.68827440087932, 35.69570804887945]], [[139.68840798991073, 35.69565359739039], [139.68740571099775, 35.69420262190149], [139.68724071295077, 35.6939215891181], [139.68707825498709, 35.69264323236263], [139.68709256971593, 35.69202970843691], [139.6874042430749, 35.69098860552867], [139.68758074816577, 35.69063874467926], [139.68786584152608, 35.69027333953234], [139.68859225195934, 35.689389760228735], [139.68874381445772, 35.689194274308925], [139.68884513204, 35.68901227604739], [139.68890247572307, 35.68886830396503], [139.68906182997696, 35.68824266583092], [139.68943157569674, 35.686476471579034]]]}}, {"type": "Feature", "properties": {"識別id": 519, "利用時間": "09:00-19:00", "制限時間": 60, "手数料": 300, "制限事項1": null, "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・チケット", "普通車": true, "貨物用有り": false, "二輪車": false, "標章車専用有り": false, "_dist": 1061}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.69068692019403, 35.684262238090426], [139.69018036892598, 35.68476977186606], [139.68998065116597, 35.68499936847219], [139.68981824103227, 35.68519942227376], [139.6896582030237, 35.68546488983659], [139.68952669429763, 35.68568578104862], [139.68938391828138, 35.686029212165856]], [[139.689526550591, 35.68606820837103], [139.6896644132555, 35.68572593200707], [139.68980282876578, 35.685478611592345], [139.689951770642, 35.68524985093433], [139.69031835280092, 35.684817459717145], [139.69080840983537, 35.68433401517023]]]}}, {"type": "Feature", "properties": {"識別id": 644, "利用時間": "09:00-19:00", "制限時間": 60, "手数料": 300, "制限事項1": "日曜・休日を除く", "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・チケット", "普通車": true, "貨物用有り": true, "二輪車": false, "標章車専用有り": false, "_dist": 1128}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.71265355960898, 35.69767000712272], [139.71200876552905, 35.697647889712044], [139.71057446281347, 35.69762496740127], [139.70911439069334, 35.69765029330015], [139.70796320251617, 35.69779931642498]]]}}, {"type": "Feature", "properties": {"識別id": 643, "利用時間": "09:00-19:00", "制限時間": 60, "手数料": 300, "制限事項1": "日曜・休日を除く", "制限事項2": "１月１日〜３日を除く", "種別": "パーキング・チケット", "普通車": true, "貨物用有り": false, "二輪車": false, "標章車専用有り": false, "_dist": 1146}, "geometry": {"type": "MultiLineString", "coordinates": [[[139.7080315877887, 35.69795877953938], [139.70892075983437, 35.69782541644032], [139.70950706242323, 35.697783036482534]]]}}]};
+const CENTER = [35.6896, 139.7006];
+const RADIUS = 1200;
+
+const map = L.map('map', { zoomControl:false }).setView(CENTER, 15);
+L.control.zoom({ position:'topright' }).addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19, attribution: '&copy; OpenStreetMap | データ: 警視庁(parking-meter.jp)'
+}).addTo(map);
+
+L.circle(CENTER, { radius:RADIUS, color:'#3b82f6', weight:1, fillColor:'#3b82f6', fillOpacity:0.06 }).addTo(map);
+L.marker(CENTER).addTo(map).bindPopup('<b>新宿駅</b><br>中心地点');
+
+function endTime(p) { const t = p['利用時間']||''; return t.indexOf('-')>=0 ? t.split('-')[1] : ''; }
+function colorFor(p) {
+  const e = endTime(p);
+  if (e === '19:00') return '#e8453c';   // 19時終了 = 赤
+  if (e === '20:00') return '#f59e0b';   // 20時終了 = 橙
+  return '#6b7280';                       // その他 = 灰
+}
+function hasSun(p) { return ((p['制限事項1']||'') + (p['制限事項2']||'')).indexOf('日曜') >= 0; }
+
+const layers = {};
+function popHtml(p) {
+  const veh = [];
+  if (p['普通車']==='True') veh.push('普通車');
+  if (p['二輪車']==='True') veh.push('二輪車');
+  if (p['貨物用有り']==='True') veh.push('貨物');
+  const notes = [p['制限事項1'], p['制限事項2']].filter(Boolean).map(s => '※' + s);
+  const hoursCell = (p['利用時間'] || '-')
+    + (notes.length ? `<br><span style="color:#b45309;font-size:11px">${notes.join('<br>')}</span>` : '');
+  return `<div class="pop"><b>${p['種別']||''}</b><table>`
+    + `<tr><td>利用時間</td><td>${hoursCell}</td></tr>`
+    + `<tr><td>制限時間</td><td>${p['制限時間']||'-'}分</td></tr>`
+    + `<tr><td>手数料</td><td>${p['手数料']||'-'}円</td></tr>`
+    + `<tr><td>対象車種</td><td>${veh.join('・')||'-'}</td></tr>`
+    + `<tr><td>中心から</td><td>約${p['_dist']}m</td></tr>`
+    + `</table></div>`;
+}
+
+const gj = L.geoJSON(DATA, {
+  style: f => ({ color: colorFor(f.properties), weight:6, opacity:0.85, lineCap:'round' }),
+  onEachFeature: (f,l) => {
+    l.bindPopup(popHtml(f.properties));
+    layers[f.properties['識別id']] = l;
+    l.on('mouseover', ()=> l.setStyle({ weight:9, opacity:1 }));
+    l.on('mouseout',  ()=> l.setStyle({ weight:6, opacity:0.85 }));
+  }
+}).addTo(map);
+
+// 日曜・休日を除く区間に緑の破線を重ねて表示（クリックは下のベース線へ通す）
+const sunFC = { type:'FeatureCollection', features: DATA.features.filter(f => hasSun(f.properties)) };
+L.geoJSON(sunFC, {
+  interactive:false,
+  style: { color:'#16a34a', weight:3, opacity:0.95, dashArray:'2,7', lineCap:'round' }
+}).addTo(map);
+
+if (DATA.features.length) map.fitBounds(gj.getBounds().pad(0.1));
+
+const list = document.getElementById('list');
+DATA.features.forEach(f => {
+  const p = f.properties;
+  const row = document.createElement('div');
+  row.className = 'row';
+  const notes = [p['制限事項1'], p['制限事項2']].filter(Boolean).map(s => '※' + s).join(' ');
+  row.innerHTML = `<span class="d">${p['_dist']}m</span>`
+                + `<span class="hb"><span class="h">${p['利用時間']||'-'}</span>`
+                + (notes ? `<span class="note">${notes}</span>` : '') + `</span>`
+                + `<span class="m">${p['制限時間']}分/${p['手数料']}円</span>`;
+  row.onclick = () => { const l = layers[p['識別id']]; if(l){ map.fitBounds(l.getBounds().pad(2)); l.openPopup(); } };
+  list.appendChild(row);
+});
+</script>
+</body>
+</html>
