@@ -24,7 +24,9 @@ header p{font-size:.8rem;color:#aab;margin-top:6px}
 #grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;padding:12px 20px 40px}
 .card{background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.07);transition:.15s;position:relative}
 .card:hover{box-shadow:0 3px 12px rgba(0,0,0,.12);transform:translateY(-1px)}
-.sentence{font-size:1.25rem;font-weight:700;line-height:1.5;margin-bottom:6px;padding-right:36px;padding-left:36px;text-align:center}
+.sentence{font-size:1.25rem;font-weight:700;line-height:1.5;margin-bottom:6px;padding-right:36px;padding-left:36px;text-align:center;cursor:pointer;transition:color .15s}
+.sentence:hover{color:#3b82f6}
+.sentence.speaking{color:#3b82f6}
 .reading{font-size:.75rem;color:#888;text-align:center;margin-bottom:8px}
 .cat-badge{text-align:center;margin-bottom:8px}
 .cat-badge span{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.65rem;font-weight:700}
@@ -112,8 +114,8 @@ function getVvUrl(){return localStorage.getItem(VV_KEY)||VV_DEFAULT;}
 function getVvSpeaker(){return parseInt(localStorage.getItem(VV_SPK_KEY)||'3');}
 
 function setBtnState(id,on){
-  const btn=document.querySelector(`.speak-btn[data-id="${id}"]`);
-  if(btn)btn.classList.toggle('speaking',on);
+  if(!id)return;
+  document.querySelectorAll(`[data-id="${id}"]`).forEach(el=>el.classList.toggle('speaking',on));
 }
 async function speakVoicevox(text,id){
   const base=getVvUrl().replace(/\/$/,'');
@@ -170,7 +172,7 @@ function makeCard(d,i){
   return`<div class="card">
 <button class="speak-btn" data-id="${id}" data-text="${sentence.replace(/"/g,'&quot;')}" title="読み上げ">🔊</button>
 <button class="check-btn${isChecked?' checked':''}" data-id="${id}" title="覚えた">✓</button>
-<div class="sentence">${sentence}</div>
+<div class="sentence" data-id="${id}" title="タップで読み上げ">${sentence}</div>
 <div class="reading">${reading}</div>
 <div class="cat-badge"><span style="background:${c.bg};color:${c.fg}">${CAT_LABEL[cat]||cat}</span></div>
 <div class="meaning">${meaning}${noteH}</div>
@@ -219,6 +221,8 @@ document.getElementById('show-checked-btn').addEventListener('click',()=>{showCh
 document.getElementById('grid').addEventListener('click',e=>{
   const sb=e.target.closest('.speak-btn');
   if(sb){speak(sb.dataset.text,sb.dataset.id);return;}
+  const st=e.target.closest('.sentence');
+  if(st){speak(st.textContent.trim(),st.dataset.id);return;}
   const cb=e.target.closest('.check-btn');if(!cb)return;
   toggleCheck(cb.dataset.id);
 });

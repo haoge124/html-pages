@@ -49,7 +49,8 @@ header p{font-size:.8rem;color:var(--text-muted);margin-top:6px}
 .examples{border-top:1px solid rgba(255,255,255,.05);padding-top:8px;filter:blur(5px);user-select:none;transition:filter .2s}
 .card.revealed .examples{filter:none;user-select:auto}
 .ex-label{font-size:.63rem;color:var(--text-faint);font-weight:600;letter-spacing:.06em;margin-bottom:4px}
-.ex{font-size:.73rem;color:var(--text-muted);line-height:1.55;padding-left:8px;border-left:2px solid rgba(240,192,64,.25);margin-bottom:3px}
+.ex{font-size:.73rem;color:var(--text-muted);line-height:1.55;padding-left:8px;border-left:2px solid rgba(240,192,64,.25);margin-bottom:3px;cursor:pointer;transition:color .15s,border-color .15s}
+.ex:hover{color:var(--text);border-left-color:var(--gold)}
 .reveal-hint{font-size:.65rem;color:var(--text-faint);text-align:center;margin-top:8px;letter-spacing:.04em}
 .card.revealed .reveal-hint{display:none}
 .no-results{text-align:center;padding:60px;color:var(--text-faint);grid-column:1/-1}
@@ -105,6 +106,11 @@ function speak(phrase){
   if(btn)btn.classList.add('speaking');
   u.onend=u.onerror=()=>{if(btn)btn.classList.remove('speaking');};
   speechSynthesis.speak(u);
+}
+
+function cardTap(el,phrase){
+  el.classList.toggle('revealed');
+  if(el.classList.contains('revealed'))speak(phrase);
 }
 
 function toggleCheck(phrase,e){
@@ -164,9 +170,9 @@ function makeCard(d){
   const[phrase,yomi,type,meaning,exs]=d;
   const isChecked=checked.has(phrase);
   const exH=exs&&exs.length
-    ?`<div class="examples"><div class="ex-label">例文</div>${exs.map(e=>`<div class="ex">${e}</div>`).join('')}</div>`
+    ?`<div class="examples"><div class="ex-label">例文（タップで読み上げ）</div>${exs.map(e=>`<div class="ex" title="タップで読み上げ" onclick="event.stopPropagation();speak('${esc(e)}')">${e}</div>`).join('')}</div>`
     :'';
-  return`<div class="card" onclick="this.classList.toggle('revealed')">
+  return`<div class="card" onclick="cardTap(this,'${esc(phrase)}')">
 <button class="speak-btn" data-phrase="${phrase}" title="読み上げ" onclick="event.stopPropagation();speak('${esc(phrase)}')">🔊</button>
 <button class="check-btn${isChecked?' checked':''}" data-phrase="${phrase}" title="覚えた" onclick="toggleCheck('${esc(phrase)}',event)">✓</button>
 <div class="phrase">${phrase}</div>
