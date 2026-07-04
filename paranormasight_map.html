@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>パラノマサイト 本所七不思議 聖地巡礼マップ</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  html,body{margin:0;padding:0;height:100%;font-family:"Hiragino Sans","Noto Sans JP",sans-serif;}
+  #map{height:100%;width:100%;}
+  header{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(20,18,30,.92);color:#f0e8ff;
+    padding:8px 12px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;}
+  header small{font-weight:400;opacity:.75;}
+  .num-icon{background:#e53935;color:#fff;border-radius:50%;width:26px;height:26px;line-height:26px;
+    text-align:center;font-weight:700;font-size:13px;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5);}
+  .food-icon{background:#f9a825;}
+  .extra-icon{background:#7b1fa2;}
+  .popup-title{font-weight:700;font-size:14px;margin-bottom:4px;}
+  .popup-desc{font-size:12px;line-height:1.5;margin-bottom:8px;}
+  .popup-btns{display:flex;gap:6px;}
+  .popup-btns a{flex:1;text-align:center;padding:6px 4px;border-radius:6px;font-size:12px;
+    text-decoration:none;color:#fff;font-weight:600;}
+  .btn-map{background:#1a73e8;}
+  .btn-nav{background:#188038;}
+  .leaflet-popup-content{margin:10px 12px;}
+</style>
+</head>
+<body>
+<header>👻 パラノマサイト聖地巡礼<small>錦糸町→両国｜赤=本編①～⑫ 黄=寄り道 紫=番外(平井)</small></header>
+<div id="map"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const SPOTS=[
+ // [group, num, name, lat, lng, desc]
+ ["main",1,"錦糸町駅南口広場・喫煙所",35.69600,139.81410,"スタート地点。喫煙所の透明仕切りに本所七不思議のイラストがぐるり。"],
+ ["main",2,"山田家（人形焼）",35.69514,139.81490,"人形焼の老舗。パッケージが「置いてけ堀」、お菓子は「たぬき囃」。（江東橋3-8-11）"],
+ ["main",3,"錦糸堀公園【置いてけ堀】",35.69493,139.81649,"ゲームの核となる呪詛「置いてけ堀」の伝承地。公園前に河童像、園内に七不思議レリーフ。"],
+ ["main",4,"江東橋脇【送り拍子木】看板",35.69562,139.81172,"大横川親水公園の南側入口付近に瓦版風看板。ここから親水公園を北上。"],
+ ["main",5,"大横川親水公園【足洗い屋敷】看板",35.69830,139.80980,"エピソード「足洗邸」の舞台。公園内に看板あり。"],
+ ["main",6,"法恩寺橋【送り提灯】看板",35.70087,139.80841,"「送り提灯」の看板は法恩寺橋のたもと。"],
+ ["main",7,"本所七不思議レリーフ（親水公園内）",35.70130,139.80820,"七不思議がまとめられたレリーフ（法恩寺橋付近）。"],
+ ["main",8,"喫茶フローラ【黒桔梗のモデル】",35.70589,139.80170,"ゲーム内喫茶店「黒桔梗」のモデルとされる純喫茶。（東駒形2-7-12）※近くの「馬鹿囃子」看板は記事著者未発見。"],
+ ["main",9,"駒形橋",35.70824,139.79744,"ゲームに登場する隅田川の橋。スカイツリー×隅田川の写真スポット。浅草駅近い。"],
+ ["main",10,"旧安田庭園【落葉なき椎】",35.69825,139.79363,"椎の木屋敷跡の看板。庭園は入園無料＆冷暖房付き休憩所あり。中間休憩に最適。"],
+ ["main",11,"緑町公園【津軽の太鼓】",35.69686,139.80176,"「津軽の太鼓」伝承地。「葛飾北斎生誕の地」看板あり、隣はすみだ北斎美術館。"],
+ ["main",12,"両国橋【片葉の葦】",35.69431,139.78886,"ゴール！「片葉の葦」の看板は橋を降りてすぐ。"],
+ ["food",0,"喫茶ニット",35.69548,139.81650,"錦糸町の有名純喫茶。③錦糸堀公園のすぐ近く。（江東橋4-26-12）"],
+ ["food",0,"白樺 本店（和菓子）",35.69411,139.81152,"錦糸町の和菓子店。駅地下テルミナでも購入可。（江東橋2-8-11）"],
+ ["food",0,"御谷湯（銭湯）",35.70145,139.80453,"歩き疲れたら立ち寄れる本格銭湯。（石原3-30-10）"],
+ ["food",0,"葛飾北斎ブロンズ像",35.69473,139.79697,"北斎と写真が撮れる。裏通りに「亀戸餃子 両国店」。（両国4-31付近）"],
+ ["food",0,"両国とし田（半生菓子）",35.69455,139.79521,"両国力士もなかで有名。（両国4-32-19）"],
+ ["food",0,"麦酒倶楽部ポパイ",35.69516,139.79279,"クラフトビールの名店。巡礼の打ち上げに。（両国2-18-7）"],
+ ["food",0,"回向院",35.69334,139.79204,"鼠小僧の墓で知られる本所ゆかりの寺院。両国橋から順路的に立ち寄りやすい。"],
+ ["extra",0,"立花大正民家園 旧小山家住宅【志岐間邸】",35.70975,139.83821,"志岐間邸のモデル。平井駅から徒歩約12分。庭園見学9:00〜16:30。（立花6丁目）"],
+ ["extra",0,"喫茶ワンモア（平井駅前）",35.70779,139.84268,"レモンの乗ったフレンチトーストが有名。旧小山家住宅とセットで。（平井5-22-11）"]
+];
+
+const map=L.map("map").setView([35.6985,139.8030],14);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+  {attribution:"&copy; OpenStreetMap contributors",maxZoom:19}).addTo(map);
+
+function makeIcon(group,num){
+  const cls=group==="main"?"num-icon":group==="food"?"num-icon food-icon":"num-icon extra-icon";
+  const label=group==="main"?num:(group==="food"?"寄":"番");
+  return L.divIcon({className:"",html:`<div class="${cls}">${label}</div>`,iconSize:[26,26],iconAnchor:[13,13],popupAnchor:[0,-14]});
+}
+function popupHTML(name,lat,lng,desc){
+  return `<div class="popup-title">${name}</div><div class="popup-desc">${desc}</div>
+  <div class="popup-btns">
+    <a class="btn-map" href="https://www.google.com/maps/search/?api=1&query=${lat},${lng}" target="_blank">地図で開く</a>
+    <a class="btn-nav" href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking" target="_blank">徒歩ナビ</a>
+  </div>`;
+}
+const routePts=[];
+SPOTS.forEach(([group,num,name,lat,lng,desc])=>{
+  L.marker([lat,lng],{icon:makeIcon(group,num)}).addTo(map).bindPopup(popupHTML(name,lat,lng,desc));
+  if(group==="main")routePts.push([lat,lng]);
+});
+L.polyline(routePts,{color:"#e53935",weight:3,opacity:.55,dashArray:"6 6"}).addTo(map);
+</script>
+</body>
+</html>
