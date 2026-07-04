@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+  <name>パラノマサイト FILE23 本所七不思議 聖地巡礼マップ（錦糸町→両国）</name>
+  <description>note記事「パラノマサイト本所七不思議の聖地巡礼してみた」(swe03) を基に作成。錦糸町駅スタート→両国方面の徒歩ルート順に①〜⑫。＋寄り道グルメ・番外編（平井）。</description>
+  <Style id="main"><IconStyle><color>ff3643f4</color><Icon><href>http://maps.google.com/mapfiles/kml/paddle/red-circle.png</href></Icon></IconStyle></Style>
+  <Style id="food"><IconStyle><color>ff00d7ff</color><Icon><href>http://maps.google.com/mapfiles/kml/paddle/ylw-blank.png</href></Icon></IconStyle></Style>
+  <Style id="extra"><IconStyle><color>ff8b6bd7</color><Icon><href>http://maps.google.com/mapfiles/kml/paddle/purple-blank.png</href></Icon></IconStyle></Style>
+
+  <Folder>
+    <name>🎮 巡礼本編（記事ルート順・徒歩）</name>
+    <Placemark><name>① 錦糸町駅南口広場・喫煙所</name><styleUrl>#main</styleUrl>
+      <description><![CDATA[スタート地点。喫煙所の透明仕切りに本所七不思議のイラストがぐるりと描かれている。]]></description>
+      <Point><coordinates>139.81410,35.69600,0</coordinates></Point></Placemark>
+    <Placemark><name>② 山田家（人形焼）</name><styleUrl>#main</styleUrl>
+      <description><![CDATA[人形焼の老舗。パッケージが「置いてけ堀」、お菓子は「たぬき囃」。巡礼のお供＆お土産に。（墨田区江東橋3-8-11）]]></description>
+      <Point><coordinates>139.81490,35.69514,0</coordinates></Point></Placemark>
+    <Placemark><name>③ 錦糸堀公園【置いてけ堀】</name><styleUrl>#main</styleUrl>
+      <description><![CDATA[ゲームの核となる呪詛「置いてけ堀」の伝承地（諸説あり）。公園前に河童像、園内に本所七不思議レリーフ＋河童伝説レリーフ。]]></description>
+      <Point><coordinates>139.81649,35.69493,0</coordinates></Point></Placemark>
+    <Placemark><name>④ 江東橋脇【送り拍子木】看板</name><styleUrl>#main</styleUrl>
+      <description><![CDATA[大横川親水公園の南側入口付近・江東橋脇に「送り拍子木」の瓦版風看板。ここから親水公園を北上。]]></description>
+      <Point><coordinates>139.81172,35.69562,0</coordinates></Point></Placemark>
+    <Placemark><name>⑤ 大横川親水公園内【足洗い屋敷】看板</name><styleUrl>#main</styleUrl>
+      <description><![CDATA[親水公園を歩いていくと「足洗い屋敷（足洗邸）」の看板。エピソード「足洗邸」の舞台。]]></description>
+      <Point><coordinates>139.80980,35.69830,0</coordinates></Point></Placemark>
+    <Placemark><name>⑥ 法恩寺橋【送り提灯】看板</name><styleUrl>#main</styleUrl>
+      <description><![CDATA[「送り提灯」の看板は法恩寺橋のたもと。]]></description>
+      <Point><coordinates>139.80841,35.70087,0</coordinates></Point></Placemark>
+    <Placemark><name>⑦ 本所七不思議レリーフ（親水公園内）</name><styleUrl>#main</styleUrl>
+      <description><![CDATA[大横川親水公園内にある七不思議まとめレリーフ（法恩寺橋付近）。]]></description>
+      <Point><coordinates>139.80820,35.70130,0</coordinates></Point></Placemark>
+    <Placemark><name>⑧ 喫茶フローラ【黒桔梗のモデル】</name><styleUrl>#main</styleUrl>
+      <description><![CDATA[ゲーム内の喫茶店「黒桔梗」のモデルとされる純喫茶。（墨田区東駒形2-7-12）※近くに「馬鹿囃子」の伝承地もあるが記事著者は看板未発見。]]></description>
+      <Point><coordinates>139.80170,35.70589,0</coordinates></Point></Placemark>
+    <Placemark><name>⑨ 駒形橋</name><styleUrl>#main</styleUrl>
+      <description><![CDATA[ゲームに登場する隅田川の橋。浅草駅・水上バス乗り場も近い。スカイツリー×隅田川の写真スポット。]]></description>
+      <Point><coordinates>139.79744,35.70824,0</coordinates></Point></Placemark>
+    <Placemark><name>⑩ 旧安田庭園・椎の木屋敷跡【落葉なき椎】</name><styleUrl>#main</styleUrl>
+      <description><![CDATA[「落葉なき椎」の地とされる椎の木屋敷跡の看板。斜め向かいの旧安田庭園は入園無料・冷暖房付き休憩所ありの絶好の休憩スポット。]]></description>
+      <Point><coordinates>139.79363,35.69825,0</coordinates></Point></Placemark>
+    <Placemark><name>⑪ 緑町公園【津軽の太鼓】</name><styleUrl>#main</styleUrl>
+      <description><![CDATA[「津軽の太鼓」の伝承地。「葛飾北斎生誕の地」看板もあり、隣はすみだ北斎美術館。]]></description>
+      <Point><coordinates>139.80176,35.69686,0</coordinates></Point></Placemark>
+    <Placemark><name>⑫ 両国橋【片葉の葦】</name><styleUrl>#main</styleUrl>
+      <description><![CDATA[ゴール。「片葉の葦」の看板は橋を降りてすぐの場所。両国駅からひと駅圏内。]]></description>
+      <Point><coordinates>139.78886,35.69431,0</coordinates></Point></Placemark>
+  </Folder>
+
+  <Folder>
+    <name>🍰 寄り道グルメ・銭湯（記事おすすめ）</name>
+    <Placemark><name>寄・喫茶ニット（錦糸町）</name><styleUrl>#food</styleUrl>
+      <description><![CDATA[錦糸町の有名純喫茶。③錦糸堀公園のすぐ近く。（江東橋4-26-12）]]></description>
+      <Point><coordinates>139.81650,35.69548,0</coordinates></Point></Placemark>
+    <Placemark><name>寄・白樺 本店（和菓子）</name><styleUrl>#food</styleUrl>
+      <description><![CDATA[錦糸町の和菓子店。駅地下テルミナでも購入可。（江東橋2-8-11）]]></description>
+      <Point><coordinates>139.81152,35.69411,0</coordinates></Point></Placemark>
+    <Placemark><name>寄・御谷湯（銭湯）</name><styleUrl>#food</styleUrl>
+      <description><![CDATA[歩き疲れたら立ち寄れる本格銭湯。（石原3-30-10）]]></description>
+      <Point><coordinates>139.80453,35.70145,0</coordinates></Point></Placemark>
+    <Placemark><name>寄・葛飾北斎ブロンズ像</name><styleUrl>#food</styleUrl>
+      <description><![CDATA[北斎と写真が撮れるブロンズ像。真裏の通りに「亀戸餃子 両国店」。（両国4-31付近）]]></description>
+      <Point><coordinates>139.79697,35.69473,0</coordinates></Point></Placemark>
+    <Placemark><name>寄・両国とし田（半生菓子）</name><styleUrl>#food</styleUrl>
+      <description><![CDATA[両国力士もなかで有名な菓子司。（両国4-32-19）]]></description>
+      <Point><coordinates>139.79521,35.69455,0</coordinates></Point></Placemark>
+    <Placemark><name>寄・麦酒倶楽部ポパイ</name><styleUrl>#food</styleUrl>
+      <description><![CDATA[クラフトビールの名店。巡礼の打ち上げに。（両国2-18-7）]]></description>
+      <Point><coordinates>139.79279,35.69516,0</coordinates></Point></Placemark>
+    <Placemark><name>寄・回向院</name><styleUrl>#food</styleUrl>
+      <description><![CDATA[記事外の追加スポット。鼠小僧の墓で知られる本所ゆかりの寺院。両国橋とポパイの間にあり順路的に立ち寄りやすい。]]></description>
+      <Point><coordinates>139.79204,35.69334,0</coordinates></Point></Placemark>
+  </Folder>
+
+  <Folder>
+    <name>🚃 番外編（電車で平井へ）</name>
+    <Placemark><name>番外・立花大正民家園 旧小山家住宅【志岐間邸】</name><styleUrl>#extra</styleUrl>
+      <description><![CDATA[志岐間邸（旧小山家）のモデル。平井駅から徒歩約12分（亀戸駅からは徒歩30分と遠い）。庭園見学 9:00〜16:30。（墨田区立花6丁目）]]></description>
+      <Point><coordinates>139.83821,35.70975,0</coordinates></Point></Placemark>
+    <Placemark><name>番外・喫茶ワンモア（平井駅前）</name><styleUrl>#extra</styleUrl>
+      <description><![CDATA[レモンの乗ったフレンチトーストが有名な喫茶店。旧小山家住宅とセットでどうぞ。（平井5-22-11）]]></description>
+      <Point><coordinates>139.84268,35.70779,0</coordinates></Point></Placemark>
+  </Folder>
+</Document>
+</kml>
