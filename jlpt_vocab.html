@@ -41,6 +41,7 @@ header .legend span{display:inline-flex;align-items:center;gap:5px}
 .lv-n5{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.25)}
 .lv-n4{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.25)}
 .lv-n3{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.25)}
+.lv-self{background:rgba(167,139,250,.14);color:#a78bfa;border:1px solid rgba(167,139,250,.3)}
 .reading-row{display:flex;align-items:baseline;gap:6px;margin-bottom:6px;flex-wrap:wrap;filter:blur(5px);user-select:none;transition:filter .2s}
 .card.revealed .reading-row{filter:none;user-select:auto}
 .pos{font-size:.68rem;color:var(--text-faint);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:1px 6px;white-space:nowrap}
@@ -118,6 +119,7 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-faint);b
     <button data-lv="n5">N5</button>
     <button data-lv="n4">N4</button>
     <button data-lv="n3">N3</button>
+    <button data-lv="selfAdd">追加</button>
   </div>
   <button id="show-checked-btn">✓ 0語</button>
   <button id="show-hard-btn">★ 難記 0語</button>
@@ -170,8 +172,8 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-faint);b
 </div>
 
 <script>
-const LV_LABEL={n5:'N5',n4:'N4',n3:'N3'};
-const LV_CLASS={n5:'lv-n5',n4:'lv-n4',n3:'lv-n3'};
+const LV_LABEL={n5:'N5',n4:'N4',n3:'N3',selfAdd:'追加'};
+const LV_CLASS={n5:'lv-n5',n4:'lv-n4',n3:'lv-n3',selfAdd:'lv-self'};
 
 function splitMorae(s){
   const sm='ゃゅょャュョぁぃぅぇぉァィゥェォ';
@@ -398,10 +400,10 @@ async function loadLevel(lv){
 async function init(){
   document.getElementById('grid').innerHTML='<div class="no-results">読み込み中…</div>';
   try{
-    const all=await Promise.all(['n5','n4','n3'].map(loadLevel));
+    const all=await Promise.all(['n5','n4','n3','selfAdd'].map(loadLevel));
     allData=all.flat();
     document.querySelector('header p').textContent=
-      `N5：${cache.n5.length}語 / N4：${cache.n4.length}語 / N3：${cache.n3.length}語 ｜読み・ピッチアクセント・日本語説明・例文付き`;
+      `N5：${cache.n5.length}語 / N4：${cache.n4.length}語 / N3：${cache.n3.length}語 / 追加：${cache.selfAdd.length}語 ｜読み・ピッチアクセント・日本語説明・例文付き`;
     render(allData);
   }catch(e){
     document.getElementById('grid').innerHTML=`<div class="no-results">データ読み込みエラー: ${e.message}<br>ページを再読み込みしてください。</div>`;
