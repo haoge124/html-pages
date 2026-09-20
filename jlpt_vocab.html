@@ -80,9 +80,13 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-faint);b
 #show-checked-btn.active{background:#22c55e;color:#fff;border-color:#22c55e}
 #show-hard-btn.active{background:#f59e0b;color:#fff;border-color:#f59e0b}
 @media(max-width:500px){#grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;padding:8px 10px 40px}.word{font-size:1.8rem}}
-#settings-btn,#tips-btn{padding:5px 10px;border:1.5px solid rgba(255,255,255,.1);border-radius:16px;background:transparent;color:var(--text-muted);font-size:.85rem;cursor:pointer;transition:.15s;-webkit-tap-highlight-color:transparent}
+#settings-btn,#tips-btn,#data-btn{padding:5px 10px;border:1.5px solid rgba(255,255,255,.1);border-radius:16px;background:transparent;color:var(--text-muted);font-size:.85rem;cursor:pointer;transition:.15s;-webkit-tap-highlight-color:transparent}
 #settings-btn:hover{border-color:var(--gold);color:var(--gold)}
 #tips-btn:hover{border-color:#f59e0b;color:#f59e0b}
+#data-btn:hover{border-color:#60a5fa;color:#60a5fa}
+#data-text{width:100%;height:160px;padding:8px 10px;border:1.5px solid rgba(255,255,255,.1);border-radius:8px;font-size:.72rem;font-family:ui-monospace,Menlo,monospace;background:var(--bg);color:var(--text);outline:none;resize:vertical;margin-bottom:10px}
+#data-text:focus{border-color:var(--gold)}
+#data-file{font-size:.75rem;color:var(--text-muted);margin-bottom:12px;font-family:inherit}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:100;align-items:center;justify-content:center}
 .modal-overlay.open{display:flex}
 .modal{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:24px;width:min(460px,90vw);max-height:86vh;overflow:auto;box-shadow:0 8px 32px rgba(0,0,0,.5)}
@@ -124,6 +128,7 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-faint);b
   <button id="show-checked-btn">✓ 0語</button>
   <button id="show-hard-btn">★ 難記 0語</button>
   <button id="tips-btn" title="記憶のコツ">💡</button>
+  <button id="data-btn" title="学習データの書き出し/読み込み">📦</button>
   <button id="settings-btn" title="音声設定">⚙️</button>
 </div>
 <div id="stats"></div>
@@ -167,6 +172,25 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-faint);b
     </div>
     <div class="modal-btns">
       <button class="btn-save" id="tips-close">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="data-modal">
+  <div class="modal">
+    <h2>📦 学習データの書き出し / 読み込み</h2>
+    <div class="hint" style="margin-top:0">★難記（復習段階つき）と ✓覚えた の一覧です。コピーしてチャットに貼るか、ファイルに保存してください。別端末で「読み込み」すると統合されます。</div>
+    <textarea id="data-text" spellcheck="false"></textarea>
+    <div class="modal-btns" style="justify-content:flex-start;flex-wrap:wrap">
+      <button class="btn-cancel" id="data-copy">📋 JSONをコピー</button>
+      <button class="btn-cancel" id="data-copy-words">📋 ★単語だけコピー</button>
+      <button class="btn-cancel" id="data-download">💾 ダウンロード</button>
+    </div>
+    <div class="hint" style="margin-top:12px">読み込み：上の欄に JSON を貼るか、ファイルを選んで「読み込み」。既存データは消さず統合します。</div>
+    <input type="file" id="data-file" accept=".json,application/json">
+    <div class="modal-btns">
+      <button class="btn-cancel" id="data-close">閉じる</button>
+      <button class="btn-save" id="data-import">読み込み</button>
     </div>
   </div>
 </div>
@@ -470,6 +494,63 @@ document.getElementById('tips-close').addEventListener('click',()=>{
 });
 document.getElementById('tips-modal').addEventListener('click',e=>{
   if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');
+});
+
+// ===== 学習データの書き出し / 読み込み =====
+const DATA_PAGE='n5-n3';
+function exportData(){
+  return JSON.stringify({page:DATA_PAGE,exported:new Date().toISOString(),hard,checked:[...checked]},null,1);
+}
+function importData(text){
+  let obj;
+  try{obj=JSON.parse(text);}catch(e){alert('JSONとして読めませんでした');return;}
+  if(!obj||typeof obj!=='object'){alert('形式が違います');return;}
+  let nh=0,nc=0;
+  if(obj.hard&&typeof obj.hard==='object'){
+    for(const[w,h]of Object.entries(obj.hard)){
+      if(!isHard(w)&&h&&typeof h.stage==='number'){hard[w]=h;nh++;}
+    }
+  }
+  if(Array.isArray(obj.checked)){
+    for(const w of obj.checked){if(typeof w==='string'&&!checked.has(w)){checked.add(w);nc++;}}
+  }
+  saveHard();saveChecked();render(currentData());
+  document.getElementById('data-text').value=exportData();
+  alert(`読み込みました：★難記 ${nh}語 / ✓覚えた ${nc}語 を追加`);
+}
+document.getElementById('data-btn').addEventListener('click',()=>{
+  document.getElementById('data-text').value=exportData();
+  document.getElementById('data-file').value='';
+  document.getElementById('data-modal').classList.add('open');
+});
+document.getElementById('data-close').addEventListener('click',()=>{
+  document.getElementById('data-modal').classList.remove('open');
+});
+document.getElementById('data-modal').addEventListener('click',e=>{
+  if(e.target===e.currentTarget)e.currentTarget.classList.remove('open');
+});
+async function copyText(t,btn){
+  try{await navigator.clipboard.writeText(t);}
+  catch(e){const ta=document.getElementById('data-text');ta.value=t;ta.select();document.execCommand('copy');}
+  const o=btn.textContent;btn.textContent='✓ コピーしました';setTimeout(()=>btn.textContent=o,1200);
+}
+document.getElementById('data-copy').addEventListener('click',e=>copyText(exportData(),e.currentTarget));
+document.getElementById('data-copy-words').addEventListener('click',e=>copyText(Object.keys(hard).join('、'),e.currentTarget));
+document.getElementById('data-download').addEventListener('click',()=>{
+  const blob=new Blob([exportData()],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  const d=new Date();const ymd=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  a.download=`jlpt_${DATA_PAGE}_${ymd}.json`;
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+});
+document.getElementById('data-import').addEventListener('click',()=>{
+  const f=document.getElementById('data-file').files[0];
+  if(f){f.text().then(importData);return;}
+  const t=document.getElementById('data-text').value.trim();
+  if(!t){alert('JSONを貼るかファイルを選んでください');return;}
+  importData(t);
 });
 
 init();
