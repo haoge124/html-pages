@@ -280,6 +280,11 @@ function toggleHard(word){
   const card=btn&&btn.closest('.card');
   if(card)card.classList.toggle('hard-mode',isHard(word));
   if(showHard)render(currentData());
+  else if(card&&isHard(word)){
+    // 難記にした語は元のタブから外し、★難記の一覧だけに表示する
+    card.classList.add('checking');
+    card.addEventListener('animationend',()=>{card.remove();refreshStats();},{once:true});
+  }
   updateHardBtn();
 }
 function reviewHard(word,result){
@@ -383,6 +388,7 @@ function render(data){
   const html=list.map(d=>{
     const word=d[0];
     if(!showHard){
+      if(isHard(word))return'';
       const isChecked=checked.has(word);
       if(isChecked&&!showChecked)return'';
     }
